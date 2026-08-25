@@ -13,13 +13,16 @@ E‑Ink Retro is a client-side theme plugin for DeepSeek Harness. Its design lan
 ## What changes
 
 - Paper-and-ink palette: light `#f4f4f4` surfaces with `#161616` ink, dark `#181818` with `#f4f4f4`; kept strictly neutral
-- 2px corner radius on controls and panels
-- Hard offset shadows at 1px and 2px, flat like print
+- One corner-radius scale: 1px on chips and switch parts, 2px on controls and panels
+- Hard offset shadows at 1px and 2px on floating layers, flat like print; controls carry a frame instead of a shadow
 - Selection states flip fully between black and white
 - Switch drawn as a rectangular track with a square knob
-- One focus frame shared by the composer, search fields, inputs, and selects
+- Links are ink, with a rule under prose links so they stay identifiable without hue
+- Native checkboxes, radios, ranges, and progress bars follow the ink accent instead of the OS one
+- One focus frame for everything reachable by keyboard: links, menu options, tree items, switches, and native fields
 - Stable scroll areas in conversation overlays and trajectory views
-- Verified adapters for conversation, context, settings, task board, SSH, skill center, plugin market, and workshop screens
+- Adapters for the composer, message editing, approvals, plugin settings cards, workspace search, trajectory, Skill Center, and the dsh-context plugin
+- Explicit high-contrast and print treatments
 - Unloading removes every injected token and style
 
 ## Modes
@@ -27,7 +30,7 @@ E‑Ink Retro is a client-side theme plugin for DeepSeek Harness. Its design lan
 | Mode | Description |
 | --- | --- |
 | **Balanced** (default) | Applies the paper-and-ink shell and control language. Keeps semantic colors where they carry meaning: status, chart, brand, and content colors are preserved in low saturation. |
-| **Immersive** | Adds grayscale treatment to verified decorative and compatibility surfaces only. User media (images, attachments, video) stays untouched. |
+| **Immersive** | Fully monochrome. The remaining status hues are replaced by an ink ramp — error carries the most ink, warn sits in the middle, success is the quietest — and verified decorative and compatibility surfaces are grayscaled. User media (images, attachments, video) stays untouched. |
 | **Off** | Removes all theme tokens and CSS overrides via the native settings checkbox. The plugin stays installed. |
 
 Both modes work with DSH's built-in System, Light, and Dark themes. When a third-party theme is selected, E‑Ink Retro suspends itself; switching back to a built-in theme restores your previous mode.
@@ -80,7 +83,7 @@ The theme styles only the surfaces it has verified. What stays untouched:
 ## FAQ
 
 **Why does Balanced mode keep colors?**
-Low-saturation semantic colors keep status information distinguishable. Immersive mode provides the fully monochrome look.
+Low-saturation semantic colors keep status information distinguishable by hue. Immersive mode is fully monochrome and moves that job to lightness: each status step holds at least 4.9:1 against its own background, so nothing becomes unreadable on the way.
 
 **Where does the Macintosh influence come in?**
 The geometry and inverted selection follow classic Macintosh; the layout and behavior stay modern DSH.
@@ -106,12 +109,19 @@ This runs the TypeScript check, regression tests, and production build. Build ou
 
 The main implementation files are:
 
-- `src/client/tokens.ts`: light and dark semantic token values
-- `src/theme.css`: component geometry, interaction states, and compatibility adapters
-- `src/client/index.ts`: mode storage, DSH theme coordination, settings UI, and cleanup
+- `src/client/tokens.ts`: the balanced token values and the immersive ink-ramp overlay
+- `src/theme.css`: design tokens, component geometry, interaction states, and compatibility adapters
+- `src/client/index.ts`: mode storage, token-layer installation, DSH theme coordination, settings UI, and cleanup
 - `tests/theme.test.mjs`: package and theme-boundary regression checks
 
-Keep new CSS scoped under `html[data-dsh-theme-eink-retro]`. Put monochrome-only adapters under the `immersive` attribute selector. Avoid global media filters and selectors tied to generated class hashes.
+Conventions:
+
+- Keep new CSS scoped under `html[data-dsh-theme-eink-retro]`. The one exception is this plugin's own settings section, which has to look right while the theme is off and is namespaced by `.eink-retro-settings` instead.
+- Take colors from the `--eink-*` tokens, and define new ones by deriving from the official DSH token layer. The theme has no dark-mode detector of its own, and adding one would give it two sources of truth.
+- Pick a line by role: `--eink-rule` for separators and static surfaces, `--eink-rule-strong` for anything operable or floating. Shadows are `--eink-shadow-1` for attached popups and `--eink-shadow-2` for floating layers; controls stay flat.
+- Put monochrome-only adapters under the `immersive` attribute selector, and status color changes in the immersive token overlay rather than in a filter.
+- Avoid global media filters. Selectors tied to generated class names are allowed only as commented compatibility adapters for surfaces that expose no stable hook.
+- A selector that matches a localized accessible name must match it by substring, list every locale we support, and pair it with a structural guard. The tests reject exact-match selectors on a localized string.
 
 ## License
 

@@ -1,8 +1,9 @@
 import React, { type ComponentType, type ReactElement } from "react";
 import themeCss from "../theme.css";
-import { EINK_TOKENS, EINK_TOKEN_SENTINEL, type ThemeTokenOverrides } from "./tokens.js";
+import { EINK_TOKEN_SENTINEL, tokensForMode, type ThemeTokenOverrides } from "./tokens.js";
 
 const STYLE_ID = "dsh-theme-eink-retro/style";
+const TOKEN_SOURCE = "dsh-theme-eink-retro";
 const ROOT_ATTRIBUTE = "data-dsh-theme-eink-retro";
 const MODE_STORAGE_KEY = "dsh-theme-eink-retro:mode";
 const ACTIVE_MODE_STORAGE_KEY = "dsh-theme-eink-retro:active-mode";
@@ -100,7 +101,7 @@ function createSettingsSection(ctx: ClientContext, syncMode: SyncMode): Componen
     {
       mode: "immersive",
       label: "完全沉浸",
-      description: "把第三方插件的数据标记、装饰皮肤和宠物也映射为单色灰阶。",
+      description: "状态色、数据标记、装饰皮肤一并转为墨色，界面完全黑白，状态改用墨色深浅区分。",
     },
   ];
 
@@ -197,6 +198,7 @@ function createSettingsSection(ctx: ClientContext, syncMode: SyncMode): Componen
 
 function apply(ctx: ClientContext): void {
   let disposeTokens: (() => void) | null = null;
+  let installedMode: ActiveThemeMode | null = null;
   let installingTokens = false;
   let releasingTokens = false;
   let syncTimer: number | null = null;
@@ -206,6 +208,7 @@ function apply(ctx: ClientContext): void {
 
     const dispose = disposeTokens;
     disposeTokens = null;
+    installedMode = null;
     releasingTokens = true;
     try {
       dispose();
@@ -214,27 +217,42 @@ function apply(ctx: ClientContext): void {
     }
   };
 
+  const installTokens = (mode: ActiveThemeMode): void => {
+    installingTokens = true;
+    try {
+      disposeTokens = ctx.theme.overrideTokens(TOKEN_SOURCE, tokensForMode(mode));
+      installedMode = mode;
+    } finally {
+      installingTokens = false;
+    }
+  };
+
   const syncMode: SyncMode = (mode, snapshot) => {
     const next = modeState(mode, snapshot);
 
-    if (next.effective && !disposeTokens && !installingTokens) {
-      installingTokens = true;
-      disposeTokens = ctx.theme.overrideTokens("dsh-theme-eink-retro", EINK_TOKENS);
-      installingTokens = false;
-    } else if (!next.effective) {
+    if (next.effective) {
+      // Balanced and immersive ship different token layers, so a mode switch
+      // has to swap the layer, not just the root attribute.
+      const activeMode = mode as ActiveThemeMode;
+      if (!installingTokens && (!disposeTokens || installedMode !== activeMode)) {
+        releaseTokens();
+        installTokens(activeMode);
+      }
+    } else {
       releaseTokens();
     }
 
     return applyMode(document.documentElement, mode, snapshot);
   };
 
+  // The probe answers one question: is our token layer still attached? It
+  // accepts either variant on purpose, so it never needs to work out which
+  // theme is active — that is the token layer's job, and a second opinion here
+  // could only ever disagree with it.
   const tokensAreApplied = (): boolean => {
-    const rootStyle = window.getComputedStyle(document.documentElement);
     const tokenStyle = window.getComputedStyle(document.body ?? document.documentElement);
-    const expected = rootStyle.colorScheme.includes("dark")
-      ? EINK_TOKEN_SENTINEL.dark
-      : EINK_TOKEN_SENTINEL.light;
-    return tokenStyle.getPropertyValue(EINK_TOKEN_SENTINEL.token).trim().toLowerCase() === expected;
+    const value = tokenStyle.getPropertyValue(EINK_TOKEN_SENTINEL.token).trim().toLowerCase();
+    return value === EINK_TOKEN_SENTINEL.light || value === EINK_TOKEN_SENTINEL.dark;
   };
 
   const scheduleThemeSync = (): void => {

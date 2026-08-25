@@ -42,7 +42,7 @@ test("settings use a native checkbox for the theme enabled state", () => {
 });
 
 test("balanced mode uses the official semantic token layer", () => {
-  assert.match(client, /overrideTokens\("dsh-theme-eink-retro", EINK_TOKENS\)/);
+  assert.match(client, /overrideTokens\(TOKEN_SOURCE, tokensForMode\(mode\)\)/);
   for (const token of [
     "--dsw-alias-bg-base",
     "--dsw-alias-bg-layer-1",
@@ -144,22 +144,22 @@ test("workspace tooltips stay legible and the add button owns an unclipped focus
   );
   assert.match(
     css,
-    /button\[aria-label="添加工作区"\]:focus-visible\s*\{[^}]*outline:\s*0\s*!important[^}]*box-shadow:\s*inset 0 0 0 1px var\(--eink-ink\)\s*!important/s,
+    /button\[aria-label\*="添加工作区"\]:focus-visible,[^{]*button\[aria-label\*="Add workspace" i\]:focus-visible\s*\{[^}]*outline:\s*0\s*!important[^}]*box-shadow:\s*inset 0 0 0 1px var\(--eink-ink\)\s*!important/s,
   );
 });
 
 test("workspace search and user messages use crisp surfaces with one focus owner", () => {
   assert.match(
     css,
-    /:has\(> button\[aria-label="搜索会话"\]\)\s*\{[^}]*border-radius:\s*var\(--eink-radius-control\)\s*!important/s,
+    /:has\(> button\[aria-label\*="搜索会话"\]\):has\(> input\),[^{]*:has\(> button\[aria-label\*="Search" i\]\):has\(> input\)\s*\{[^}]*border-radius:\s*var\(--eink-radius-control\)\s*!important/s,
   );
   assert.match(
     css,
-    /:has\(> button\[aria-label="搜索会话"\]\)\s*>\s*input\[placeholder="搜索会话…"\]\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+    /:has\(> button\[aria-label\*="搜索会话"\]\)\s*>\s*input,[^{]*\{[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*none\s*!important/s,
   );
   assert.match(
     css,
-    /:has\(> input\[placeholder="搜索会话…"\]:focus-visible\)\s*\{[^}]*border-color:\s*var\(--eink-ink\)\s*!important/s,
+    /:has\(> button\[aria-label\*="搜索会话"\]\):has\(> input:focus-visible\),[^{]*\{[^}]*border-color:\s*var\(--eink-ink\)\s*!important/s,
   );
   assert.match(
     css,
@@ -203,26 +203,28 @@ test("legacy DSH variables bridge to the current semantic token system", () => {
 test("message editing uses one crisp frame and consistently sized actions", () => {
   assert.match(
     css,
-    /\[data-slot="conversation\.chat\.turnTail"\]:has\(textarea\[placeholder="编辑"\]\)[^{]*textarea\[placeholder="编辑"\]\s*\{[^}]*border:\s*1px solid var\(--eink-rule-strong\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+    /\[data-slot="conversation\.chat\.turnTail"\] textarea\s*\{[^}]*border:\s*1px solid var\(--eink-rule-strong\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
   );
   assert.match(
     css,
-    /\[data-slot="conversation\.chat\.turnTail"\]:has\(textarea\[placeholder="编辑"\]\)[^{]*:has\(> textarea\[placeholder="编辑"\]\)[^{]*>\s*:nth-child\(2\)\s*>\s*button\s*\{[^}]*box-sizing:\s*border-box[^}]*min-height:\s*24px[^}]*font-size:\s*12px[^}]*line-height:\s*22px/s,
+    /\[data-slot="conversation\.chat\.turnTail"\][^{]*:has\(> textarea\)[^{]*>\s*:nth-child\(2\)\s*>\s*button\s*\{[^}]*box-sizing:\s*border-box[^}]*min-height:\s*24px[^}]*font-size:\s*var\(--eink-text-sm\)[^}]*line-height:\s*22px/s,
   );
   assert.match(
     css,
-    /\[data-slot="conversation\.chat\.turnTail"\]:has\(textarea\[placeholder="编辑"\]\)[^{]*button:last-child\s*\{[^}]*border:\s*1px solid var\(--eink-selection-bg\)\s*!important/s,
+    /\[data-slot="conversation\.chat\.turnTail"\][^{]*button:last-child\s*\{[^}]*border:\s*1px solid var\(--eink-selection-bg\)\s*!important/s,
   );
+  // The editing state is identified by structure, not by a localized placeholder.
+  assert.doesNotMatch(css, /placeholder="编辑"/);
 });
 
 test("approval requests and active turn status use neutral ink treatments", () => {
   assert.match(
     css,
-    /:has\(> \[aria-label="审批详情"\]\)\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border-color:\s*var\(--eink-rule-strong\)\s*!important/s,
+    /:has\(> \[aria-label\*="审批详情"\]\),[^{]*:has\(> \[aria-label\*="Approval details" i\]\)\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border-color:\s*var\(--eink-rule-strong\)\s*!important/s,
   );
   assert.match(
     css,
-    /:has\(> \[aria-label="审批详情"\]\)\s*>\s*:first-child\s*\{[^}]*color:\s*var\(--eink-ink\)\s*!important[^}]*background-color:\s*var\(--eink-paper-raised\)\s*!important[^}]*border-bottom:\s*1px solid var\(--eink-rule\)\s*!important/s,
+    /:has\(> \[aria-label\*="审批详情"\]\)\s*>\s*:first-child,[^{]*\{[^}]*color:\s*var\(--eink-ink\)\s*!important[^}]*background-color:\s*var\(--eink-paper-raised\)\s*!important[^}]*border-bottom:\s*1px solid var\(--eink-rule\)\s*!important/s,
   );
   assert.match(
     css,
@@ -322,7 +324,7 @@ test("floating listboxes do not resize the conversation scrollport", () => {
   assert.match(css, /\[role="listbox"\]\s*>\s*\*\s*\{[^}]*scrollbar-gutter:\s*stable/s);
   assert.match(
     css,
-    /\[data-dsh-part="scrollport"\]:has\(\s*section\[aria-label="Trajectory timeline"\]\s*\)\s*\{[^}]*overflow-y:\s*hidden/s,
+    /\[data-dsh-part="scrollport"\]:has\(\s*section\[aria-label\*="Trajectory" i\]\s*\),[\s\S]*?\{[^}]*overflow-y:\s*hidden/s,
   );
 });
 
@@ -338,4 +340,161 @@ test("client exposes reversible modes and shares one style across reloads", () =
   assert.match(client, /tokensAreApplied/);
   assert.match(client, /scheduleThemeSync/);
   assert.match(client, /EINK_TOKEN_SENTINEL/);
+});
+
+test("immersive mode ships its own monochrome token layer", () => {
+  assert.match(tokens, /EINK_IMMERSIVE_TOKENS/);
+  assert.match(tokens, /export function tokensForMode/);
+  assert.match(client, /installedMode !== activeMode/);
+
+  // The ink ramp replaces every hue that balanced keeps, so nothing tinted
+  // survives into immersive.
+  for (const token of [
+    "--dsw-alias-state-error-primary",
+    "--dsw-alias-state-error-secondary",
+    "--dsw-alias-state-success-primary",
+    "--dsw-alias-state-success-secondary",
+    "--dsw-alias-state-success-tertiary",
+    "--dsw-alias-state-warn-primary",
+    "--dsw-alias-interactive-bg-hover-danger",
+  ]) {
+    const overlay = tokens.slice(tokens.indexOf("EINK_IMMERSIVE_OVERLAY"));
+    assert.ok(overlay.includes(token), `immersive overlay is missing ${token}`);
+  }
+
+  const overlay = tokens.slice(
+    tokens.indexOf("EINK_IMMERSIVE_OVERLAY"),
+    tokens.indexOf("export const EINK_IMMERSIVE_TOKENS"),
+  );
+  for (const [, hex] of overlay.matchAll(/#([0-9a-f]{6})/gi)) {
+    const [r, g, b] = [hex.slice(0, 2), hex.slice(2, 4), hex.slice(4, 6)];
+    assert.equal(r, g, `immersive value #${hex} is not neutral`);
+    assert.equal(g, b, `immersive value #${hex} is not neutral`);
+  }
+});
+
+test("the token probe is stable across modes", () => {
+  const sentinel = tokens.slice(
+    tokens.indexOf("EINK_TOKEN_SENTINEL"),
+    tokens.indexOf("EINK_BALANCED_TOKENS"),
+  );
+  const probed = sentinel.match(/token:\s*"([^"]+)"/)[1];
+  const overlay = tokens.slice(tokens.indexOf("EINK_IMMERSIVE_OVERLAY"));
+  assert.ok(!overlay.includes(probed), `${probed} changes between modes and cannot be a probe`);
+});
+
+test("design tokens derive from the official layer instead of a second dark detector", () => {
+  assert.doesNotMatch(css, /data-ds-dark-theme/);
+  for (const [own, source] of [
+    ["--eink-paper", "--dsw-alias-bg-base"],
+    ["--eink-paper-bright", "--dsw-alias-bg-layer-1"],
+    ["--eink-paper-raised", "--dsw-alias-bg-layer-2"],
+    ["--eink-paper-inset", "--dsw-alias-bg-layer-3"],
+    ["--eink-ink", "--dsw-alias-label-primary"],
+    ["--eink-ink-2", "--dsw-alias-label-secondary"],
+    ["--eink-ink-3", "--dsw-alias-label-tertiary"],
+    ["--eink-selection-bg", "--dsw-alias-brand-primary"],
+    ["--eink-selection-fg", "--dsw-alias-brand-primary-invert"],
+    ["--eink-shadow-1", "--dsw-shadow-lv1"],
+    ["--eink-shadow-2", "--dsw-shadow-lv2"],
+  ]) {
+    assert.ok(
+      css.includes(`${own}: var(${source},`),
+      `${own} should derive from ${source}`,
+    );
+  }
+  assert.match(css, /--eink-rule:\s*color-mix\(in srgb, var\(--eink-ink\) \d+%, var\(--eink-paper\)\)/);
+  assert.match(css, /--eink-rule-strong:\s*color-mix\(in srgb, var\(--eink-ink\) \d+%, var\(--eink-paper\)\)/);
+});
+
+test("localized hooks always carry a second locale and a structural guard", () => {
+  assert.doesNotMatch(css, /aria-label="[^"]*[一-鿿]/);
+  assert.doesNotMatch(css, /placeholder="[^"]*[一-鿿]/);
+  for (const companion of [
+    'aria-label*="Add workspace" i',
+    'aria-label*="Search" i',
+    'aria-label*="Approval details" i',
+    'aria-label*="轨迹"',
+  ]) {
+    assert.ok(css.includes(companion), `missing locale companion ${companion}`);
+  }
+});
+
+test("native color and text affordances follow the ink palette", () => {
+  assert.match(css, /accent-color:\s*var\(--eink-ink\)/);
+  assert.match(css, /\.eink-retro-settings__enabled-input\s*\{\s*accent-color:\s*var\(--eink-ink\)\s*!important/s);
+  assert.match(css, /::placeholder\s*\{[^}]*color:\s*var\(--eink-ink-3\)[^}]*opacity:\s*1/s);
+  assert.match(
+    css,
+    /:where\(\s*a:not\(\[role="button"\], \[class\*="button" i\], \[aria-current\], \[aria-selected="true"\]\)\s*\)\s*\{[^}]*color:\s*var\(--eink-ink\)/s,
+  );
+  assert.match(css, /text-decoration:\s*underline/);
+  assert.match(
+    css,
+    /:where\(button, input, textarea, select\):disabled,[^{]*\[aria-disabled="true"\][^{]*\{[^}]*cursor:\s*not-allowed/s,
+  );
+  assert.match(
+    css,
+    /::-webkit-scrollbar-thumb:hover\s*\{[^}]*var\(--dsw-alias-scrollbar-hover-l2\)/s,
+  );
+});
+
+test("one focus frame covers every keyboard-reachable role and adds no ground halo", () => {
+  const focusRule = css
+    .slice(css.search(/html\[data-dsh-theme-eink-retro\] :where\(\s*a,/))
+    .split("}")[0];
+  for (const role of [
+    "a,",
+    "summary,",
+    '[role="option"]',
+    '[role="checkbox"]',
+    '[tabindex]:not([tabindex="-1"])',
+  ]) {
+    assert.ok(focusRule.includes(role), `focus rule is missing ${role}`);
+  }
+  assert.match(focusRule, /outline:\s*1px solid var\(--eink-ink\)/);
+  assert.doesNotMatch(focusRule, /box-shadow/);
+});
+
+test("controls and surfaces take their radius from the matching token", () => {
+  assert.match(
+    css,
+    /:where\(button, input, textarea, select, \[role="button"\]\)\s*\{\s*border-radius:\s*var\(--eink-radius-control\)\s*!important/s,
+  );
+  // Every radius on the scale goes through a token; only an explicit reset to
+  // 0 and the `var(--token, 2px)` fallbacks used while the theme is off remain.
+  const strayRadius = css
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => /border-radius:\s*[1-9]/.test(line) && !line.includes("var(--eink-radius"));
+  assert.deepEqual(strayRadius, [], `hardcoded radius: ${strayRadius.join(" | ")}`);
+});
+
+test("focused fields keep their inset well", () => {
+  assert.match(css, /--eink-well:\s*inset 1px 1px 0/);
+  assert.match(
+    css,
+    /:focus-visible\s*\{[^}]*box-shadow:\s*var\(--eink-well\), inset 0 -2px 0 var\(--eink-ink\)\s*!important/s,
+  );
+});
+
+test("high contrast and print get an explicit treatment", () => {
+  assert.match(css, /@media \(forced-colors: active\)/);
+  assert.match(css, /outline:\s*2px solid CanvasText\s*!important/);
+  assert.match(css, /@media print/);
+  assert.match(
+    css,
+    /@media print[\s\S]*?color:\s*#000000\s*!important[^}]*background:\s*transparent\s*!important/s,
+  );
+});
+
+test("the theme keeps exactly one opinion about light and dark", () => {
+  // The CSS derives from the token layer and the probe accepts either variant,
+  // so neither side re-derives the active theme for itself.
+  assert.doesNotMatch(css, /prefers-color-scheme/);
+  assert.doesNotMatch(client, /colorScheme/);
+  assert.match(
+    client,
+    /value === EINK_TOKEN_SENTINEL\.light \|\| value === EINK_TOKEN_SENTINEL\.dark/,
+  );
 });
