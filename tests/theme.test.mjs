@@ -176,6 +176,29 @@ test("approval requests and active turn status use neutral ink treatments", () =
   );
 });
 
+test("settings plugin cards share one neutral surface and text hierarchy", () => {
+  assert.match(
+    css,
+    /\[data-dsh-surface="settings"\][^{]*\[data-slot="settings\.plugin\.item"\]\s*>\s*:first-child\s*\{[^}]*background-color:\s*var\(--eink-paper-inset\)\s*!important[^}]*border:\s*1px solid color-mix\(in srgb, var\(--eink-ink\) 35%, transparent\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-slot="settings\.plugin\.item"\][^{]*details\s*>\s*summary\s*>\s*:first-child\s*>\s*:last-child\s*\{[^}]*color:\s*var\(--eink-ink-2\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-slot="settings\.plugin\.item"\][^{]*input\[type="radio"\]\s*\{[^}]*accent-color:\s*var\(--eink-ink\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-slot="settings\.plugin\.item"\][^{]*label:has\(> input\[type="radio"\]:checked\)\s*\{[^}]*border-color:\s*var\(--eink-ink\)\s*!important[^}]*box-shadow:\s*inset 0 -2px 0 var\(--eink-ink\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-slot="settings\.plugin\.item"\][^{]*button\[type="submit"\]\s*\{[^}]*color:\s*var\(--eink-selection-fg\)\s*!important[^}]*background-color:\s*var\(--eink-selection-bg\)\s*!important/s,
+  );
+});
+
 test("markdown quotes and overlay surfaces stay flat and rectilinear", () => {
   assert.match(
     css,

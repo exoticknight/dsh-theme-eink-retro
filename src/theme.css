@@ -514,6 +514,54 @@ html[data-dsh-theme-eink-retro] :where([role="menu"], [role="listbox"]) {
   box-shadow: var(--eink-shadow-1);
 }
 
+/* Plugin settings are contributed by independent packages, so their card
+ * implementations do not always consume DSH's shared surface tokens. Normalize
+ * the semantic slot instead of coupling the theme to generated class names. */
+html[data-dsh-theme-eink-retro]
+  [data-dsh-surface="settings"]
+  [data-slot="settings.plugin.item"]
+  > :first-child {
+  color: var(--eink-ink) !important;
+  background-color: var(--eink-paper-inset) !important;
+  background-image: none !important;
+  border: 1px solid color-mix(in srgb, var(--eink-ink) 35%, transparent) !important;
+  box-shadow: none !important;
+}
+
+html[data-dsh-theme-eink-retro]
+  [data-dsh-surface="settings"]
+  [data-slot="settings.plugin.item"]
+  details
+  > summary
+  > :first-child
+  > :last-child {
+  color: var(--eink-ink-2) !important;
+}
+
+html[data-dsh-theme-eink-retro]
+  [data-dsh-surface="settings"]
+  [data-slot="settings.plugin.item"]
+  input[type="radio"] {
+  accent-color: var(--eink-ink) !important;
+}
+
+html[data-dsh-theme-eink-retro]
+  [data-dsh-surface="settings"]
+  [data-slot="settings.plugin.item"]
+  label:has(> input[type="radio"]:checked) {
+  border-color: var(--eink-ink) !important;
+  box-shadow: inset 0 -2px 0 var(--eink-ink) !important;
+}
+
+html[data-dsh-theme-eink-retro]
+  [data-dsh-surface="settings"]
+  [data-slot="settings.plugin.item"]
+  button[type="submit"] {
+  color: var(--eink-selection-fg) !important;
+  background-color: var(--eink-selection-bg) !important;
+  border-color: var(--eink-selection-bg) !important;
+}
+
 html[data-dsh-theme-eink-retro] [role="tooltip"] {
   color: var(--eink-selection-fg) !important;
   background-color: var(--eink-selection-bg) !important;
