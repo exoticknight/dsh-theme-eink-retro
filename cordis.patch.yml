@@ -1,0 +1,5 @@
+# E-Ink Retro UI theme plugin. The client entry applies and cleans up the
+# theme atomically; it does not add, remove or reorder DSH interface regions.
+- insert:
+    - id: dsh-theme-eink-retro
+      name: dsh-theme-eink-retro
