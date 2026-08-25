@@ -93,6 +93,18 @@ test("secondary tabs, markdown tables and capability badges keep readable hierar
   );
 });
 
+test("floating listboxes do not resize the conversation scrollport", () => {
+  assert.match(
+    css,
+    /\[data-dsh-part="scrollport"\]\s+:has\(>\s*\[role="listbox"\]\)\s*\{[^}]*contain:\s*layout/s,
+  );
+  assert.match(css, /\[role="listbox"\]\s*>\s*\*\s*\{[^}]*scrollbar-gutter:\s*stable/s);
+  assert.match(
+    css,
+    /\[data-dsh-part="scrollport"\]:has\(\s*section\[aria-label="Trajectory timeline"\]\s*\)\s*\{[^}]*overflow-y:\s*hidden/s,
+  );
+});
+
 test("client exposes reversible modes and shares one style across reloads", () => {
   assert.match(client, /type ThemeMode = "balanced" \| "immersive" \| "off"/);
   assert.match(client, /localStorage\.setItem\(MODE_STORAGE_KEY, mode\)/);

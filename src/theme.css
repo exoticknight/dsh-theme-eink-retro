@@ -405,6 +405,29 @@ html[data-dsh-theme-eink-retro] th {
   font-weight: 650;
 }
 
+/* DSH mounts composer menus inside the conversation scrollport. Their
+ * absolutely positioned listboxes must not contribute their popup height to
+ * the message stream, otherwise opening one changes the stream scrollHeight
+ * and makes its scrollbar/thumb jump. Keep gutter reservation local to the
+ * popup viewport: reserving it on the outer scrollport creates a second empty
+ * track beside views such as the trajectory table. */
+html[data-dsh-theme-eink-retro] [data-dsh-part="scrollport"] :has(> [role="listbox"]) {
+  contain: layout;
+}
+
+html[data-dsh-theme-eink-retro] [role="listbox"] > * {
+  scrollbar-gutter: stable;
+}
+
+/* The trajectory view already owns its vertical range in an inner table
+ * scroller. Keep the otherwise empty outer scrollport from acquiring a second
+ * scrollbar while a composer popup mounts or finishes unmounting. */
+html[data-dsh-theme-eink-retro] [data-dsh-part="scrollport"]:has(
+  section[aria-label="Trajectory timeline"]
+) {
+  overflow-y: hidden;
+}
+
 html[data-dsh-theme-eink-retro] * {
   scrollbar-color: var(--dsw-alias-scrollbar-bg-l2) var(--dsw-alias-scrollbar-bg-l1);
   scrollbar-width: thin;
