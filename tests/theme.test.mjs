@@ -156,14 +156,51 @@ test("workspace search and user messages use crisp surfaces with one focus owner
   );
 });
 
-test("message editing restores the legacy control tokens inside the turn tail", () => {
+test("legacy DSH variables bridge to the current semantic token system", () => {
+  const bridges = {
+    "--dsw-alias-border": "--dsw-alias-border-l3",
+    "--dsw-alias-fill-primary": "--dsw-alias-bg-layer-1",
+    "--dsw-alias-text-primary": "--dsw-alias-label-primary",
+    "--dsw-alias-accent": "--dsw-alias-brand-primary",
+    "--dsw-alias-text-on-accent": "--dsw-alias-brand-primary-invert",
+    "--dsw-alias-button-info-label": "--dsw-alias-brand-primary-invert",
+    "--dsw-alias-danger": "--dsw-alias-state-error-primary",
+    "--dsw-alias-label-danger": "--dsw-alias-state-error-primary",
+    "--dsw-alias-label-error": "--dsw-alias-state-error-primary",
+    "--dsw-alias-label-on-danger": "--dsw-alias-brand-primary-invert",
+    "--dsw-alias-label-on-primary": "--dsw-alias-brand-primary-invert",
+    "--dsw-alias-label-quaternary": "--dsw-alias-label-dimmed",
+    "--dsw-alias-separator-primary": "--dsw-alias-border-l2",
+    "--dsw-alias-state-danger": "--dsw-alias-state-error-primary",
+    "--dsw-alias-state-warning-primary": "--dsw-alias-state-warn-primary",
+    "--dsw-alias-text-danger": "--dsw-alias-state-error-primary",
+    "--dsw-font-mono": "--eink-font-mono",
+    "--dsh-font-mono": "--eink-font-mono",
+    "--dsh-color-surface": "--dsw-alias-bg-layer-3",
+    "--dsh-color-border": "--dsw-alias-border-l3",
+    "--dsh-color-accent": "--dsw-alias-brand-primary",
+    "--dsh-color-text": "--dsw-alias-label-primary",
+    "--dsh-color-text-secondary": "--dsw-alias-label-secondary",
+    "--dsh-state-ongoing": "--dsw-alias-state-warn-primary",
+  };
+
+  for (const [legacy, current] of Object.entries(bridges)) {
+    assert.ok(css.includes(`${legacy}: var(${current});`), `missing ${legacy} bridge`);
+  }
+});
+
+test("message editing uses one crisp frame and consistently sized actions", () => {
   assert.match(
     css,
-    /\[data-slot="conversation\.chat\.turnTail"\]:has\(textarea\[placeholder="编辑"\]\)\s*\{[^}]*--dsw-alias-border:\s*var\(--eink-rule-strong\)[^}]*--dsw-alias-fill-primary:\s*var\(--eink-paper-bright\)[^}]*--dsw-alias-text-primary:\s*var\(--eink-ink\)[^}]*--dsw-alias-accent:\s*var\(--eink-selection-bg\)[^}]*--dsw-alias-text-on-accent:\s*var\(--eink-selection-fg\)/s,
+    /\[data-slot="conversation\.chat\.turnTail"\]:has\(textarea\[placeholder="编辑"\]\)[^{]*textarea\[placeholder="编辑"\]\s*\{[^}]*border:\s*1px solid var\(--eink-rule-strong\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
   );
   assert.match(
     css,
-    /\[data-slot="conversation\.chat\.turnTail"\]:has\(textarea\[placeholder="编辑"\]\)[^{]*:has\(> textarea\[placeholder="编辑"\]\)[^{]*>\s*:nth-child\(2\)\s*>\s*button:first-child\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important/s,
+    /\[data-slot="conversation\.chat\.turnTail"\]:has\(textarea\[placeholder="编辑"\]\)[^{]*:has\(> textarea\[placeholder="编辑"\]\)[^{]*>\s*:nth-child\(2\)\s*>\s*button\s*\{[^}]*box-sizing:\s*border-box[^}]*min-height:\s*24px[^}]*font-size:\s*12px[^}]*line-height:\s*22px/s,
+  );
+  assert.match(
+    css,
+    /\[data-slot="conversation\.chat\.turnTail"\]:has\(textarea\[placeholder="编辑"\]\)[^{]*button:last-child\s*\{[^}]*border:\s*1px solid var\(--eink-selection-bg\)\s*!important/s,
   );
 });
 
