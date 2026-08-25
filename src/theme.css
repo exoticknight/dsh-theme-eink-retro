@@ -584,6 +584,27 @@ html[data-dsh-theme-eink-retro]
   box-shadow: none !important;
 }
 
+/* The message editor still consumes an earlier, unsuffixed DSH token set.
+ * Restore those aliases only inside the turn-tail edit slot so its declared
+ * border, paper fill and primary action remain intact without affecting other
+ * third-party surfaces. */
+html[data-dsh-theme-eink-retro]
+  [data-slot="conversation.chat.turnTail"]:has(textarea[placeholder="编辑"]) {
+  --dsw-alias-border: var(--eink-rule-strong);
+  --dsw-alias-fill-primary: var(--eink-paper-bright);
+  --dsw-alias-text-primary: var(--eink-ink);
+  --dsw-alias-accent: var(--eink-selection-bg);
+  --dsw-alias-text-on-accent: var(--eink-selection-fg);
+}
+
+html[data-dsh-theme-eink-retro]
+  [data-slot="conversation.chat.turnTail"]:has(textarea[placeholder="编辑"])
+  :has(> textarea[placeholder="编辑"])
+  > :nth-child(2)
+  > button:first-child {
+  background-color: var(--eink-paper-bright) !important;
+}
+
 /* Approval requests are important without needing a warm warning wash. The
  * labelled body gives us a stable hook for its surrounding native card. */
 html[data-dsh-theme-eink-retro] :has(> [aria-label="审批详情"]) {

@@ -156,6 +156,17 @@ test("workspace search and user messages use crisp surfaces with one focus owner
   );
 });
 
+test("message editing restores the legacy control tokens inside the turn tail", () => {
+  assert.match(
+    css,
+    /\[data-slot="conversation\.chat\.turnTail"\]:has\(textarea\[placeholder="编辑"\]\)\s*\{[^}]*--dsw-alias-border:\s*var\(--eink-rule-strong\)[^}]*--dsw-alias-fill-primary:\s*var\(--eink-paper-bright\)[^}]*--dsw-alias-text-primary:\s*var\(--eink-ink\)[^}]*--dsw-alias-accent:\s*var\(--eink-selection-bg\)[^}]*--dsw-alias-text-on-accent:\s*var\(--eink-selection-fg\)/s,
+  );
+  assert.match(
+    css,
+    /\[data-slot="conversation\.chat\.turnTail"\]:has\(textarea\[placeholder="编辑"\]\)[^{]*:has\(> textarea\[placeholder="编辑"\]\)[^{]*>\s*:nth-child\(2\)\s*>\s*button:first-child\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important/s,
+  );
+});
+
 test("approval requests and active turn status use neutral ink treatments", () => {
   assert.match(
     css,
