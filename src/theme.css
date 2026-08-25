@@ -252,6 +252,24 @@ html[data-dsh-theme-eink-retro] :where(input, textarea, select, [contenteditable
   caret-color: var(--eink-ink);
 }
 
+/* The composer keeps its visible text in a backdrop layer underneath a
+ * transparent textarea. Let the outer composer card own the surface and
+ * focus treatment; otherwise the backdrop is hidden and a second inset rule
+ * remains visible after the textarea loses focus. */
+html[data-dsh-theme-eink-retro] textarea[data-dsh-part="composer-input"] {
+  background-color: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
+  textarea[data-dsh-part="composer-input"]:focus-visible
+) {
+  border-color: var(--eink-ink) !important;
+  box-shadow: var(--eink-shadow-1) !important;
+}
+
 html[data-dsh-theme-eink-retro] :where(
   button,
   input,

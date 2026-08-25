@@ -74,6 +74,13 @@ test("both active modes share crisp geometry and black-white interaction states"
   assert.match(css, /span\[class\*="tabSearch"\]/);
 });
 
+test("composer preserves DSH's backdrop text and owns a single focus border", () => {
+  assert.match(css, /textarea\[data-dsh-part="composer-input"\]/);
+  assert.match(css, /background-color:\s*transparent\s*!important/);
+  assert.match(css, /\[data-composer-card="true"\]:has\(/);
+  assert.match(css, /textarea\[data-dsh-part="composer-input"\]:focus-visible/);
+});
+
 test("client exposes reversible modes and shares one style across reloads", () => {
   assert.match(client, /type ThemeMode = "balanced" \| "immersive" \| "off"/);
   assert.match(client, /localStorage\.setItem\(MODE_STORAGE_KEY, mode\)/);
