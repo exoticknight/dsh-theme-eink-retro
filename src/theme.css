@@ -229,22 +229,36 @@ html[data-dsh-theme-eink-retro] [role="switch"] {
   box-shadow: none !important;
 }
 
-html[data-dsh-theme-eink-retro] [role="switch"] > * {
+html[data-dsh-theme-eink-retro] [role="switch"] > :last-child {
+  box-sizing: border-box;
+  width: 30px;
+  height: 16px;
   background-color: var(--eink-paper-bright) !important;
-  border: 1px solid var(--eink-rule-strong) !important;
+  border: 1px solid var(--eink-ink) !important;
   border-radius: 1px !important;
 }
 
-html[data-dsh-theme-eink-retro] [role="switch"] > * > * {
-  background-color: var(--eink-paper-bright) !important;
-  border: 1px solid var(--eink-selection-bg) !important;
+html[data-dsh-theme-eink-retro] [role="switch"] > :last-child > * {
+  box-sizing: border-box;
+  width: 10px;
+  height: 10px;
+  background-color: var(--eink-ink) !important;
+  border: 0 !important;
   border-radius: 1px !important;
   box-shadow: none !important;
 }
 
-html[data-dsh-theme-eink-retro] [role="switch"][aria-checked="true"] > * {
+html[data-dsh-theme-eink-retro] [role="switch"]:not([aria-checked="true"]) > :last-child > * {
+  background-color: var(--eink-ink) !important;
+}
+
+html[data-dsh-theme-eink-retro] [role="switch"][aria-checked="true"] > :last-child {
   background-color: var(--eink-selection-bg) !important;
   border-color: var(--eink-selection-bg) !important;
+}
+
+html[data-dsh-theme-eink-retro] [role="switch"][aria-checked="true"] > :last-child > * {
+  background-color: var(--eink-selection-fg) !important;
 }
 
 /* Semantic destructive actions keep their warning color, but use the same

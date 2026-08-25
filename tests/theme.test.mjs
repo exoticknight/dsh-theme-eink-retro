@@ -111,7 +111,19 @@ test("switches and semantic destructive buttons stay flat and explicit", () => {
   );
   assert.match(
     css,
-    /\[role="switch"\]\s*>\s*\*\s*>\s*\*\s*\{[^}]*box-shadow:\s*none\s*!important/s,
+    /\[role="switch"\]\s*>\s*:last-child\s*>\s*\*\s*\{[^}]*box-shadow:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[role="switch"\]\s*>\s*:last-child\s*\{[^}]*box-sizing:\s*border-box[^}]*width:\s*30px[^}]*height:\s*16px/s,
+  );
+  assert.match(
+    css,
+    /\[role="switch"\]:not\(\[aria-checked="true"\]\)\s*>\s*:last-child\s*>\s*\*\s*\{[^}]*background-color:\s*var\(--eink-ink\)/s,
+  );
+  assert.match(
+    css,
+    /\[role="switch"\]\s*>\s*:last-child\s*>\s*\*\s*\{[^}]*width:\s*10px[^}]*height:\s*10px[^}]*border:\s*0/s,
   );
   assert.match(css, /button\[class\*="deleteButton" i\]/);
   assert.match(css, /\[role="button"\][^}]*border-radius/s);
