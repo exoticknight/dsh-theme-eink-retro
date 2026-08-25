@@ -167,7 +167,31 @@ test("approval requests and active turn status use neutral ink treatments", () =
   );
   assert.match(
     css,
-    /\[data-chat-flow\]\s*>\s*\[role="status"\]\s*\{[^}]*color:\s*var\(--eink-ink-2\)\s*!important[^}]*-webkit-text-fill-color:\s*currentColor\s*!important[^}]*background-image:\s*none\s*!important[^}]*animation:\s*none\s*!important/s,
+    /\[data-chat-flow\]\s*>\s*\[role="status"\]\s*\{[^}]*color:\s*var\(--eink-ink-2\)[^}]*-webkit-text-fill-color:\s*currentColor\s*!important[^}]*background-image:\s*none\s*!important[^}]*animation:\s*eink-retro-turn-status-refresh 2\.4s steps\(1, end\) infinite\s*!important/s,
+  );
+  assert.match(css, /@keyframes eink-retro-turn-status-refresh/);
+  assert.match(
+    css,
+    /@media \(prefers-reduced-motion: reduce\)[^{]*\{[\s\S]*?\[data-chat-flow\]\s*>\s*\[role="status"\]\s*\{[^}]*animation:\s*none\s*!important/s,
+  );
+});
+
+test("markdown quotes and overlay surfaces stay flat and rectilinear", () => {
+  assert.match(
+    css,
+    /blockquote\s*\{[^}]*border-left:\s*2px solid var\(--eink-rule-strong\)[^}]*background:\s*transparent/s,
+  );
+  assert.match(
+    css,
+    /\[role="presentation"\]:has\(> \[role="dialog"\]\)\s*>\s*:first-child\s*\{[^}]*backdrop-filter:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-dsh-plugin="skill-explorer"\][^{]*\[data-dsh-part="card"\]\s*\{[^}]*box-shadow:\s*var\(--eink-shadow-2\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\.lc-root \.lc-gran\s*\{[^}]*border-radius:\s*var\(--eink-radius-control\)\s*!important/s,
   );
 });
 

@@ -501,6 +501,13 @@ html[data-dsh-theme-eink-retro] :where([role="dialog"], [data-dsh-part="dialog"]
   border-radius: var(--eink-radius-surface) !important;
 }
 
+/* Modal masks should separate layers without simulating frosted glass. */
+html[data-dsh-theme-eink-retro] [role="presentation"]:has(> [role="dialog"]) > :first-child {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-color: color-mix(in srgb, var(--eink-ink) 18%, transparent) !important;
+}
+
 html[data-dsh-theme-eink-retro] :where([role="menu"], [role="listbox"]) {
   background-color: var(--dsw-specific-menu);
   border: 1px solid var(--eink-rule-strong);
@@ -547,15 +554,35 @@ html[data-dsh-theme-eink-retro] :has(> [aria-label="审批详情"]) > :first-chi
   background-color: var(--eink-ink) !important;
 }
 
-/* DSH renders the active turn label with a continuous blue shimmer. A static
- * secondary-ink label is calmer, reads cleanly on e-ink, and the live clock
- * still communicates that work is progressing. */
+/* DSH renders the active turn label with a continuous blue shimmer. Replace
+ * it with a two-frame local refresh: a short contrast drop, then settled ink.
+ * The live clock remains stable and continues to communicate progress. */
 html[data-dsh-theme-eink-retro] [data-chat-flow] > [role="status"] {
-  color: var(--eink-ink-2) !important;
+  color: var(--eink-ink-2);
   -webkit-text-fill-color: currentColor !important;
   background-image: none !important;
   background-clip: border-box !important;
-  animation: none !important;
+  animation: eink-retro-turn-status-refresh 2.4s steps(1, end) infinite !important;
+}
+
+@keyframes eink-retro-turn-status-refresh {
+  0%,
+  72%,
+  100% {
+    color: var(--eink-ink-2);
+  }
+
+  73%,
+  84% {
+    color: var(--eink-rule-strong);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-dsh-theme-eink-retro] [data-chat-flow] > [role="status"] {
+    color: var(--eink-ink-2) !important;
+    animation: none !important;
+  }
 }
 
 html[data-dsh-theme-eink-retro] :where(
@@ -622,8 +649,17 @@ html[data-dsh-theme-eink-retro] code:not(pre code) {
 }
 
 html[data-dsh-theme-eink-retro] blockquote {
-  border-left: 3px double var(--eink-rule-strong);
-  background: var(--eink-paper-raised);
+  border-left: 2px solid var(--eink-rule-strong);
+  background: transparent;
+  padding: 2px 0 2px 14px;
+}
+
+html[data-dsh-theme-eink-retro] blockquote > :first-child {
+  margin-top: 0 !important;
+}
+
+html[data-dsh-theme-eink-retro] blockquote > :last-child {
+  margin-bottom: 0 !important;
 }
 
 html[data-dsh-theme-eink-retro] table {
@@ -709,9 +745,23 @@ html[data-dsh-theme-eink-retro] .lc-root :is(.lc-card, .lc-stat, .lc-br-cat, .lc
   box-shadow: none;
 }
 
+html[data-dsh-theme-eink-retro] .lc-root .lc-gran {
+  border-radius: var(--eink-radius-control) !important;
+}
+
 html[data-dsh-theme-eink-retro] .lc-root :is(.lc-gran-on, .lc-rich-seg-on) {
   color: var(--eink-selection-fg);
   background: var(--eink-selection-bg);
+}
+
+/* Skill Center is an app surface even though its panel is not exposed as a
+ * dialog. Replace the soft 60px float shadow with the shared hard elevation. */
+html[data-dsh-theme-eink-retro]
+  [data-dsh-plugin="skill-explorer"]
+  [data-dsh-part="card"] {
+  background-color: var(--eink-paper-bright) !important;
+  border: 1px solid var(--eink-rule-strong) !important;
+  box-shadow: var(--eink-shadow-2) !important;
 }
 
 /* Optional decorative adapters. User-authored images, attachments, previews,
