@@ -1,37 +1,43 @@
-# E-Ink Retro for DeepSeek Harness
+# E‑Ink Retro for DeepSeek Harness
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-E-Ink Retro is a client-side theme plugin for DeepSeek Harness (DSH). It gives the app a clear, restrained interface built from neutral surfaces, black-and-white controls, crisp borders, and compact geometry.
+E‑Ink Retro is a client-side theme plugin for DeepSeek Harness. Its design language is paper and ink: neutral gray surfaces, true black type, hard offset shadows, square corners, and selection states that flip between black and white. The geometry draws on classic Macintosh and lands as a modern, quiet interface.
 
-The theme keeps DSH's layout and workflows intact. It changes semantic colors and verified component styles. It does not turn DSH into a terminal UI or reproduce a vintage desktop. Classic Macintosh design informs the hierarchy and control shapes, while the result remains suited to a modern application.
+## Who it's for
 
-## What the theme changes
+- People who spend long hours in DSH and want an interface that stays out of the way
+- People who prefer paper-and-ink aesthetics: gray surfaces, black text, restrained color
+- People who appreciate classic Macintosh geometry and want it in a modern app
 
-- Neutral light and dark palettes without a beige paper tint or green cast
-- Square, low-radius controls and surfaces
-- Clear black-and-white selected states for buttons, tabs, and switches
-- Consistent focus frames for the composer, search fields, inputs, and selects
-- Stable scroll ownership for conversation overlays and trajectory views
-- Focused adapters for DSH's conversation, context, settings, task board, SSH, skill center, plugin market, and workshop screens
-- Automatic cleanup of injected tokens and styles when the plugin unloads
+## What changes
+
+- Paper-and-ink palette: light `#f4f4f4` surfaces with `#161616` ink, dark `#181818` with `#f4f4f4`; kept strictly neutral
+- 2px corner radius on controls and panels
+- Hard offset shadows at 1px and 2px, flat like print
+- Selection states flip fully between black and white
+- Switch drawn as a rectangular track with a square knob
+- One focus frame shared by the composer, search fields, inputs, and selects
+- Stable scroll areas in conversation overlays and trajectory views
+- Verified adapters for conversation, context, settings, task board, SSH, skill center, plugin market, and workshop screens
+- Unloading removes every injected token and style
 
 ## Modes
 
-| Mode | Intended use | Color treatment |
-| --- | --- | --- |
-| **Balanced** | Default. Use it for daily work and mixed plugin content. | Applies the E-Ink shell and control language while preserving meaningful status, chart, brand, and content colors. |
-| **Immersive** | Use it when you want a stronger monochrome environment. | Adds grayscale treatment only to verified decorative and compatibility surfaces. User media stays unchanged. |
-| **Off** | Temporarily disable the theme with the native checkbox in settings. | Removes the theme's token and CSS overrides. |
+| Mode | Description |
+| --- | --- |
+| **Balanced** (default) | Applies the paper-and-ink shell and control language. Keeps semantic colors where they carry meaning: status, chart, brand, and content colors are preserved in low saturation. |
+| **Immersive** | Adds grayscale treatment to verified decorative and compatibility surfaces only. User media (images, attachments, video) stays untouched. |
+| **Off** | Removes all theme tokens and CSS overrides via the native settings checkbox. The plugin stays installed. |
 
-Balanced and Immersive work with DSH's built-in System, Light, and Dark themes. If you select another third-party theme, E-Ink Retro yields to it. Returning to a built-in theme restores your selected E-Ink mode.
+Both modes work with DSH's built-in System, Light, and Dark themes. When a third-party theme is selected, E‑Ink Retro suspends itself; switching back to a built-in theme restores your previous mode.
 
 ## Install from source
 
 Requirements:
 
 - Node.js 20 or newer
-- A working DSH installation with the `web` profile
+- A DSH installation with the `web` profile
 
 Clone or download this repository, then run:
 
@@ -56,22 +62,37 @@ Reload DSH after linking the plugin.
 
 ## Use
 
-Open **Settings → E-Ink Retro**. Use the native checkbox to enable or disable the theme. When enabled, choose Balanced or Immersive. The selection is stored in the browser for the current DSH profile.
+Open **Settings → E‑Ink Retro**. Enable the theme with the native checkbox, then choose Balanced or Immersive. The selection is stored in the browser for the current DSH profile.
 
-Start with Balanced. Switch to Immersive when the active screens and plugins look correct in monochrome. Clear the checkbox when comparing behavior with the base DSH interface.
+Start with Balanced. Switch to Immersive once your active screens and plugins look right in monochrome. Clear the checkbox to compare against the stock DSH interface.
 
 ## Compatibility boundaries
 
-The theme targets DSH's semantic token system and verified public component surfaces. Components that use DSH tokens inherit the palette with little or no special handling.
+The theme works through DSH's semantic token system and verified public component surfaces. Components built on DSH tokens pick up the palette directly.
 
-Some content stays outside the theme's control:
+The theme styles only the surfaces it has verified. What stays untouched:
 
-- Images, attachments, video, canvas output, and iframe content are not globally filtered.
-- Native select menus may use operating-system styling after they open.
-- Plugins with hard-coded colors, Shadow DOM, or isolated rendering may only inherit part of the theme.
-- Balanced mode keeps low-saturation semantic colors when removing them would hide status or meaning.
+- Images, attachments, video, canvas output, and iframe content keep their original rendering.
+- Native select menus may use OS styling once opened.
+- Plugins with hard-coded colors, Shadow DOM, or isolated rendering inherit only part of the theme.
+- Balanced mode keeps low-saturation semantic colors where they carry status or meaning.
 
-These boundaries prevent the theme from damaging content or changing another plugin's interface without a verified adapter.
+## FAQ
+
+**Why does Balanced mode keep colors?**
+Low-saturation semantic colors keep status information distinguishable. Immersive mode provides the fully monochrome look.
+
+**Where does the Macintosh influence come in?**
+The geometry and inverted selection follow classic Macintosh; the layout and behavior stay modern DSH.
+
+**Will it affect plugin content?**
+The theme styles only verified surfaces. Images, attachments, video, canvas, and iframes keep their original rendering; plugins using Shadow DOM or hard-coded colors inherit only part of the theme.
+
+**Does it have a performance cost?**
+The theme ships as one stylesheet plus a token override, synced only when the theme changes.
+
+**Does uninstalling clean up after itself?**
+Unloading removes the injected style node and token overrides.
 
 ## Development
 
@@ -81,7 +102,7 @@ Run the full local check before submitting a change:
 npm run check
 ```
 
-This command runs the TypeScript check, regression tests, and production build. Build output is written to `lib/index.js` and `lib/client.js`.
+This runs the TypeScript check, regression tests, and production build. Build output goes to `lib/index.js` and `lib/client.js`.
 
 The main implementation files are:
 
