@@ -16,6 +16,7 @@
 }
 
 .eink-retro-settings__intro,
+.eink-retro-settings__enabled-description,
 .eink-retro-settings__option-description,
 .eink-retro-settings__status {
   color: var(--dsw-alias-label-secondary);
@@ -23,9 +24,57 @@
   line-height: 1.55;
 }
 
+.eink-retro-settings__enabled {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 48px;
+  cursor: pointer;
+}
+
+.eink-retro-settings__enabled-copy,
+.eink-retro-settings__enabled-title,
+.eink-retro-settings__enabled-description {
+  display: block;
+}
+
+.eink-retro-settings__enabled-copy {
+  min-width: 0;
+}
+
+.eink-retro-settings__enabled-title {
+  margin-bottom: 2px;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.eink-retro-settings__enabled-input,
+html[data-dsh-theme-eink-retro] .eink-retro-settings__enabled-input {
+  flex: 0 0 auto;
+  width: auto !important;
+  height: auto !important;
+  margin: 0;
+  padding: 0 !important;
+  appearance: auto !important;
+  accent-color: auto !important;
+  background: revert !important;
+  border: revert !important;
+  border-radius: revert !important;
+  box-shadow: none !important;
+  cursor: pointer;
+}
+
+html[data-dsh-theme-eink-retro] .eink-retro-settings__enabled-input:focus-visible {
+  outline: auto !important;
+  outline-offset: 2px;
+  border: revert !important;
+  box-shadow: none !important;
+}
+
 .eink-retro-settings__options {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 

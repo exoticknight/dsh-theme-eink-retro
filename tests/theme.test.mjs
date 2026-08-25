@@ -30,6 +30,17 @@ test("package ships user-facing documentation in English and Chinese", () => {
   assert.match(readmeZh, /兼容边界/);
 });
 
+test("settings use a native checkbox for the theme enabled state", () => {
+  assert.match(
+    client,
+    /React\.createElement\(\s*"input",\s*\{[^}]*type:\s*"checkbox"[^}]*className:\s*"eink-retro-settings__enabled-input"/s,
+  );
+  assert.match(
+    css,
+    /\.eink-retro-settings__enabled-input\s*\{[^}]*appearance:\s*auto\s*!important/s,
+  );
+});
+
 test("balanced mode uses the official semantic token layer", () => {
   assert.match(client, /overrideTokens\("dsh-theme-eink-retro", EINK_TOKENS\)/);
   for (const token of [

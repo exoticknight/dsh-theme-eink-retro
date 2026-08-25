@@ -5,11 +5,13 @@ import { EINK_TOKENS, EINK_TOKEN_SENTINEL, type ThemeTokenOverrides } from "./to
 const STYLE_ID = "dsh-theme-eink-retro/style";
 const ROOT_ATTRIBUTE = "data-dsh-theme-eink-retro";
 const MODE_STORAGE_KEY = "dsh-theme-eink-retro:mode";
+const ACTIVE_MODE_STORAGE_KEY = "dsh-theme-eink-retro:active-mode";
 const MODE_EVENT = "dsh-theme-eink-retro:mode-change";
 const THEME_STATE_KEY = "__dshEinkRetroThemeState__";
 const BUILTIN_THEME_IDS = new Set(["system", "light", "dark"]);
 
 type ThemeMode = "balanced" | "immersive" | "off";
+type ActiveThemeMode = Exclude<ThemeMode, "off">;
 
 interface ThemeSnapshot {
   preference: string;
@@ -53,8 +55,17 @@ function readMode(): ThemeMode {
   return "balanced";
 }
 
+function readActiveMode(): ActiveThemeMode {
+  const stored = window.localStorage.getItem(ACTIVE_MODE_STORAGE_KEY);
+  if (stored === "immersive") return stored;
+
+  const currentMode = readMode();
+  return currentMode === "immersive" ? currentMode : "balanced";
+}
+
 function writeMode(mode: ThemeMode): void {
   window.localStorage.setItem(MODE_STORAGE_KEY, mode);
+  if (mode !== "off") window.localStorage.setItem(ACTIVE_MODE_STORAGE_KEY, mode);
 }
 
 function isBuiltinTheme(snapshot: ThemeSnapshot): boolean {
@@ -80,7 +91,7 @@ function applyMode(root: HTMLElement, mode: ThemeMode, snapshot: ThemeSnapshot):
 type SyncMode = (mode: ThemeMode, snapshot: ThemeSnapshot) => ModeViewState;
 
 function createSettingsSection(ctx: ClientContext, syncMode: SyncMode): ComponentType {
-  const options: Array<{ description: string; label: string; mode: ThemeMode }> = [
+  const options: Array<{ description: string; label: string; mode: ActiveThemeMode }> = [
     {
       mode: "balanced",
       label: "平衡模式（推荐）",
@@ -90,11 +101,6 @@ function createSettingsSection(ctx: ClientContext, syncMode: SyncMode): Componen
       mode: "immersive",
       label: "完全沉浸",
       description: "把第三方插件的数据标记、装饰皮肤和宠物也映射为单色灰阶。",
-    },
-    {
-      mode: "off",
-      label: "暂停主题",
-      description: "移除 E‑Ink 覆盖，显示当前 DSH 或第三方皮肤的原始外观。",
     },
   ];
 
@@ -119,6 +125,12 @@ function createSettingsSection(ctx: ClientContext, syncMode: SyncMode): Componen
       setView(syncMode(mode, snapshot));
     };
 
+    const setEnabled = (enabled: boolean) => {
+      selectMode(enabled ? readActiveMode() : "off");
+    };
+
+    const enabled = view.mode !== "off";
+
     return React.createElement(
       "section",
       { className: "eink-retro-settings", "aria-labelledby": "eink-retro-settings-title" },
@@ -126,27 +138,52 @@ function createSettingsSection(ctx: ClientContext, syncMode: SyncMode): Componen
       React.createElement(
         "p",
         { className: "eink-retro-settings__intro" },
-        "选择主题覆盖范围。切换其他第三方皮肤时会自动暂停；回到 DSH 默认浅色、深色或跟随系统后恢复。",
+        "启用主题后选择覆盖范围。切换其他第三方皮肤时会自动暂停；回到 DSH 默认浅色、深色或跟随系统后恢复。",
       ),
       React.createElement(
-        "div",
-        { className: "eink-retro-settings__options", role: "radiogroup", "aria-label": "E‑Ink 主题模式" },
-        ...options.map((option) =>
+        "label",
+        { className: "eink-retro-settings__enabled" },
+        React.createElement(
+          "span",
+          { className: "eink-retro-settings__enabled-copy" },
+          React.createElement("span", { className: "eink-retro-settings__enabled-title" }, "启用主题"),
           React.createElement(
-            "button",
-            {
-              key: option.mode,
-              type: "button",
-              role: "radio",
-              "aria-checked": view.mode === option.mode,
-              className: "eink-retro-settings__option",
-              onClick: () => selectMode(option.mode),
-            },
-            React.createElement("span", { className: "eink-retro-settings__option-title" }, option.label),
-            React.createElement("span", { className: "eink-retro-settings__option-description" }, option.description),
+            "span",
+            { className: "eink-retro-settings__enabled-description" },
+            "关闭后移除全部 E‑Ink 颜色和组件覆盖。",
           ),
         ),
+        React.createElement(
+          "input",
+          {
+            type: "checkbox",
+            className: "eink-retro-settings__enabled-input",
+            checked: enabled,
+            onChange: (event: { currentTarget: { checked: boolean } }) => setEnabled(event.currentTarget.checked),
+          },
+        ),
       ),
+      enabled
+        ? React.createElement(
+            "div",
+            { className: "eink-retro-settings__options", role: "radiogroup", "aria-label": "E‑Ink 主题模式" },
+            ...options.map((option) =>
+              React.createElement(
+                "button",
+                {
+                  key: option.mode,
+                  type: "button",
+                  role: "radio",
+                  "aria-checked": view.mode === option.mode,
+                  className: "eink-retro-settings__option",
+                  onClick: () => selectMode(option.mode),
+                },
+                React.createElement("span", { className: "eink-retro-settings__option-title" }, option.label),
+                React.createElement("span", { className: "eink-retro-settings__option-description" }, option.description),
+              ),
+            ),
+          )
+        : null,
       !view.effective && view.mode !== "off"
         ? React.createElement(
             "p",

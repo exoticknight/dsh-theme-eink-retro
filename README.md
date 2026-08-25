@@ -22,7 +22,7 @@ The theme keeps DSH's layout and workflows intact. It changes semantic colors an
 | --- | --- | --- |
 | **Balanced** | Default. Use it for daily work and mixed plugin content. | Applies the E-Ink shell and control language while preserving meaningful status, chart, brand, and content colors. |
 | **Immersive** | Use it when you want a stronger monochrome environment. | Adds grayscale treatment only to verified decorative and compatibility surfaces. User media stays unchanged. |
-| **Off** | Temporarily disable the theme without removing the plugin. | Removes the theme's token and CSS overrides. |
+| **Off** | Temporarily disable the theme with the native checkbox in settings. | Removes the theme's token and CSS overrides. |
 
 Balanced and Immersive work with DSH's built-in System, Light, and Dark themes. If you select another third-party theme, E-Ink Retro yields to it. Returning to a built-in theme restores your selected E-Ink mode.
 
@@ -56,9 +56,9 @@ Reload DSH after linking the plugin.
 
 ## Use
 
-Open **Settings → E-Ink Retro**, then choose Balanced, Immersive, or Off. The selection is stored in the browser for the current DSH profile.
+Open **Settings → E-Ink Retro**. Use the native checkbox to enable or disable the theme. When enabled, choose Balanced or Immersive. The selection is stored in the browser for the current DSH profile.
 
-Start with Balanced. Switch to Immersive when the active screens and plugins look correct in monochrome. Use Off when comparing behavior with the base DSH interface.
+Start with Balanced. Switch to Immersive when the active screens and plugins look correct in monochrome. Clear the checkbox when comparing behavior with the base DSH interface.
 
 ## Compatibility boundaries
 
