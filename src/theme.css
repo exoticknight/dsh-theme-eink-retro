@@ -238,7 +238,24 @@ html[data-dsh-theme-eink-retro] [role="switch"][aria-checked="true"] > * {
 
 html[data-dsh-theme-eink-retro] :where([class*="badge" i], [class*="tag" i]):not(.lc-root *) {
   border-radius: 1px !important;
+  filter: none;
+}
+
+html[data-dsh-theme-eink-retro="immersive"] :where([class*="badge" i], [class*="tag" i]):not(.lc-root *) {
   filter: grayscale(1);
+}
+
+/* Capability metadata is tertiary information, not an active control. Use a
+ * quiet outline instead of a low-contrast filled status color. */
+html[data-dsh-theme-eink-retro] [class*="badgeInvokable"] {
+  color: var(--eink-ink-2) !important;
+  background-color: transparent !important;
+  border-color: var(--eink-rule) !important;
+  padding: 2px 6px !important;
+  font-size: 11px !important;
+  font-weight: 550 !important;
+  line-height: 1.3 !important;
+  filter: none !important;
 }
 
 html[data-dsh-theme-eink-retro] :where(button:not(:disabled), [role="button"]:not([aria-disabled="true"]), [role="tab"]):active {
@@ -306,7 +323,6 @@ html[data-dsh-theme-eink-retro] [role="tooltip"] {
 }
 
 html[data-dsh-theme-eink-retro] :where(
-  [role="tab"][aria-selected="true"],
   [role="treeitem"][aria-selected="true"],
   [aria-current="true"],
   [aria-current="page"]
@@ -319,11 +335,25 @@ html[data-dsh-theme-eink-retro] :where(
 }
 
 html[data-dsh-theme-eink-retro] :where(
-  [role="tab"][aria-selected="true"],
   [role="treeitem"][aria-selected="true"],
   [aria-current="true"],
   [aria-current="page"]
 ) * {
+  color: inherit !important;
+}
+
+/* Tabs are secondary navigation. A baseline and stronger label keep their
+ * original footprint; inverse fills are reserved for primary selections. */
+html[data-dsh-theme-eink-retro] [role="tab"][aria-selected="true"] {
+  color: var(--eink-ink) !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: inset 0 -2px 0 var(--eink-ink) !important;
+  font-weight: 650 !important;
+}
+
+html[data-dsh-theme-eink-retro] [role="tab"][aria-selected="true"] * {
   color: inherit !important;
 }
 
@@ -366,10 +396,13 @@ html[data-dsh-theme-eink-retro] table {
 
 html[data-dsh-theme-eink-retro] :where(th, td) {
   border: 1px solid var(--eink-rule);
+  padding: 8px 12px !important;
+  vertical-align: top;
 }
 
 html[data-dsh-theme-eink-retro] th {
-  background: var(--eink-paper-inset);
+  background: var(--eink-paper-raised);
+  font-weight: 650;
 }
 
 html[data-dsh-theme-eink-retro] * {

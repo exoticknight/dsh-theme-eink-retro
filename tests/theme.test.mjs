@@ -81,6 +81,18 @@ test("composer preserves DSH's backdrop text and owns a single focus border", ()
   assert.match(css, /textarea\[data-dsh-part="composer-input"\]:focus-visible/);
 });
 
+test("secondary tabs, markdown tables and capability badges keep readable hierarchy", () => {
+  assert.match(
+    css,
+    /\[role="tab"\]\[aria-selected="true"\]\s*\{[^}]*background-color:\s*transparent\s*!important/s,
+  );
+  assert.match(css, /:where\(th, td\)\s*\{[^}]*padding:\s*8px 12px\s*!important/s);
+  assert.match(
+    css,
+    /\[class\*="badgeInvokable"\]\s*\{[^}]*background-color:\s*transparent\s*!important/s,
+  );
+});
+
 test("client exposes reversible modes and shares one style across reloads", () => {
   assert.match(client, /type ThemeMode = "balanced" \| "immersive" \| "off"/);
   assert.match(client, /localStorage\.setItem\(MODE_STORAGE_KEY, mode\)/);
