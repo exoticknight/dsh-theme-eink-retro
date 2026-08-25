@@ -137,6 +137,25 @@ test("workspace tooltips stay legible and the add button owns an unclipped focus
   );
 });
 
+test("workspace search and user messages use crisp surfaces with one focus owner", () => {
+  assert.match(
+    css,
+    /:has\(> button\[aria-label="搜索会话"\]\)\s*\{[^}]*border-radius:\s*var\(--eink-radius-control\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /:has\(> button\[aria-label="搜索会话"\]\)\s*>\s*input\[placeholder="搜索会话…"\]\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
+    /:has\(> input\[placeholder="搜索会话…"\]:focus-visible\)\s*\{[^}]*border-color:\s*var\(--eink-ink\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-chat-flow-kind="user"\][^{]*\[data-time-hover-root="true"\][^{]*>\s*:first-child\s*>\s*:last-child\s*\{[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important/s,
+  );
+});
+
 test("switches and semantic destructive buttons stay flat and explicit", () => {
   assert.match(
     css,
