@@ -24,6 +24,7 @@ const client = await build({
   format: "cjs",
   target: "es2020",
   loader: { ".css": "text" },
+  external: ["react"],
   write: false,
   logLevel: "info",
 });

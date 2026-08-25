@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const css = fs.readFileSync(path.join(root, "src/theme.css"), "utf8");
 const client = fs.readFileSync(path.join(root, "src/client/index.ts"), "utf8");
+const tokens = fs.readFileSync(path.join(root, "src/client/tokens.ts"), "utf8");
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 
 test("package exposes a standard DSH host and client bundle", () => {
@@ -14,10 +15,12 @@ test("package exposes a standard DSH host and client bundle", () => {
   assert.equal(pkg.main, "lib/index.js");
   assert.equal(pkg.exports["./client"], "./lib/client.js");
   assert.equal(pkg.dsh.client.platform, "web");
+  assert.ok(pkg.dsh.client.inject.includes("@deepseek-ai/dsh-client-ui-theme"));
+  assert.ok(pkg.dsh.client.inject.includes("@deepseek-ai/dsh-client-ui-settings"));
 });
 
-test("theme is scoped and covers the official core tokens", () => {
-  assert.match(css, /html\[data-dsh-theme-eink-retro="on"\]/);
+test("balanced mode uses the official semantic token layer", () => {
+  assert.match(client, /overrideTokens\("dsh-theme-eink-retro", EINK_TOKENS\)/);
   for (const token of [
     "--dsw-alias-bg-base",
     "--dsw-alias-bg-layer-1",
@@ -30,8 +33,12 @@ test("theme is scoped and covers the official core tokens", () => {
     "--dsw-alias-scrollbar-bg-l1",
     "--dsw-shadow-lv1",
   ]) {
-    assert.ok(css.includes(token), `missing ${token}`);
+    assert.ok(tokens.includes(token), `missing ${token}`);
   }
+  assert.doesNotMatch(tokens, /--aion-/i);
+  assert.match(tokens, /pair\("#8e3f3f", "#d08a82"\)/i);
+  assert.match(tokens, /pair\("#4e674d", "#8da284"\)/i);
+  assert.match(tokens, /pair\("#735e20", "#c7aa62"\)/i);
 });
 
 test("theme does not synthesize application structure", () => {
@@ -40,17 +47,27 @@ test("theme does not synthesize application structure", () => {
   assert.doesNotMatch(css, /terminal|tui/i);
 });
 
-test("theme keeps the interface monochrome", () => {
+test("immersive mode owns all monochrome compatibility adapters", () => {
   for (const forbiddenHue of ["sage", "green", "ochre", "brick"]) {
     assert.doesNotMatch(css, new RegExp(`--eink-${forbiddenHue}`, "i"));
   }
-  assert.match(css, /--eink-selection-bg:\s*#1c1b19/i);
+  assert.match(css, /data-dsh-theme-eink-retro="immersive"/i);
   assert.match(css, /filter:\s*grayscale\(1\)/i);
+  assert.doesNotMatch(css, /data-dsh-theme-eink-retro="balanced"/i);
+  assert.doesNotMatch(css, /body:has\(/i);
+  assert.doesNotMatch(css, /--aion-/i);
 });
 
-test("client shares one reference-counted style across reloads", () => {
+test("client exposes reversible modes and shares one style across reloads", () => {
+  assert.match(client, /type ThemeMode = "balanced" \| "immersive" \| "off"/);
+  assert.match(client, /localStorage\.setItem\(MODE_STORAGE_KEY, mode\)/);
+  assert.match(client, /ctx\.slots\.inject\("settings\.section"/);
   assert.match(client, /users:\s*number/);
   assert.match(client, /state\.users \+= 1/);
   assert.match(client, /current\.users -= 1/);
   assert.match(client, /delete themeGlobal\[THEME_STATE_KEY\]/);
+  assert.match(client, /if \(installingTokens \|\| releasingTokens\) return/);
+  assert.match(client, /tokensAreApplied/);
+  assert.match(client, /scheduleThemeSync/);
+  assert.match(client, /EINK_TOKEN_SENTINEL/);
 });
