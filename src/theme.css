@@ -397,6 +397,24 @@ html[data-dsh-theme-eink-retro] textarea[data-dsh-part="composer-input"] {
   box-shadow: none !important;
 }
 
+/* The context meter is only 14px wide, so DSH's tertiary label and translucent
+ * border tokens collapse into one mid-gray ring after the e-ink token map. Use
+ * an explicit paper rule for the capacity track and primary ink for the used
+ * arc. The structural hook is language-independent and avoids hashed classes. */
+html[data-dsh-theme-eink-retro]
+  [data-composer-card="true"]
+  button[aria-haspopup="dialog"]:has(> svg > circle[stroke-dasharray])
+  circle:not([stroke-dasharray]) {
+  stroke: var(--eink-rule) !important;
+}
+
+html[data-dsh-theme-eink-retro]
+  [data-composer-card="true"]
+  button[aria-haspopup="dialog"]:has(> svg > circle[stroke-dasharray])
+  circle[stroke-dasharray] {
+  stroke: var(--eink-ink) !important;
+}
+
 /* DSH places a blue-gray fade on the composer seat itself. Retint that native
  * layer instead of removing the useful separation between the message stream
  * and composer. */

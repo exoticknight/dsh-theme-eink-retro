@@ -107,6 +107,17 @@ test("composer preserves DSH's backdrop text and owns a single focus border", ()
   );
 });
 
+test("composer context usage ring separates its track from its used portion", () => {
+  assert.match(
+    css,
+    /\[data-composer-card="true"\][^{]*button\[aria-haspopup="dialog"\]:has\(> svg > circle\[stroke-dasharray\]\)[^{]*circle:not\(\[stroke-dasharray\]\)\s*\{[^}]*stroke:\s*var\(--eink-rule\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-composer-card="true"\][^{]*button\[aria-haspopup="dialog"\]:has\(> svg > circle\[stroke-dasharray\]\)[^{]*circle\[stroke-dasharray\]\s*\{[^}]*stroke:\s*var\(--eink-ink\)\s*!important/s,
+  );
+});
+
 test("form controls use one focus owner and trajectory search has one frame", () => {
   assert.match(
     css,
