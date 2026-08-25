@@ -399,6 +399,14 @@ html[data-dsh-theme-eink-retro] :where(
   box-shadow: 0 0 0 1px var(--eink-paper-bright);
 }
 
+/* The workspace header clips an outward focus outline on its final icon
+ * action, leaving only a detached vertical stroke. Keep the keyboard focus
+ * frame inside that compact button instead. */
+html[data-dsh-theme-eink-retro] button[aria-label="添加工作区"]:focus-visible {
+  outline: 0 !important;
+  box-shadow: inset 0 0 0 1px var(--eink-ink) !important;
+}
+
 /* Native form controls already own a visible border. Strengthen that one
  * frame and add an inner baseline instead of drawing a second offset outline. */
 html[data-dsh-theme-eink-retro] :where(input, textarea, select, [contenteditable="true"]):focus-visible {
@@ -474,6 +482,8 @@ html[data-dsh-theme-eink-retro] :where([role="menu"], [role="listbox"]) {
 }
 
 html[data-dsh-theme-eink-retro] [role="tooltip"] {
+  color: var(--eink-selection-fg) !important;
+  background-color: var(--eink-selection-bg) !important;
   border: 1px solid var(--eink-rule-strong);
   box-shadow: var(--eink-shadow-1);
 }

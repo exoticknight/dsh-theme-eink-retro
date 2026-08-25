@@ -126,6 +126,17 @@ test("form controls use one focus owner and trajectory search has one frame", ()
   );
 });
 
+test("workspace tooltips stay legible and the add button owns an unclipped focus frame", () => {
+  assert.match(
+    css,
+    /\[role="tooltip"\]\s*\{[^}]*color:\s*var\(--eink-selection-fg\)\s*!important[^}]*background-color:\s*var\(--eink-selection-bg\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /button\[aria-label="添加工作区"\]:focus-visible\s*\{[^}]*outline:\s*0\s*!important[^}]*box-shadow:\s*inset 0 0 0 1px var\(--eink-ink\)\s*!important/s,
+  );
+});
+
 test("switches and semantic destructive buttons stay flat and explicit", () => {
   assert.match(
     css,
