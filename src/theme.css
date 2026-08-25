@@ -183,8 +183,11 @@ html[data-dsh-theme-eink-retro] body {
   --eink-ink-3: var(--dsw-alias-label-tertiary, #6a6a6a);
   --eink-selection-bg: var(--dsw-alias-brand-primary, #161616);
   --eink-selection-fg: var(--dsw-alias-brand-primary-invert, #ffffff);
-  --eink-rule: color-mix(in srgb, var(--eink-ink) 34%, var(--eink-paper));
-  --eink-rule-strong: color-mix(in srgb, var(--eink-ink) 60%, var(--eink-paper));
+  /* Mixed into the layer-1 surface rather than the base: DSH gives the window
+   * base a translucent fill in dark mode, and a rule that inherits that alpha
+   * lets whatever sits behind the window bleed through the line. */
+  --eink-rule: color-mix(in srgb, var(--eink-ink) 36%, var(--eink-paper-bright));
+  --eink-rule-strong: color-mix(in srgb, var(--eink-ink) 63%, var(--eink-paper-bright));
   --eink-shadow-1: var(--dsw-shadow-lv1, 1px 1px 0 #16161633);
   --eink-shadow-2: var(--dsw-shadow-lv2, 2px 2px 0 #16161633);
   --eink-well: inset 1px 1px 0 color-mix(in srgb, var(--eink-ink) 14%, transparent);
@@ -268,27 +271,37 @@ html[data-dsh-theme-eink-retro] ::placeholder {
   }
 }
 
-html[data-dsh-theme-eink-retro] [data-pane="sidebar"],
-html[data-dsh-theme-eink-retro] [data-pane="conversation"],
-html[data-dsh-theme-eink-retro] [data-pane="details"] {
+/* Shell regions. `data-dsh-surface` marks each region with a zero-size anchor
+ * rather than the column that paints it, so the column is addressed as the
+ * anchor's parent. That keeps the hook public and hash-free while still
+ * landing on the element that actually has a background. */
+html[data-dsh-theme-eink-retro] :where(
+  :has(> [data-dsh-surface="sidebar"]),
+  :has(> [data-dsh-surface="conversation"]),
+  :has(> [data-dsh-surface="details"])
+) {
   background-color: var(--dsw-alias-bg-base);
   background-image: none;
   box-shadow: none;
 }
 
-html[data-dsh-theme-eink-retro] [data-pane="sidebar"] {
+html[data-dsh-theme-eink-retro] :has(> [data-dsh-surface="sidebar"]) {
   background-color: var(--dsw-specific-sidebar-fill);
   border-right: 1px solid var(--eink-rule);
 }
 
-html[data-dsh-theme-eink-retro] [data-pane="conversation"] {
+/* Only a details pane that is actually on screen earns a divider, otherwise
+ * the rule lands on the right edge of the window. */
+html[data-dsh-theme-eink-retro]
+  :not([data-details-collapsed="true"])
+  > :has(> [data-dsh-surface="conversation"]) {
   border-right: 1px solid var(--eink-rule);
 }
 
 /* The two side panes are one pair. Sourcing both from the sidebar fill keeps
  * that relationship identical in light and dark; `--eink-paper-raised` reads
  * as a lighter, detached slab in dark mode only. */
-html[data-dsh-theme-eink-retro] [data-pane="details"] {
+html[data-dsh-theme-eink-retro] :has(> [data-dsh-surface="details"]) {
   background-color: var(--dsw-specific-sidebar-fill);
 }
 
@@ -563,8 +576,11 @@ html[data-dsh-theme-eink-retro] button[aria-label*="Add workspace" i]:focus-visi
 /* The workspace search draws its visible shape on the wrapper, not the icon
  * button or input. Give that wrapper the same compact geometry as adjacent
  * actions, and let it own the expanded focus border. */
-html[data-dsh-theme-eink-retro] :has(> button[aria-label*="搜索会话"]):has(> input),
-html[data-dsh-theme-eink-retro] :has(> button[aria-label*="Search" i]):has(> input) {
+/* The collapsed shell holds nothing but the icon button — the input is only
+ * mounted once it expands — so this rule cannot ask for one. Without it the
+ * shell keeps its 50% radius and reads as a circle among square actions. */
+html[data-dsh-theme-eink-retro] :has(> button[aria-label*="搜索会话"]),
+html[data-dsh-theme-eink-retro] :has(> button[aria-label*="Search" i]) {
   border-radius: var(--eink-radius-control) !important;
 }
 
@@ -1026,10 +1042,24 @@ html[data-dsh-theme-eink-retro]
   box-shadow: var(--eink-shadow-2) !important;
 }
 
+/* The empty composer sits on a decorative glow with a hard-coded blue fill.
+ * It is marked aria-hidden, so it carries no meaning to retint around: the
+ * fill drops to a neutral wash and the composition DSH intended survives.
+ * Kept out of the immersive block on purpose — a saturated glow is off
+ * palette in balanced mode too. */
+html[data-dsh-theme-eink-retro]
+  [data-slot="conversation.composer"]
+  svg[aria-hidden="true"]
+  :is(ellipse, circle)[fill]:not([fill="none"]):not([fill="currentColor"]) {
+  fill: var(--eink-paper-raised);
+}
+
 /* Optional decorative adapters. User-authored images, attachments, previews,
- * canvas content and media are intentionally never filtered. */
+ * canvas content and media are intentionally never filtered. The pet is
+ * addressed through its wrapper so its own chrome — the close button and its
+ * tinted border — is covered along with the sprite. */
 html[data-dsh-theme-eink-retro="immersive"] img[src*="/api/skin-center/"],
-html[data-dsh-theme-eink-retro="immersive"] [style*="/pet/"][style*="spritesheet"] {
+html[data-dsh-theme-eink-retro="immersive"] :has(> [style*="spritesheet"]) {
   filter: grayscale(1) contrast(1.08);
 }
 
@@ -1076,7 +1106,7 @@ html[data-dsh-theme-eink-retro="immersive"] [style*="/pet/"][style*="spritesheet
     filter: none !important;
   }
 
-  html[data-dsh-theme-eink-retro] :where([data-pane="sidebar"], [role="tooltip"]),
+  html[data-dsh-theme-eink-retro] :where(:has(> [data-dsh-surface="sidebar"]), [role="tooltip"]),
   html[data-dsh-theme-eink-retro] [data-composer-card="true"] {
     display: none !important;
   }

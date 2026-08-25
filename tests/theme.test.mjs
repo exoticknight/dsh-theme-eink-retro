@@ -151,7 +151,7 @@ test("workspace tooltips stay legible and the add button owns an unclipped focus
 test("workspace search and user messages use crisp surfaces with one focus owner", () => {
   assert.match(
     css,
-    /:has\(> button\[aria-label\*="搜索会话"\]\):has\(> input\),[^{]*:has\(> button\[aria-label\*="Search" i\]\):has\(> input\)\s*\{[^}]*border-radius:\s*var\(--eink-radius-control\)\s*!important/s,
+    /:has\(> button\[aria-label\*="搜索会话"\]\[aria-expanded="true"\]\):has\(> input\),[^{]*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important/s,
   );
   assert.match(
     css,
@@ -403,8 +403,13 @@ test("design tokens derive from the official layer instead of a second dark dete
       `${own} should derive from ${source}`,
     );
   }
-  assert.match(css, /--eink-rule:\s*color-mix\(in srgb, var\(--eink-ink\) \d+%, var\(--eink-paper\)\)/);
-  assert.match(css, /--eink-rule-strong:\s*color-mix\(in srgb, var\(--eink-ink\) \d+%, var\(--eink-paper\)\)/);
+  // Mixed into an opaque surface: the window base is translucent in dark mode
+  // and a rule must not inherit that alpha.
+  assert.match(css, /--eink-rule:\s*color-mix\(in srgb, var\(--eink-ink\) \d+%, var\(--eink-paper-bright\)\)/);
+  assert.match(
+    css,
+    /--eink-rule-strong:\s*color-mix\(in srgb, var\(--eink-ink\) \d+%, var\(--eink-paper-bright\)\)/,
+  );
 });
 
 test("localized hooks always carry a second locale and a structural guard", () => {
@@ -496,5 +501,46 @@ test("the theme keeps exactly one opinion about light and dark", () => {
   assert.match(
     client,
     /value === EINK_TOKEN_SENTINEL\.light \|\| value === EINK_TOKEN_SENTINEL\.dark/,
+  );
+});
+
+test("shell regions use the public surface anchor, not a stale pane attribute", () => {
+  // `data-dsh-surface` marks a region with a zero-size anchor, so the column
+  // that paints it is its parent. `data-pane` does not exist in DSH.
+  assert.doesNotMatch(css, /data-pane=/);
+  for (const region of ["sidebar", "conversation", "details"]) {
+    assert.ok(
+      css.includes(`:has(> [data-dsh-surface="${region}"])`),
+      `missing surface anchor for ${region}`,
+    );
+  }
+  assert.match(
+    css,
+    /:not\(\[data-details-collapsed="true"\]\)\s*>\s*:has\(> \[data-dsh-surface="conversation"\]\)/s,
+  );
+});
+
+test("the collapsed workspace search shell still gets square corners", () => {
+  // The input only mounts once the shell expands, so the radius rule must not
+  // ask for one.
+  assert.match(
+    css,
+    /:has\(> button\[aria-label\*="搜索会话"\]\),[^{]*:has\(> button\[aria-label\*="Search" i\]\)\s*\{[^}]*border-radius:\s*var\(--eink-radius-control\)\s*!important/s,
+  );
+});
+
+test("decorative chrome carries no hue of its own", () => {
+  // The composer hero glow ships a hard-coded blue fill and is aria-hidden, so
+  // it is neutralized in both modes rather than only under immersive.
+  assert.match(
+    css,
+    /\[data-slot="conversation\.composer"\][^{]*svg\[aria-hidden="true"\][^{]*:is\(ellipse, circle\)\[fill\]:not\(\[fill="none"\]\):not\(\[fill="currentColor"\]\)\s*\{[^}]*fill:\s*var\(--eink-paper-raised\)/s,
+  );
+  const glowRule = css.slice(css.indexOf('[data-slot="conversation.composer"]\n  svg[aria-hidden="true"]'));
+  assert.doesNotMatch(glowRule.split("}")[0], /immersive/);
+  // The pet is grayscaled through its wrapper so its own chrome goes with it.
+  assert.match(
+    css,
+    /data-dsh-theme-eink-retro="immersive"\] :has\(> \[style\*="spritesheet"\]\)\s*\{[^}]*filter:\s*grayscale\(1\)/s,
   );
 });
