@@ -168,7 +168,7 @@ html[data-dsh-theme-eink-retro] [data-pane="details"] {
   background-color: var(--eink-paper-raised);
 }
 
-html[data-dsh-theme-eink-retro] :where(button, input, textarea, select),
+html[data-dsh-theme-eink-retro] :where(button, input, textarea, select, [role="button"]),
 html[data-dsh-theme-eink-retro] :where(
   article,
   fieldset,
@@ -199,7 +199,6 @@ html[data-dsh-theme-eink-retro] :where(button, [role="button"], [role="tab"]) {
 }
 
 html[data-dsh-theme-eink-retro] :where(
-  [role="switch"][aria-checked="true"],
   [role="radio"][aria-checked="true"],
   button[aria-pressed="true"],
   [data-state="checked"],
@@ -212,7 +211,6 @@ html[data-dsh-theme-eink-retro] :where(
 }
 
 html[data-dsh-theme-eink-retro] :where(
-  [role="switch"][aria-checked="true"],
   [role="radio"][aria-checked="true"],
   button[aria-pressed="true"],
   [data-state="checked"],
@@ -222,18 +220,43 @@ html[data-dsh-theme-eink-retro] :where(
   color: inherit !important;
 }
 
+/* Switches own their state on the track, not on the button shell. Keeping the
+ * shell transparent prevents a second black rectangle from showing around an
+ * enabled track. */
+html[data-dsh-theme-eink-retro] [role="switch"] {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
 html[data-dsh-theme-eink-retro] [role="switch"] > * {
+  background-color: var(--eink-paper-bright) !important;
+  border: 1px solid var(--eink-rule-strong) !important;
   border-radius: 1px !important;
 }
 
 html[data-dsh-theme-eink-retro] [role="switch"] > * > * {
   background-color: var(--eink-paper-bright) !important;
-  border: 1px solid var(--eink-selection-bg);
+  border: 1px solid var(--eink-selection-bg) !important;
   border-radius: 1px !important;
+  box-shadow: none !important;
 }
 
 html[data-dsh-theme-eink-retro] [role="switch"][aria-checked="true"] > * {
   background-color: var(--eink-selection-bg) !important;
+  border-color: var(--eink-selection-bg) !important;
+}
+
+/* Semantic destructive actions keep their warning color, but use the same
+ * flat outline treatment as the rest of the control system. */
+html[data-dsh-theme-eink-retro] button[class*="deleteButton" i] {
+  background-color: transparent !important;
+  border: 1px solid currentColor !important;
+  box-shadow: none !important;
+}
+
+html[data-dsh-theme-eink-retro] button[class*="deleteButton" i]:hover {
+  background-color: color-mix(in srgb, currentColor 8%, transparent) !important;
 }
 
 html[data-dsh-theme-eink-retro] :where([class*="badge" i], [class*="tag" i]):not(.lc-root *) {
@@ -280,6 +303,18 @@ html[data-dsh-theme-eink-retro] textarea[data-dsh-part="composer-input"] {
   box-shadow: none !important;
 }
 
+/* DSH places a blue-gray fade on the composer seat itself. Retint that native
+ * layer instead of removing the useful separation between the message stream
+ * and composer. */
+html[data-dsh-theme-eink-retro] [data-dsh-part="scrollport"] > :has(
+  [data-composer-card="true"]
+)::before {
+  background-image: linear-gradient(
+    transparent 0,
+    color-mix(in srgb, var(--dsw-alias-bg-base) 94%, transparent) 36px
+  ) !important;
+}
+
 html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
   textarea[data-dsh-part="composer-input"]:focus-visible
 ) {
@@ -289,18 +324,76 @@ html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
 
 html[data-dsh-theme-eink-retro] :where(
   button,
-  input,
-  textarea,
-  select,
   [role="button"],
   [role="tab"],
   [role="menuitem"],
   [role="treeitem"],
-  [contenteditable="true"]
+  [role="switch"],
+  [role="radio"]
 ):focus-visible {
   outline: 1px solid var(--eink-ink);
   outline-offset: 2px;
   box-shadow: 0 0 0 1px var(--eink-paper-bright);
+}
+
+/* Native form controls already own a visible border. Strengthen that one
+ * frame and add an inner baseline instead of drawing a second offset outline. */
+html[data-dsh-theme-eink-retro] :where(input, textarea, select, [contenteditable="true"]):focus-visible {
+  outline: 0 !important;
+  border-color: var(--eink-ink) !important;
+  box-shadow: inset 0 -2px 0 var(--eink-ink) !important;
+}
+
+html[data-dsh-theme-eink-retro] textarea[data-dsh-part="composer-input"]:focus-visible {
+  box-shadow: none !important;
+}
+
+/* The trajectory search already has a semantic wrapper with its search icon.
+ * Make that wrapper the only surface and the only focus owner. */
+html[data-dsh-theme-eink-retro] [role="toolbar"]:has(input[type="search"]) {
+  gap: 4px;
+}
+
+html[data-dsh-theme-eink-retro] [role="toolbar"]:has(input[type="search"]) button {
+  min-height: 24px;
+  padding: 2px 8px;
+  color: var(--eink-ink-2);
+  background-color: var(--eink-paper-bright);
+  border: 1px solid var(--eink-rule);
+}
+
+html[data-dsh-theme-eink-retro] [role="toolbar"]:has(input[type="search"]) :has(
+  > input[type="search"]
+) {
+  min-height: 24px;
+  background-color: var(--eink-paper-bright) !important;
+  border: 1px solid var(--eink-rule-strong) !important;
+  border-radius: var(--eink-radius-control) !important;
+  box-shadow: none !important;
+}
+
+html[data-dsh-theme-eink-retro] [role="toolbar"]:has(input[type="search"]) input[type="search"] {
+  background-color: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-dsh-theme-eink-retro] [role="toolbar"]:has(input[type="search"]) :has(
+  > input[type="search"]:focus-visible
+) {
+  border-color: var(--eink-ink) !important;
+  box-shadow: inset 0 -2px 0 var(--eink-ink) !important;
+}
+
+html[data-dsh-theme-eink-retro] select option {
+  color: var(--eink-ink);
+  background-color: var(--eink-paper-bright);
+}
+
+html[data-dsh-theme-eink-retro] select option:checked {
+  color: var(--eink-selection-fg);
+  background-color: var(--eink-selection-bg);
 }
 
 html[data-dsh-theme-eink-retro] :where([role="dialog"], [data-dsh-part="dialog"]) {

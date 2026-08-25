@@ -79,6 +79,42 @@ test("composer preserves DSH's backdrop text and owns a single focus border", ()
   assert.match(css, /background-color:\s*transparent\s*!important/);
   assert.match(css, /\[data-composer-card="true"\]:has\(/);
   assert.match(css, /textarea\[data-dsh-part="composer-input"\]:focus-visible/);
+  assert.match(
+    css,
+    /\[data-dsh-part="scrollport"\]\s*>\s*:has\(\s*\[data-composer-card="true"\]\s*\)::before\s*\{[^}]*linear-gradient/s,
+  );
+});
+
+test("form controls use one focus owner and trajectory search has one frame", () => {
+  assert.match(
+    css,
+    /:where\(input, textarea, select, \[contenteditable="true"\]\):focus-visible\s*\{[^}]*outline:\s*0\s*!important[^}]*border-color:\s*var\(--eink-ink\)/s,
+  );
+  assert.doesNotMatch(
+    css,
+    /:where\([^)]*button[^)]*input[^)]*\):focus-visible\s*\{[^}]*outline-offset:\s*2px/s,
+  );
+  assert.match(
+    css,
+    /\[role="toolbar"\]:has\(input\[type="search"\]\)[^{]*input\[type="search"\][^{]*\{[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[role="toolbar"\]:has\(input\[type="search"\]\)[^{]*:has\(\s*>\s*input\[type="search"\]:focus-visible\s*\)[^{]*\{[^}]*border-color:\s*var\(--eink-ink\)/s,
+  );
+});
+
+test("switches and semantic destructive buttons stay flat and explicit", () => {
+  assert.match(
+    css,
+    /\[role="switch"\]\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[role="switch"\]\s*>\s*\*\s*>\s*\*\s*\{[^}]*box-shadow:\s*none\s*!important/s,
+  );
+  assert.match(css, /button\[class\*="deleteButton" i\]/);
+  assert.match(css, /\[role="button"\][^}]*border-radius/s);
 });
 
 test("secondary tabs, markdown tables and capability badges keep readable hierarchy", () => {
