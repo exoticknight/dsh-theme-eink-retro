@@ -40,6 +40,14 @@ test("theme does not synthesize application structure", () => {
   assert.doesNotMatch(css, /terminal|tui/i);
 });
 
+test("theme keeps the interface monochrome", () => {
+  for (const forbiddenHue of ["sage", "green", "ochre", "brick"]) {
+    assert.doesNotMatch(css, new RegExp(`--eink-${forbiddenHue}`, "i"));
+  }
+  assert.match(css, /--eink-selection-bg:\s*#1c1b19/i);
+  assert.match(css, /filter:\s*grayscale\(1\)/i);
+});
+
 test("client shares one reference-counted style across reloads", () => {
   assert.match(client, /users:\s*number/);
   assert.match(client, /state\.users \+= 1/);
