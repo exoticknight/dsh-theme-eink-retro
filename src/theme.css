@@ -529,6 +529,35 @@ html[data-dsh-theme-eink-retro]
   box-shadow: none !important;
 }
 
+/* Approval requests are important without needing a warm warning wash. The
+ * labelled body gives us a stable hook for its surrounding native card. */
+html[data-dsh-theme-eink-retro] :has(> [aria-label="审批详情"]) {
+  background-color: var(--eink-paper-bright) !important;
+  border-color: var(--eink-rule-strong) !important;
+}
+
+html[data-dsh-theme-eink-retro] :has(> [aria-label="审批详情"]) > :first-child {
+  color: var(--eink-ink) !important;
+  background-color: var(--eink-paper-raised) !important;
+  border-bottom: 1px solid var(--eink-rule) !important;
+}
+
+html[data-dsh-theme-eink-retro] :has(> [aria-label="审批详情"]) > :first-child > :first-child {
+  color: var(--eink-ink) !important;
+  background-color: var(--eink-ink) !important;
+}
+
+/* DSH renders the active turn label with a continuous blue shimmer. A static
+ * secondary-ink label is calmer, reads cleanly on e-ink, and the live clock
+ * still communicates that work is progressing. */
+html[data-dsh-theme-eink-retro] [data-chat-flow] > [role="status"] {
+  color: var(--eink-ink-2) !important;
+  -webkit-text-fill-color: currentColor !important;
+  background-image: none !important;
+  background-clip: border-box !important;
+  animation: none !important;
+}
+
 html[data-dsh-theme-eink-retro] :where(
   [role="treeitem"][aria-selected="true"],
   [aria-current="true"],

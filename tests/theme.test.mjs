@@ -156,6 +156,21 @@ test("workspace search and user messages use crisp surfaces with one focus owner
   );
 });
 
+test("approval requests and active turn status use neutral ink treatments", () => {
+  assert.match(
+    css,
+    /:has\(> \[aria-label="审批详情"\]\)\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border-color:\s*var\(--eink-rule-strong\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /:has\(> \[aria-label="审批详情"\]\)\s*>\s*:first-child\s*\{[^}]*color:\s*var\(--eink-ink\)\s*!important[^}]*background-color:\s*var\(--eink-paper-raised\)\s*!important[^}]*border-bottom:\s*1px solid var\(--eink-rule\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-chat-flow\]\s*>\s*\[role="status"\]\s*\{[^}]*color:\s*var\(--eink-ink-2\)\s*!important[^}]*-webkit-text-fill-color:\s*currentColor\s*!important[^}]*background-image:\s*none\s*!important[^}]*animation:\s*none\s*!important/s,
+  );
+});
+
 test("switches and semantic destructive buttons stay flat and explicit", () => {
   assert.match(
     css,
