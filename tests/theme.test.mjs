@@ -39,6 +39,12 @@ test("balanced mode uses the official semantic token layer", () => {
   assert.match(tokens, /pair\("#8e3f3f", "#d08a82"\)/i);
   assert.match(tokens, /pair\("#4e674d", "#8da284"\)/i);
   assert.match(tokens, /pair\("#735e20", "#c7aa62"\)/i);
+  for (const neutral of ["#f4f4f4", "#ffffff", "#e8e8e8", "#d2d2d2", "#161616"]) {
+    assert.ok(tokens.includes(neutral), `missing neutral ${neutral}`);
+  }
+  for (const paperTint of ["#f3efe4", "#eee9dc", "#e8e1d2", "#f0eadc"]) {
+    assert.ok(!tokens.includes(paperTint), `unexpected warm paper tint ${paperTint}`);
+  }
 });
 
 test("theme does not synthesize application structure", () => {
@@ -56,6 +62,16 @@ test("immersive mode owns all monochrome compatibility adapters", () => {
   assert.doesNotMatch(css, /data-dsh-theme-eink-retro="balanced"/i);
   assert.doesNotMatch(css, /body:has\(/i);
   assert.doesNotMatch(css, /--aion-/i);
+});
+
+test("both active modes share crisp geometry and black-white interaction states", () => {
+  assert.match(client, /root\.setAttribute\(ROOT_ATTRIBUTE, mode\)/);
+  assert.match(css, /html\[data-dsh-theme-eink-retro\]/);
+  assert.match(css, /--eink-radius-control:\s*2px/);
+  assert.match(css, /--eink-radius-surface:\s*2px/);
+  assert.match(css, /\[data-active="true"\]/);
+  assert.match(css, /\[role="switch"\]\[aria-checked="true"\]/);
+  assert.match(css, /span\[class\*="tabSearch"\]/);
 });
 
 test("client exposes reversible modes and shares one style across reloads", () => {

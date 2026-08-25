@@ -71,7 +71,7 @@ function dispatchModeState(state: ModeViewState): void {
 
 function applyMode(root: HTMLElement, mode: ThemeMode, snapshot: ThemeSnapshot): ModeViewState {
   const state = modeState(mode, snapshot);
-  if (state.effective && mode === "immersive") root.setAttribute(ROOT_ATTRIBUTE, mode);
+  if (state.effective) root.setAttribute(ROOT_ATTRIBUTE, mode);
   else root.removeAttribute(ROOT_ATTRIBUTE);
   dispatchModeState(state);
   return state;

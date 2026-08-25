@@ -1,7 +1,8 @@
 /* E‑Ink Retro has two layers:
- * 1. balanced semantic colors are installed through ctx.theme.overrideTokens;
- * 2. the rules below activate only for the explicit immersive mode.
- * Third-party content colors remain untouched in balanced mode. */
+ * 1. both modes share neutral semantic tokens, crisp geometry and black/white
+ *    interaction states;
+ * 2. immersive mode additionally maps selected decorative/data colors to gray.
+ * User-authored media is never filtered. */
 
 .eink-retro-settings {
   display: grid;
@@ -35,7 +36,7 @@
   text-align: left;
   background: var(--dsw-alias-bg-layer-1);
   border: 1px solid var(--dsw-alias-border-l3);
-  border-radius: 3px;
+  border-radius: 2px;
   box-shadow: none;
   cursor: pointer;
 }
@@ -87,46 +88,48 @@
   }
 }
 
-html[data-dsh-theme-eink-retro="immersive"] {
-  --eink-paper: #f3f1ea;
-  --eink-paper-bright: #faf9f4;
-  --eink-paper-raised: #e6e3dc;
-  --eink-paper-inset: #d6d2ca;
-  --eink-ink: #1c1b19;
-  --eink-ink-2: #4d4a45;
-  --eink-rule: #b9b5ad;
-  --eink-rule-strong: #98948c;
-  --eink-selection-bg: #1c1b19;
-  --eink-selection-fg: #faf9f4;
-  --eink-shadow-1: 1px 1px 0 #1c1b192e;
-  --eink-shadow-2: 2px 2px 0 #1c1b192e;
+html[data-dsh-theme-eink-retro] {
+  --eink-paper: #f4f4f4;
+  --eink-paper-bright: #ffffff;
+  --eink-paper-raised: #e8e8e8;
+  --eink-paper-inset: #d2d2d2;
+  --eink-ink: #161616;
+  --eink-ink-2: #4a4a4a;
+  --eink-rule: #a8a8a8;
+  --eink-rule-strong: #686868;
+  --eink-selection-bg: #161616;
+  --eink-selection-fg: #ffffff;
+  --eink-shadow-1: 1px 1px 0 #16161633;
+  --eink-shadow-2: 2px 2px 0 #16161633;
+  --eink-radius-control: 2px;
+  --eink-radius-surface: 2px;
   --eink-font-sans: "IBM Plex Sans SC", "Noto Sans SC", "Source Han Sans SC", "Microsoft YaHei UI", "Segoe UI", sans-serif;
   --eink-font-mono: "IBM Plex Mono", "Sarasa Mono SC", "Cascadia Mono", Consolas, monospace;
 }
 
-html[data-dsh-theme-eink-retro="immersive"] body[data-ds-dark-theme] {
-  --eink-paper: #1c1b19;
-  --eink-paper-bright: #24221f;
-  --eink-paper-raised: #2f2d29;
-  --eink-paper-inset: #161513;
-  --eink-ink: #f3f1ea;
-  --eink-ink-2: #c9c5bc;
-  --eink-rule: #5b5751;
-  --eink-rule-strong: #7b766e;
-  --eink-selection-bg: #f3f1ea;
-  --eink-selection-fg: #1c1b19;
+html[data-dsh-theme-eink-retro] body[data-ds-dark-theme] {
+  --eink-paper: #181818;
+  --eink-paper-bright: #222222;
+  --eink-paper-raised: #303030;
+  --eink-paper-inset: #121212;
+  --eink-ink: #f4f4f4;
+  --eink-ink-2: #c8c8c8;
+  --eink-rule: #585858;
+  --eink-rule-strong: #888888;
+  --eink-selection-bg: #f4f4f4;
+  --eink-selection-fg: #161616;
   --eink-shadow-1: 1px 1px 0 #0008;
   --eink-shadow-2: 2px 2px 0 #0008;
 }
 
-html[data-dsh-theme-eink-retro="immersive"],
-html[data-dsh-theme-eink-retro="immersive"] body,
-html[data-dsh-theme-eink-retro="immersive"] #root {
+html[data-dsh-theme-eink-retro],
+html[data-dsh-theme-eink-retro] body,
+html[data-dsh-theme-eink-retro] #root {
   background-color: var(--dsw-alias-bg-base);
   background-image: none;
 }
 
-html[data-dsh-theme-eink-retro="immersive"] body {
+html[data-dsh-theme-eink-retro] body {
   color: var(--dsw-alias-label-primary);
   font-family: var(--eink-font-sans);
   font-synthesis: none;
@@ -134,9 +137,9 @@ html[data-dsh-theme-eink-retro="immersive"] body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html[data-dsh-theme-eink-retro="immersive"] *,
-  html[data-dsh-theme-eink-retro="immersive"] *::before,
-  html[data-dsh-theme-eink-retro="immersive"] *::after {
+  html[data-dsh-theme-eink-retro] *,
+  html[data-dsh-theme-eink-retro] *::before,
+  html[data-dsh-theme-eink-retro] *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
@@ -144,48 +147,112 @@ html[data-dsh-theme-eink-retro="immersive"] body {
   }
 }
 
-html[data-dsh-theme-eink-retro="immersive"] [data-pane="sidebar"],
-html[data-dsh-theme-eink-retro="immersive"] [data-pane="conversation"],
-html[data-dsh-theme-eink-retro="immersive"] [data-pane="details"] {
+html[data-dsh-theme-eink-retro] [data-pane="sidebar"],
+html[data-dsh-theme-eink-retro] [data-pane="conversation"],
+html[data-dsh-theme-eink-retro] [data-pane="details"] {
   background-color: var(--dsw-alias-bg-base);
   background-image: none;
   box-shadow: none;
 }
 
-html[data-dsh-theme-eink-retro="immersive"] [data-pane="sidebar"] {
+html[data-dsh-theme-eink-retro] [data-pane="sidebar"] {
   background-color: var(--dsw-specific-sidebar-fill);
   border-right: 1px solid var(--eink-rule);
 }
 
-html[data-dsh-theme-eink-retro="immersive"] [data-pane="conversation"] {
+html[data-dsh-theme-eink-retro] [data-pane="conversation"] {
   border-right: 1px solid var(--eink-rule);
 }
 
-html[data-dsh-theme-eink-retro="immersive"] [data-pane="details"] {
+html[data-dsh-theme-eink-retro] [data-pane="details"] {
   background-color: var(--eink-paper-raised);
 }
 
-html[data-dsh-theme-eink-retro="immersive"] :where(button, input, textarea, select),
-html[data-dsh-theme-eink-retro="immersive"] :where([role="dialog"], [role="menu"], [role="listbox"], [role="tooltip"]) {
-  border-radius: 3px;
+html[data-dsh-theme-eink-retro] :where(button, input, textarea, select),
+html[data-dsh-theme-eink-retro] :where(
+  article,
+  fieldset,
+  [role="dialog"],
+  [role="menu"],
+  [role="listbox"],
+  [role="tooltip"],
+  [role="treeitem"],
+  [class*="card" i],
+  [class*="panel" i],
+  [class*="modal" i],
+  [class*="column" i]
+) {
+  border-radius: var(--eink-radius-surface) !important;
 }
 
-html[data-dsh-theme-eink-retro="immersive"] :where(button, [role="button"], [role="tab"]) {
+/* Some DSH and marketplace controls draw their visible surface on a wrapper
+ * instead of the native input/card. Keep those shells in the same rectilinear
+ * system without flattening charts or user content. */
+html[data-dsh-theme-eink-retro] span[class*="tabSearch"],
+html[data-dsh-theme-eink-retro] div[class$="_bar"]:has(> [class$="_label"]),
+html[data-dsh-theme-eink-retro] div:has(> [class$="_sep"][aria-hidden="true"]) {
+  border-radius: var(--eink-radius-surface) !important;
+}
+
+html[data-dsh-theme-eink-retro] :where(button, [role="button"], [role="tab"]) {
   box-shadow: none;
 }
 
-html[data-dsh-theme-eink-retro="immersive"] :where(button:not(:disabled), [role="button"]:not([aria-disabled="true"]), [role="tab"]):active {
+html[data-dsh-theme-eink-retro] :where(
+  [role="switch"][aria-checked="true"],
+  [role="radio"][aria-checked="true"],
+  button[aria-pressed="true"],
+  [data-state="checked"],
+  [data-state="active"],
+  [data-active="true"]
+) {
+  color: var(--eink-selection-fg) !important;
+  background-color: var(--eink-selection-bg) !important;
+  border-color: var(--eink-selection-bg) !important;
+}
+
+html[data-dsh-theme-eink-retro] :where(
+  [role="switch"][aria-checked="true"],
+  [role="radio"][aria-checked="true"],
+  button[aria-pressed="true"],
+  [data-state="checked"],
+  [data-state="active"],
+  [data-active="true"]
+) * {
+  color: inherit !important;
+}
+
+html[data-dsh-theme-eink-retro] [role="switch"] > * {
+  border-radius: 1px !important;
+}
+
+html[data-dsh-theme-eink-retro] [role="switch"] > * > * {
+  background-color: var(--eink-paper-bright) !important;
+  border: 1px solid var(--eink-selection-bg);
+  border-radius: 1px !important;
+}
+
+html[data-dsh-theme-eink-retro] [role="switch"][aria-checked="true"] > * {
+  background-color: var(--eink-selection-bg) !important;
+}
+
+html[data-dsh-theme-eink-retro] :where([class*="badge" i], [class*="tag" i]):not(.lc-root *) {
+  border-radius: 1px !important;
+  filter: grayscale(1);
+}
+
+html[data-dsh-theme-eink-retro] :where(button:not(:disabled), [role="button"]:not([aria-disabled="true"]), [role="tab"]):active {
   transform: translate(1px, 1px);
 }
 
-html[data-dsh-theme-eink-retro="immersive"] :where(input, textarea, select, [contenteditable="true"]) {
+html[data-dsh-theme-eink-retro] :where(input, textarea, select, [contenteditable="true"]) {
   background-color: var(--dsw-specific-input-major);
   border-color: var(--eink-rule-strong);
   box-shadow: inset 1px 1px 0 color-mix(in srgb, var(--eink-ink) 14%, transparent);
   caret-color: var(--eink-ink);
 }
 
-html[data-dsh-theme-eink-retro="immersive"] :where(
+html[data-dsh-theme-eink-retro] :where(
   button,
   input,
   textarea,
@@ -201,25 +268,26 @@ html[data-dsh-theme-eink-retro="immersive"] :where(
   box-shadow: 0 0 0 1px var(--eink-paper-bright);
 }
 
-html[data-dsh-theme-eink-retro="immersive"] :where([role="dialog"], [data-dsh-part="dialog"]) {
+html[data-dsh-theme-eink-retro] :where([role="dialog"], [data-dsh-part="dialog"]) {
   background-color: var(--dsw-alias-bg-layer-1);
   border: 1px solid var(--eink-rule-strong);
   box-shadow: var(--eink-shadow-2);
   backdrop-filter: none;
+  border-radius: var(--eink-radius-surface) !important;
 }
 
-html[data-dsh-theme-eink-retro="immersive"] :where([role="menu"], [role="listbox"]) {
+html[data-dsh-theme-eink-retro] :where([role="menu"], [role="listbox"]) {
   background-color: var(--dsw-specific-menu);
   border: 1px solid var(--eink-rule-strong);
   box-shadow: var(--eink-shadow-1);
 }
 
-html[data-dsh-theme-eink-retro="immersive"] [role="tooltip"] {
+html[data-dsh-theme-eink-retro] [role="tooltip"] {
   border: 1px solid var(--eink-rule-strong);
   box-shadow: var(--eink-shadow-1);
 }
 
-html[data-dsh-theme-eink-retro="immersive"] :where(
+html[data-dsh-theme-eink-retro] :where(
   [role="tab"][aria-selected="true"],
   [role="treeitem"][aria-selected="true"],
   [aria-current="true"],
@@ -232,7 +300,7 @@ html[data-dsh-theme-eink-retro="immersive"] :where(
   box-shadow: none !important;
 }
 
-html[data-dsh-theme-eink-retro="immersive"] :where(
+html[data-dsh-theme-eink-retro] :where(
   [role="tab"][aria-selected="true"],
   [role="treeitem"][aria-selected="true"],
   [aria-current="true"],
@@ -241,67 +309,67 @@ html[data-dsh-theme-eink-retro="immersive"] :where(
   color: inherit !important;
 }
 
-html[data-dsh-theme-eink-retro="immersive"] ::selection {
+html[data-dsh-theme-eink-retro] ::selection {
   color: var(--eink-selection-fg);
   background: var(--eink-selection-bg);
 }
 
-html[data-dsh-theme-eink-retro="immersive"] hr {
+html[data-dsh-theme-eink-retro] hr {
   height: 1px;
   background: var(--eink-rule);
   border: 0;
 }
 
-html[data-dsh-theme-eink-retro="immersive"] :where(code, kbd, samp, pre) {
+html[data-dsh-theme-eink-retro] :where(code, kbd, samp, pre) {
   font-family: var(--eink-font-mono);
 }
 
-html[data-dsh-theme-eink-retro="immersive"] :where(pre, [class*="code-block" i]) {
+html[data-dsh-theme-eink-retro] :where(pre, [class*="code-block" i]) {
   background-color: var(--dsw-alias-markdown-code-block);
   border: 1px solid var(--eink-rule);
   border-radius: 2px;
   box-shadow: inset 2px 0 0 var(--eink-rule-strong);
 }
 
-html[data-dsh-theme-eink-retro="immersive"] code:not(pre code) {
+html[data-dsh-theme-eink-retro] code:not(pre code) {
   background-color: var(--dsw-alias-markdown-inline-code);
   border: 1px solid var(--eink-rule);
   border-radius: 2px;
 }
 
-html[data-dsh-theme-eink-retro="immersive"] blockquote {
+html[data-dsh-theme-eink-retro] blockquote {
   border-left: 3px double var(--eink-rule-strong);
   background: var(--eink-paper-raised);
 }
 
-html[data-dsh-theme-eink-retro="immersive"] table {
+html[data-dsh-theme-eink-retro] table {
   border-collapse: collapse;
 }
 
-html[data-dsh-theme-eink-retro="immersive"] :where(th, td) {
+html[data-dsh-theme-eink-retro] :where(th, td) {
   border: 1px solid var(--eink-rule);
 }
 
-html[data-dsh-theme-eink-retro="immersive"] th {
+html[data-dsh-theme-eink-retro] th {
   background: var(--eink-paper-inset);
 }
 
-html[data-dsh-theme-eink-retro="immersive"] * {
+html[data-dsh-theme-eink-retro] * {
   scrollbar-color: var(--dsw-alias-scrollbar-bg-l2) var(--dsw-alias-scrollbar-bg-l1);
   scrollbar-width: thin;
 }
 
-html[data-dsh-theme-eink-retro="immersive"] *::-webkit-scrollbar {
+html[data-dsh-theme-eink-retro] *::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 
-html[data-dsh-theme-eink-retro="immersive"] *::-webkit-scrollbar-track,
-html[data-dsh-theme-eink-retro="immersive"] *::-webkit-scrollbar-corner {
+html[data-dsh-theme-eink-retro] *::-webkit-scrollbar-track,
+html[data-dsh-theme-eink-retro] *::-webkit-scrollbar-corner {
   background: var(--dsw-alias-scrollbar-bg-l1);
 }
 
-html[data-dsh-theme-eink-retro="immersive"] *::-webkit-scrollbar-thumb {
+html[data-dsh-theme-eink-retro] *::-webkit-scrollbar-thumb {
   background: var(--dsw-alias-scrollbar-bg-l2);
   border: 2px solid var(--dsw-alias-scrollbar-bg-l1);
   border-radius: 0;
@@ -326,12 +394,12 @@ html[data-dsh-theme-eink-retro="immersive"] .lc-root :is(
   filter: grayscale(1) contrast(1.12);
 }
 
-html[data-dsh-theme-eink-retro="immersive"] .lc-root :is(.lc-card, .lc-stat, .lc-br-cat, .lc-ts-card) {
+html[data-dsh-theme-eink-retro] .lc-root :is(.lc-card, .lc-stat, .lc-br-cat, .lc-ts-card) {
   border-radius: 2px;
   box-shadow: none;
 }
 
-html[data-dsh-theme-eink-retro="immersive"] .lc-root :is(.lc-gran-on, .lc-rich-seg-on) {
+html[data-dsh-theme-eink-retro] .lc-root :is(.lc-gran-on, .lc-rich-seg-on) {
   color: var(--eink-selection-fg);
   background: var(--eink-selection-bg);
 }
