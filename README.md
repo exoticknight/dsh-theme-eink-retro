@@ -1,41 +1,97 @@
-# DSH E-Ink Retro UI Theme
+# E-Ink Retro for DeepSeek Harness
 
-一个可直接由 DeepSeek Harness 加载的主题插件。它保留 DSH 原生的侧栏、对话、详情、工具调用与插件结构，通过官方 `ctx.theme.overrideTokens()` 统一 DSH 的语义令牌，再用严格限定作用域的 CSS 提供可选沉浸效果。
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-视觉语言来自黑白电子纸与经典 Macintosh，但不是复刻旧系统：中性浅灰/纯白、墨黑、离散灰阶、反白选中、硬边框、2px 微圆角与按下位移；正文保持现代无衬线字体，代码才使用等宽字体。没有米黄纸张色、TUI、终端面板、跑马灯或额外菜单栏。
+E-Ink Retro is a client-side theme plugin for DeepSeek Harness (DSH). It gives the app a clear, restrained interface built from neutral surfaces, black-and-white controls, crisp borders, and compact geometry.
 
-## 三种覆盖模式
+The theme keeps DSH's layout and workflows intact. It changes semantic colors and verified component styles. It does not turn DSH into a terminal UI or reproduce a vintage desktop. Classic Macintosh design informs the hierarchy and control shapes, while the result remains suited to a modern application.
 
-在 **设置 → E‑Ink Retro** 中切换：
+## What the theme changes
 
-- **平衡模式（默认）**：统一 DSH 壳层、弹层、控件、黑白激活态与低圆角几何；保留第三方插件的数据图表、状态告警、品牌色、宠物和内容颜色。
-- **完全沉浸**：在平衡模式之上，把已适配的第三方数据标记、装饰皮肤和宠物按亮度映射为灰阶。
-- **暂停主题**：释放令牌覆盖，显示当前 DSH 或第三方皮肤的原始外观。
+- Neutral light and dark palettes without a beige paper tint or green cast
+- Square, low-radius controls and surfaces
+- Clear black-and-white selected states for buttons, tabs, and switches
+- Consistent focus frames for the composer, search fields, inputs, and selects
+- Stable scroll ownership for conversation overlays and trajectory views
+- Focused adapters for DSH's conversation, context, settings, task board, SSH, skill center, plugin market, and workshop screens
+- Automatic cleanup of injected tokens and styles when the plugin unloads
 
-切换到另一套第三方皮肤时，E‑Ink Retro 会自动让位；回到 DSH 默认浅色、深色或跟随系统后恢复。无论使用哪种模式，用户消息中的图片、附件、视频、Canvas 和 iframe 内容都不会被全局滤镜改色。
+## Modes
 
-## 本地开发加载
+| Mode | Intended use | Color treatment |
+| --- | --- | --- |
+| **Balanced** | Default. Use it for daily work and mixed plugin content. | Applies the E-Ink shell and control language while preserving meaningful status, chart, brand, and content colors. |
+| **Immersive** | Use it when you want a stronger monochrome environment. | Adds grayscale treatment only to verified decorative and compatibility surfaces. User media stays unchanged. |
+| **Off** | Temporarily disable the theme without removing the plugin. | Removes the theme's token and CSS overrides. |
+
+Balanced and Immersive work with DSH's built-in System, Light, and Dark themes. If you select another third-party theme, E-Ink Retro yields to it. Returning to a built-in theme restores your selected E-Ink mode.
+
+## Install from source
+
+Requirements:
+
+- Node.js 20 or newer
+- A working DSH installation with the `web` profile
+
+Clone or download this repository, then run:
+
+```sh
+npm install
+npm run build
+```
+
+Link the built plugin into DSH. Replace the example path with the absolute path to this repository:
+
+```sh
+dsh plugin --profile web add link:/absolute/path/to/dsh-theme-eink-retro
+```
+
+Windows example:
 
 ```powershell
-npm install
-npm run check
 dsh plugin --profile web add link:C:/path/to/dsh-theme-eink-retro
 ```
 
-修改 `src/theme.css` 或 `src/client/` 后运行 `npm run build`，然后刷新 DSH 页面即可检视。插件卸载、暂停或热重载时会自动移除样式、令牌层和根属性，不污染其他主题。
+Reload DSH after linking the plugin.
 
-## 兼容与调研
+## Use
 
-- [组件兼容检查清单](docs/component-compatibility.md)
-- [DSH 主题生态与成熟写法调研](docs/theme-compatibility-research.md)
-- [实机审计截图](docs/audit)
-- [第二轮参考对照与逐界面截图](docs/audit-iteration-2)
+Open **Settings → E-Ink Retro**, then choose Balanced, Immersive, or Off. The selection is stored in the browser for the current DSH profile.
 
-## 文件结构
+Start with Balanced. Switch to Immersive when the active screens and plugins look correct in monochrome. Use Off when comparing behavior with the base DSH interface.
 
-- `src/client/tokens.ts`：平衡模式的官方 DSH 语义令牌映射。
-- `src/theme.css`：两种有效模式共用的几何/交互规则，以及完全沉浸模式的附加灰阶适配器。
-- `src/client/index.ts`：模式设置、令牌覆盖、第三方皮肤让位与生命周期清理。
-- `src/host/index.ts`：标准 DSH 插件 host 入口。
-- `cordis.patch.yml`：把插件插入 DSH profile。
-- `tests/theme.test.mjs`：检查包结构、核心令牌覆盖与“无结构注入”边界。
+## Compatibility boundaries
+
+The theme targets DSH's semantic token system and verified public component surfaces. Components that use DSH tokens inherit the palette with little or no special handling.
+
+Some content stays outside the theme's control:
+
+- Images, attachments, video, canvas output, and iframe content are not globally filtered.
+- Native select menus may use operating-system styling after they open.
+- Plugins with hard-coded colors, Shadow DOM, or isolated rendering may only inherit part of the theme.
+- Balanced mode keeps low-saturation semantic colors when removing them would hide status or meaning.
+
+These boundaries prevent the theme from damaging content or changing another plugin's interface without a verified adapter.
+
+## Development
+
+Run the full local check before submitting a change:
+
+```sh
+npm run check
+```
+
+This command runs the TypeScript check, regression tests, and production build. Build output is written to `lib/index.js` and `lib/client.js`.
+
+The main implementation files are:
+
+- `src/client/tokens.ts`: light and dark semantic token values
+- `src/theme.css`: component geometry, interaction states, and compatibility adapters
+- `src/client/index.ts`: mode storage, DSH theme coordination, settings UI, and cleanup
+- `tests/theme.test.mjs`: package and theme-boundary regression checks
+
+Keep new CSS scoped under `html[data-dsh-theme-eink-retro]`. Put monochrome-only adapters under the `immersive` attribute selector. Avoid global media filters and selectors tied to generated class hashes.
+
+## License
+
+[MIT](LICENSE)

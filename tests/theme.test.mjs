@@ -9,6 +9,8 @@ const css = fs.readFileSync(path.join(root, "src/theme.css"), "utf8");
 const client = fs.readFileSync(path.join(root, "src/client/index.ts"), "utf8");
 const tokens = fs.readFileSync(path.join(root, "src/client/tokens.ts"), "utf8");
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
+const readmeEn = fs.readFileSync(path.join(root, "README.md"), "utf8");
+const readmeZh = fs.readFileSync(path.join(root, "README.zh-CN.md"), "utf8");
 
 test("package exposes a standard DSH host and client bundle", () => {
   assert.equal(pkg.name, "dsh-theme-eink-retro");
@@ -17,6 +19,15 @@ test("package exposes a standard DSH host and client bundle", () => {
   assert.equal(pkg.dsh.client.platform, "web");
   assert.ok(pkg.dsh.client.inject.includes("@deepseek-ai/dsh-client-ui-theme"));
   assert.ok(pkg.dsh.client.inject.includes("@deepseek-ai/dsh-client-ui-settings"));
+});
+
+test("package ships user-facing documentation in English and Chinese", () => {
+  assert.ok(pkg.files.includes("README.md"));
+  assert.ok(pkg.files.includes("README.zh-CN.md"));
+  assert.match(readmeEn, /Install from source/);
+  assert.match(readmeEn, /Compatibility boundaries/);
+  assert.match(readmeZh, /从源码安装/);
+  assert.match(readmeZh, /兼容边界/);
 });
 
 test("balanced mode uses the official semantic token layer", () => {
