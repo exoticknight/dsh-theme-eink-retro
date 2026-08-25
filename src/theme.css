@@ -167,7 +167,8 @@ html[data-dsh-theme-eink-retro] .eink-retro-settings__enabled-input:focus-visibl
  * Elevation hierarchy — hard offset, never blurred:
  *   --eink-shadow-1     attached popups: menus, listboxes, tooltips
  *   --eink-shadow-2     floating layers: dialogs, elevated cards
- *   (controls stay flat: a control earns a frame, not a shadow)
+ *   (controls stay flat: a control is shaped by its fill or its frame;
+ *   ghost icon actions carry neither and rely on their label)
  *
  * Weights are mid-steps on purpose. On a variable face they render as drawn;
  * on a 400/700 system face the browser resolves both to the nearest real
@@ -378,6 +379,9 @@ html[data-dsh-theme-eink-retro] :where([aria-disabled="true"]) {
 
 html[data-dsh-theme-eink-retro] :where(
   [role="radio"][aria-checked="true"],
+  [role="checkbox"][aria-checked="true"],
+  [role="menuitemcheckbox"][aria-checked="true"],
+  [role="menuitemradio"][aria-checked="true"],
   button[aria-pressed="true"],
   [data-state="checked"],
   [data-state="active"],
@@ -390,6 +394,9 @@ html[data-dsh-theme-eink-retro] :where(
 
 html[data-dsh-theme-eink-retro] :where(
   [role="radio"][aria-checked="true"],
+  [role="checkbox"][aria-checked="true"],
+  [role="menuitemcheckbox"][aria-checked="true"],
+  [role="menuitemradio"][aria-checked="true"],
   button[aria-pressed="true"],
   [data-state="checked"],
   [data-state="active"],
@@ -398,44 +405,62 @@ html[data-dsh-theme-eink-retro] :where(
   color: inherit !important;
 }
 
-/* Switches own their state on the track, not on the button shell. Keeping the
- * shell transparent prevents a second black rectangle from showing around an
- * enabled track. */
-html[data-dsh-theme-eink-retro] [role="switch"] {
+/* A switch is a button wrapping a track, which in turn holds one absolutely
+ * positioned thumb. The button is only the hit target, so it stays blank and
+ * the track carries the state: an empty paper frame when off, filled with ink
+ * when on, with the thumb inverting against it.
+ *
+ * The offsets are authored against the track's padding box, which its own 1px
+ * border already insets — so a 10px thumb centres in a 30 × 16 track at 2px,
+ * not 3px, and rests 3px from either end across a 14px travel. Every rule is
+ * gated on that structure: a switch built some other way is left to DSH
+ * rather than styled from a guess about its shape. */
+html[data-dsh-theme-eink-retro] [role="switch"]:has(> :last-child > :only-child) {
+  box-sizing: border-box;
   background-color: transparent !important;
   border-color: transparent !important;
   box-shadow: none !important;
 }
 
-html[data-dsh-theme-eink-retro] [role="switch"] > :last-child {
+html[data-dsh-theme-eink-retro]
+  [role="switch"]:has(> :last-child > :only-child)
+  > :last-child {
   box-sizing: border-box;
-  width: 30px;
-  height: 16px;
+  width: 30px !important;
+  height: 16px !important;
   background-color: var(--eink-paper-bright) !important;
   border: 1px solid var(--eink-ink) !important;
   border-radius: var(--eink-radius-tight) !important;
+  box-shadow: none !important;
 }
 
-html[data-dsh-theme-eink-retro] [role="switch"] > :last-child > * {
+html[data-dsh-theme-eink-retro]
+  [role="switch"]:has(> :last-child > :only-child)
+  > :last-child
+  > :only-child {
   box-sizing: border-box;
-  width: 10px;
-  height: 10px;
+  width: 10px !important;
+  height: 10px !important;
+  top: 2px !important;
+  left: 2px !important;
   background-color: var(--eink-ink) !important;
   border: 0 !important;
   border-radius: var(--eink-radius-tight) !important;
   box-shadow: none !important;
 }
 
-html[data-dsh-theme-eink-retro] [role="switch"]:not([aria-checked="true"]) > :last-child > * {
-  background-color: var(--eink-ink) !important;
-}
-
-html[data-dsh-theme-eink-retro] [role="switch"][aria-checked="true"] > :last-child {
+html[data-dsh-theme-eink-retro]
+  [role="switch"][aria-checked="true"]:has(> :last-child > :only-child)
+  > :last-child {
   background-color: var(--eink-selection-bg) !important;
   border-color: var(--eink-selection-bg) !important;
 }
 
-html[data-dsh-theme-eink-retro] [role="switch"][aria-checked="true"] > :last-child > * {
+html[data-dsh-theme-eink-retro]
+  [role="switch"][aria-checked="true"]:has(> :last-child > :only-child)
+  > :last-child
+  > :only-child {
+  left: 16px !important;
   background-color: var(--eink-selection-fg) !important;
 }
 
@@ -900,6 +925,20 @@ html[data-dsh-theme-eink-retro] hr {
 
 html[data-dsh-theme-eink-retro] :where(code, kbd, samp, pre) {
   font-family: var(--eink-font-mono);
+}
+
+/* A key is a physical thing on paper: a keycap frame with the same hard
+ * offset the rest of the elevation scale uses. */
+html[data-dsh-theme-eink-retro] kbd {
+  padding: 1px 5px;
+  color: var(--eink-ink);
+  background-color: var(--eink-paper-bright);
+  border: 1px solid var(--eink-rule-strong);
+  border-radius: var(--eink-radius-tight);
+  box-shadow: var(--eink-shadow-1);
+  font-size: 0.9em;
+  line-height: 1.4;
+  white-space: nowrap;
 }
 
 html[data-dsh-theme-eink-retro] :where(pre, [class*="code-block" i]) {

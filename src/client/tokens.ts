@@ -111,11 +111,17 @@ export const EINK_BALANCED_TOKENS: ThemeTokenOverrides = {
   "--dsw-specific-sidebar-nav-item-active-accent": pair("#ffffff", "#161616"),
   "--dsw-specific-sidebar-nav-item-hover": pair("#d2d2d2", "#303030"),
   "--dsw-specific-tip": pair("#e8e8e8", "#303030"),
-  "--dsw-shadow-lv1": pair("1px 1px 0 #16161633", "1px 1px 0 #0008"),
+  /**
+   * Solid ink, no alpha. A 1-bit display cannot express a 20%-gray shadow, and
+   * neither can print: the offset either lands or it does not. A translucent
+   * offset reads as a soft modern drop, which is the one place the palette was
+   * still hedging.
+   */
+  "--dsw-shadow-lv1": pair("1px 1px 0 #161616", "1px 1px 0 #000000"),
   "--dsw-shadow-lv1-blur": pair("none", "none"),
-  "--dsw-shadow-lv2": pair("2px 2px 0 #16161633", "2px 2px 0 #0008"),
+  "--dsw-shadow-lv2": pair("2px 2px 0 #161616", "2px 2px 0 #000000"),
   "--dsw-shadow-lv2-blur": pair("none", "none"),
-  "--dsw-shadow-lv3": pair("2px 2px 0 #16161640", "2px 2px 0 #0009"),
+  "--dsw-shadow-lv3": pair("2px 2px 0 #161616", "2px 2px 0 #000000"),
   "--dsw-shadow-lv3-blur": pair("none", "none"),
 };
 

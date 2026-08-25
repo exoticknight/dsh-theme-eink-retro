@@ -14,7 +14,7 @@ E‑Ink Retro is a client-side theme plugin for DeepSeek Harness. Its design lan
 
 - Paper-and-ink palette: light `#f4f4f4` surfaces with `#161616` ink, dark `#181818` with `#f4f4f4`; kept strictly neutral
 - One corner-radius scale: 1px on chips and switch parts, 2px on controls and panels
-- Hard offset shadows at 1px and 2px on floating layers, flat like print; controls carry a frame instead of a shadow
+- Hard offset shadows at 1px and 2px on floating layers, solid ink with no alpha, the way print and a 1-bit screen actually behave; controls are shaped by fill or frame, never by elevation
 - Selection states flip fully between black and white
 - Switch drawn as a rectangular track with a square knob
 - Links are ink, with a rule under prose links so they stay identifiable without hue
@@ -29,7 +29,7 @@ E‑Ink Retro is a client-side theme plugin for DeepSeek Harness. Its design lan
 
 | Mode | Description |
 | --- | --- |
-| **Balanced** (default) | Applies the paper-and-ink shell and control language. Keeps semantic colors where they carry meaning: status, chart, brand, and content colors are preserved in low saturation. |
+| **Balanced** (default) | Applies the paper-and-ink shell and control language. Keeps semantic colors where they carry meaning: status, chart, and content colors are preserved in low saturation. The brand color is ink in both modes by design — it is also the selection color, and a colored accent would break the black-and-white inversion the theme is built on. |
 | **Immersive** | Fully monochrome. The remaining status hues are replaced by an ink ramp — error carries the most ink, warn sits in the middle, success is the quietest — and verified decorative and compatibility surfaces are grayscaled. User media (images, attachments, video) stays untouched. |
 | **Off** | Removes all theme tokens and CSS overrides via the native settings checkbox. The plugin stays installed. |
 

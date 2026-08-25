@@ -280,26 +280,37 @@ test("markdown quotes and overlay surfaces stay flat and rectilinear", () => {
 });
 
 test("switches and semantic destructive buttons stay flat and explicit", () => {
+  // Every switch DSH ships is button > track > thumb, so there is one rule set
+  // and it is gated on that structure. The button stays blank, the track owns
+  // the state, and the thumb offsets are measured against the track's padding
+  // box: 2px centres a 10px thumb in a 30 x 16 track, 16px parks it at the far
+  // end, and both rest 3px from their edge.
   assert.match(
     css,
-    /\[role="switch"\]\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+    /\[role="switch"\]:has\(> :last-child > :only-child\)\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*none\s*!important/s,
   );
   assert.match(
     css,
-    /\[role="switch"\]\s*>\s*:last-child\s*>\s*\*\s*\{[^}]*box-shadow:\s*none\s*!important/s,
+    /\[role="switch"\]:has\(> :last-child > :only-child\)\s*>\s*:last-child\s*\{[^}]*width:\s*30px\s*!important[^}]*height:\s*16px\s*!important[^}]*border:\s*1px solid var\(--eink-ink\)\s*!important/s,
   );
   assert.match(
     css,
-    /\[role="switch"\]\s*>\s*:last-child\s*\{[^}]*box-sizing:\s*border-box[^}]*width:\s*30px[^}]*height:\s*16px/s,
+    /\[role="switch"\]:has\(> :last-child > :only-child\)\s*>\s*:last-child\s*>\s*:only-child\s*\{[^}]*width:\s*10px\s*!important[^}]*height:\s*10px\s*!important[^}]*top:\s*2px\s*!important[^}]*left:\s*2px\s*!important/s,
   );
   assert.match(
     css,
-    /\[role="switch"\]:not\(\[aria-checked="true"\]\)\s*>\s*:last-child\s*>\s*\*\s*\{[^}]*background-color:\s*var\(--eink-ink\)/s,
+    /\[role="switch"\]\[aria-checked="true"\]:has\(> :last-child > :only-child\)[^{]*>\s*:last-child\s*>\s*:only-child\s*\{[^}]*left:\s*16px\s*!important[^}]*background-color:\s*var\(--eink-selection-fg\)\s*!important/s,
   );
-  assert.match(
-    css,
-    /\[role="switch"\]\s*>\s*:last-child\s*>\s*\*\s*\{[^}]*width:\s*10px[^}]*height:\s*10px[^}]*border:\s*0/s,
-  );
+  // No rule that targets a switch may do so without first checking it has that
+  // structure. Role lists inside :where() — the shared focus frame, the
+  // inverted selection set — address it as one role among many and are exempt.
+  const switchRules = (
+    css.match(/html\[data-dsh-theme-eink-retro\][^{}]*\[role="switch"\][^{}]*\{/g) || []
+  ).filter((rule) => !rule.includes(":where("));
+  assert.ok(switchRules.length > 0, "no switch rules found");
+  for (const rule of switchRules) {
+    assert.match(rule, /:has\(> :last-child > :only-child\)/, `ungated switch rule: ${rule.trim()}`);
+  }
   assert.match(css, /button\[class\*="deleteButton" i\]/);
   assert.match(css, /\[role="button"\][^}]*border-radius/s);
 });
@@ -542,5 +553,23 @@ test("decorative chrome carries no hue of its own", () => {
   assert.match(
     css,
     /data-dsh-theme-eink-retro="immersive"\] :has\(> \[style\*="spritesheet"\]\)\s*\{[^}]*filter:\s*grayscale\(1\)/s,
+  );
+});
+
+test("elevation is solid ink, the way print and a 1-bit screen behave", () => {
+  const shadows = [...tokens.matchAll(/"--dsw-shadow-lv\d":\s*pair\("([^"]+)",\s*"([^"]+)"\)/g)];
+  assert.equal(shadows.length, 3, "expected three elevation steps");
+  for (const [, light, dark] of shadows) {
+    for (const value of [light, dark]) {
+      assert.doesNotMatch(value, /blur|rgba|hsla/, `${value} is not a hard offset`);
+      assert.match(value, /^\d+px \d+px 0 #[0-9a-f]{6}$/, `${value} carries alpha or a blur radius`);
+    }
+  }
+});
+
+test("a keycap is a physical object on paper", () => {
+  assert.match(
+    css,
+    /html\[data-dsh-theme-eink-retro\] kbd\s*\{[^}]*border:\s*1px solid var\(--eink-rule-strong\)[^}]*box-shadow:\s*var\(--eink-shadow-1\)/s,
   );
 });
