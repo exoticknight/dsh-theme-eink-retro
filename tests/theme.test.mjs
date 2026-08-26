@@ -9,6 +9,8 @@ const css = fs.readFileSync(path.join(root, "src/theme.css"), "utf8");
 const client = fs.readFileSync(path.join(root, "src/client/index.ts"), "utf8");
 const tokens = fs.readFileSync(path.join(root, "src/client/tokens.ts"), "utf8");
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
+const buildScript = fs.readFileSync(path.join(root, "scripts/build.mjs"), "utf8");
+const gitAttributes = fs.readFileSync(path.join(root, ".gitattributes"), "utf8");
 const readmeEn = fs.readFileSync(path.join(root, "README.md"), "utf8");
 const readmeZh = fs.readFileSync(path.join(root, "README.zh-CN.md"), "utf8");
 
@@ -16,9 +18,22 @@ test("package exposes a standard DSH host and client bundle", () => {
   assert.equal(pkg.name, "dsh-theme-eink-retro");
   assert.equal(pkg.main, "lib/index.js");
   assert.equal(pkg.exports["./client"], "./lib/client.js");
+  assert.equal(pkg.dsh.bundle.patch, "./cordis.patch.yml");
   assert.equal(pkg.dsh.client.platform, "web");
   assert.ok(pkg.dsh.client.inject.includes("@deepseek-ai/dsh-client-ui-theme"));
   assert.ok(pkg.dsh.client.inject.includes("@deepseek-ai/dsh-client-ui-settings"));
+});
+
+test("package exposes release and support metadata", () => {
+  assert.equal(pkg.repository.url, "git+https://github.com/exoticknight/dsh-theme-eink-retro.git");
+  assert.equal(pkg.homepage, "https://github.com/exoticknight/dsh-theme-eink-retro#readme");
+  assert.equal(pkg.bugs.url, "https://github.com/exoticknight/dsh-theme-eink-retro/issues");
+  assert.match(pkg.scripts.prepack, /npm run check/);
+});
+
+test("build output is normalized across operating systems", () => {
+  assert.match(gitAttributes, /\*\s+text=auto\s+eol=lf/);
+  assert.match(buildScript, /replace\(\/\\r\\n\?\/g, "\\n"\)/);
 });
 
 test("package ships user-facing documentation in English and Chinese", () => {
@@ -26,8 +41,12 @@ test("package ships user-facing documentation in English and Chinese", () => {
   assert.ok(pkg.files.includes("README.zh-CN.md"));
   assert.match(readmeEn, /Install from source/);
   assert.match(readmeEn, /Compatibility boundaries/);
+  assert.match(readmeEn, /github:exoticknight\/dsh-theme-eink-retro#v0\.1\.0/);
+  assert.match(readmeEn, /Privacy and storage/);
   assert.match(readmeZh, /从源码安装/);
   assert.match(readmeZh, /兼容边界/);
+  assert.match(readmeZh, /github:exoticknight\/dsh-theme-eink-retro#v0\.1\.0/);
+  assert.match(readmeZh, /隐私与存储/);
 });
 
 test("settings use a native checkbox for the theme enabled state", () => {
@@ -107,14 +126,14 @@ test("composer preserves DSH's backdrop text and owns a single focus border", ()
   );
   assert.match(
     css,
-    /\[data-composer-card="true"\]:has\(\s*textarea\[data-dsh-part="composer-input"\]:focus-visible\s*\)\s*\{[^}]*box-shadow:\s*var\(--eink-shadow-2\), var\(--eink-focus-ring\)\s*!important/s,
+    /\[data-composer-card="true"\]:has\(\s*textarea\[data-dsh-part="composer-input"\]:focus-visible\s*\)\s*\{[^}]*box-shadow:\s*var\(--eink-focus-ring\)\s*!important/s,
   );
 });
 
 test("the no-workspace composer is a solid rectilinear picker surface", () => {
   assert.match(
     css,
-    /\[data-composer-card="true"\]:has\(\s*textarea\[aria-haspopup="menu"\]\[readonly\]\s*\)\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border:\s*1px solid var\(--eink-rule-strong\)\s*!important[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important[^}]*box-shadow:\s*var\(--eink-shadow-2\)\s*!important/s,
+    /\[data-composer-card="true"\]:has\(\s*textarea\[aria-haspopup="menu"\]\[readonly\]\s*\)\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border:\s*1px solid var\(--eink-rule-strong\)\s*!important[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
   );
   assert.match(
     css,
@@ -273,16 +292,16 @@ test("approval requests and active turn status use neutral ink treatments", () =
 test("session state dots use the e-ink status palette and a legible chase", () => {
   assert.match(
     css,
-    /\[data-state="ongoing"\]\s*\{[^}]*--dsh-state-ongoing:\s*var\(--eink-ink-2\)\s*!important/s,
+    /svg\[data-state="ongoing"\]\[aria-hidden="true"\]\[viewBox="0 0 10 10"\]\s*\{[^}]*--dsh-state-ongoing:\s*var\(--eink-ink-2\)\s*!important/s,
   );
   assert.match(
     css,
-    /\[data-state="ongoing"\]\s*>\s*rect\s*\{[^}]*animation-name:\s*eink-retro-state-dot-chase\s*!important/s,
+    /svg\[data-state="ongoing"\]\[aria-hidden="true"\]\[viewBox="0 0 10 10"\]\s*>\s*rect\s*\{[^}]*animation-name:\s*eink-retro-state-dot-chase\s*!important/s,
   );
   assert.match(css, /@keyframes eink-retro-state-dot-chase/);
   assert.match(
     css,
-    /\[data-state="done"\]::before\s*\{[^}]*opacity:\s*0\.16/s,
+    /span\[data-state="done"\]\[aria-hidden="true"\]::before\s*\{[^}]*opacity:\s*0\.16/s,
   );
 });
 

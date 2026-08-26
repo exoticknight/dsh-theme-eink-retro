@@ -194,8 +194,8 @@ html[data-dsh-theme-eink-retro] body {
    * lets whatever sits behind the window bleed through the line. */
   --eink-rule: color-mix(in srgb, var(--eink-ink) 36%, var(--eink-paper-bright));
   --eink-rule-strong: color-mix(in srgb, var(--eink-ink) 63%, var(--eink-paper-bright));
-  --eink-shadow-1: var(--dsw-shadow-lv1, 1px 1px 0 #16161633);
-  --eink-shadow-2: var(--dsw-shadow-lv2, 2px 2px 0 #16161633);
+  --eink-shadow-1: var(--dsw-shadow-lv1, 1px 1px 0 var(--eink-ink));
+  --eink-shadow-2: var(--dsw-shadow-lv2, 2px 2px 0 var(--eink-ink));
   --eink-well: inset 1px 1px 0 color-mix(in srgb, var(--eink-ink) 14%, transparent);
   --eink-focus-ring: inset 0 0 0 1px var(--eink-ink);
   --eink-focus-ring-inverse: inset 0 0 0 1px var(--eink-selection-fg);
@@ -512,11 +512,11 @@ html[data-dsh-theme-eink-retro] [class*="badgeInvokable"] {
  * pixel chase a slightly clearer head-to-tail contrast. The selected row still
  * inverts the matrix through its own currentColor rule. A completed state stays
  * still; only its quiet halo gains enough density to read at sidebar scale. */
-html[data-dsh-theme-eink-retro] [data-state="ongoing"] {
+html[data-dsh-theme-eink-retro] svg[data-state="ongoing"][aria-hidden="true"][viewBox="0 0 10 10"] {
   --dsh-state-ongoing: var(--eink-ink-2) !important;
 }
 
-html[data-dsh-theme-eink-retro] [data-state="ongoing"] > rect {
+html[data-dsh-theme-eink-retro] svg[data-state="ongoing"][aria-hidden="true"][viewBox="0 0 10 10"] > rect {
   animation-name: eink-retro-state-dot-chase !important;
 }
 
@@ -542,7 +542,7 @@ html[data-dsh-theme-eink-retro] [data-state="ongoing"] > rect {
   }
 }
 
-html[data-dsh-theme-eink-retro] [data-state="done"]::before {
+html[data-dsh-theme-eink-retro] span[data-state="done"][aria-hidden="true"]::before {
   opacity: 0.16;
 }
 
@@ -572,14 +572,15 @@ html[data-dsh-theme-eink-retro] textarea[data-dsh-part="composer-input"] {
  * trigger and draws a 22px dashed SVG-mask ring over its real border. The ring
  * survives the card's rectilinear theme radius and reads like a drop zone.
  * Keep the generous whole-card target, but express it as the same solid paper
- * panel used everywhere else; a real border also survives forced colors. */
+ * panel used everywhere else. The card keeps one border and no drop shadow so
+ * its lower edge cannot read as a stray rule; the border survives forced colors. */
 html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
   textarea[aria-haspopup="menu"][readonly]
 ) {
   background-color: var(--eink-paper-bright) !important;
   border: 1px solid var(--eink-rule-strong) !important;
   border-radius: var(--eink-radius-surface) !important;
-  box-shadow: var(--eink-shadow-2) !important;
+  box-shadow: none !important;
 }
 
 html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
@@ -630,7 +631,7 @@ html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
   textarea[data-dsh-part="composer-input"]:focus-visible
 ) {
   border-color: var(--eink-ink) !important;
-  box-shadow: var(--eink-shadow-2), var(--eink-focus-ring) !important;
+  box-shadow: var(--eink-focus-ring) !important;
 }
 
 /* One focus frame for everything that can be reached by keyboard. Ink is by

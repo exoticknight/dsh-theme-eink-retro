@@ -1,7 +1,7 @@
 {
   "name": "dsh-theme-eink-retro",
   "version": "0.1.0",
-  "description": "A modern e-ink theme plugin for DeepSeek Harness, inspired by classic Macintosh interaction without changing DSH layout.",
+  "description": "A paper-and-ink client-side theme for DeepSeek Harness with Balanced and Immersive modes.",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
@@ -21,7 +21,8 @@
     "build": "node scripts/build.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "node --test tests/*.test.mjs",
-    "check": "npm run typecheck && npm run test && npm run build"
+    "check": "npm run typecheck && npm run test && npm run build",
+    "prepack": "npm run check"
   },
   "keywords": [
     "deepseek-harness",
@@ -29,16 +30,29 @@
     "dsh-plugin",
     "theme",
     "e-ink",
+    "monochrome",
     "macintosh",
     "retro-modern"
   ],
+  "author": "exoticknight",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/exoticknight/dsh-theme-eink-retro.git"
+  },
+  "homepage": "https://github.com/exoticknight/dsh-theme-eink-retro#readme",
+  "bugs": {
+    "url": "https://github.com/exoticknight/dsh-theme-eink-retro/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=20"
   },
   "dsh": {
     "bundle": {
-      "patch": "cordis.patch.yml"
+      "patch": "./cordis.patch.yml"
     },
     "client": {
       "inject": [

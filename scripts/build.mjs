@@ -6,6 +6,16 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const lib = path.join(root, "lib");
 
+const normalizeTextNewlines = {
+  name: "normalize-text-newlines",
+  setup(build) {
+    build.onLoad({ filter: /\.css$/ }, async ({ path: filename }) => ({
+      contents: (await fs.promises.readFile(filename, "utf8")).replace(/\r\n?/g, "\n"),
+      loader: "text",
+    }));
+  },
+};
+
 await build({
   entryPoints: [path.join(root, "src/host/index.ts")],
   bundle: true,
@@ -23,7 +33,7 @@ const client = await build({
   platform: "browser",
   format: "cjs",
   target: "es2020",
-  loader: { ".css": "text" },
+  plugins: [normalizeTextNewlines],
   external: ["react"],
   write: false,
   logLevel: "info",

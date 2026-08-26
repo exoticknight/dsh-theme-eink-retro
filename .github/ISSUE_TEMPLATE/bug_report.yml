@@ -1,0 +1,54 @@
+name: Bug report
+description: Report a visual or functional problem with E-Ink Retro.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to report a problem.
+  - type: input
+    id: dsh-version
+    attributes:
+      label: DSH version
+      placeholder: 0.1.1-rc.2
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Theme mode
+      options:
+        - Balanced
+        - Immersive
+        - Off
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Include the screen or control involved and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open …
+        2. Select …
+        3. See …
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system, browser, and other active DSH client themes or UI plugins.
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or logs
+      description: Remove private workspace names, paths, prompts, and account information before uploading.

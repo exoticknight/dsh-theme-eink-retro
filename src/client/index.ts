@@ -96,12 +96,12 @@ function createSettingsSection(ctx: ClientContext, syncMode: SyncMode): Componen
     {
       mode: "balanced",
       label: "平衡模式（推荐）",
-      description: "统一 DSH 壳层与控件，保留插件图表、告警、品牌和内容颜色。",
+      description: "统一 DSH 壳层与控件，保留承载状态含义的语义色和用户内容原色。",
     },
     {
       mode: "immersive",
       label: "完全沉浸",
-      description: "状态色、数据标记、装饰皮肤一并转为墨色，界面完全黑白，状态改用墨色深浅区分。",
+      description: "将已适配的界面与兼容层转为墨色阶梯，图片、附件和视频保持原样。",
     },
   ];
 
@@ -139,7 +139,7 @@ function createSettingsSection(ctx: ClientContext, syncMode: SyncMode): Componen
       React.createElement(
         "p",
         { className: "eink-retro-settings__intro" },
-        "启用主题后选择覆盖范围。切换其他第三方皮肤时会自动暂停；回到 DSH 默认浅色、深色或跟随系统后恢复。",
+        "切换其他第三方皮肤时，E‑Ink Retro 会暂停。重新启用或切换 E‑Ink 模式时，DSH 会回到跟随系统。",
       ),
       React.createElement(
         "label",
