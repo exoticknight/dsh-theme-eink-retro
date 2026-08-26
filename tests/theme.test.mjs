@@ -13,6 +13,7 @@ const buildScript = fs.readFileSync(path.join(root, "scripts/build.mjs"), "utf8"
 const gitAttributes = fs.readFileSync(path.join(root, ".gitattributes"), "utf8");
 const readmeEn = fs.readFileSync(path.join(root, "README.md"), "utf8");
 const readmeZh = fs.readFileSync(path.join(root, "README.zh-CN.md"), "utf8");
+const releaseWorkflow = fs.readFileSync(path.join(root, ".github/workflows/release.yml"), "utf8");
 
 test("package exposes a standard DSH host and client bundle", () => {
   assert.equal(pkg.name, "dsh-theme-eink-retro");
@@ -29,6 +30,18 @@ test("package exposes release and support metadata", () => {
   assert.equal(pkg.homepage, "https://github.com/exoticknight/dsh-theme-eink-retro#readme");
   assert.equal(pkg.bugs.url, "https://github.com/exoticknight/dsh-theme-eink-retro/issues");
   assert.match(pkg.scripts.prepack, /npm run check/);
+});
+
+test("version tags verify and publish a reproducible GitHub release", () => {
+  assert.match(releaseWorkflow, /tags:\s*\n\s*- ["']v\[0-9\]\+\.\[0-9\]\+\.\[0-9\]\+["']/);
+  assert.match(releaseWorkflow, /GITHUB_REF_NAME/);
+  assert.match(releaseWorkflow, /package\.json/);
+  assert.match(releaseWorkflow, /npm run check/);
+  assert.match(releaseWorkflow, /git diff --exit-code -- lib/);
+  assert.match(releaseWorkflow, /npm pack --ignore-scripts/);
+  assert.match(releaseWorkflow, /gh release edit[^\n]*--verify-tag[^\n]*--notes-file/);
+  assert.match(releaseWorkflow, /gh release upload[^\n]*--clobber/);
+  assert.match(releaseWorkflow, /gh release create[^\n]*--verify-tag/);
 });
 
 test("build output is normalized across operating systems", () => {
