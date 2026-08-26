@@ -3,10 +3,12 @@ import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { transform } from "esbuild";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const css = fs.readFileSync(path.join(root, "src/theme.css"), "utf8");
 const client = fs.readFileSync(path.join(root, "src/client/index.ts"), "utf8");
+const i18nSource = fs.readFileSync(path.join(root, "src/client/i18n.ts"), "utf8");
 const tokens = fs.readFileSync(path.join(root, "src/client/tokens.ts"), "utf8");
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 const buildScript = fs.readFileSync(path.join(root, "scripts/build.mjs"), "utf8");
@@ -14,6 +16,11 @@ const gitAttributes = fs.readFileSync(path.join(root, ".gitattributes"), "utf8")
 const readmeEn = fs.readFileSync(path.join(root, "README.md"), "utf8");
 const readmeZh = fs.readFileSync(path.join(root, "README.zh-CN.md"), "utf8");
 const releaseWorkflow = fs.readFileSync(path.join(root, ".github/workflows/release.yml"), "utf8");
+
+async function loadI18n() {
+  const { code } = await transform(i18nSource, { format: "esm", loader: "ts", target: "node20" });
+  return import(`data:text/javascript;base64,${Buffer.from(code).toString("base64")}`);
+}
 
 test("package exposes a standard DSH host and client bundle", () => {
   assert.equal(pkg.name, "dsh-theme-eink-retro");
@@ -71,6 +78,96 @@ test("settings use a native checkbox for the theme enabled state", () => {
     css,
     /\.eink-retro-settings__enabled-input\s*\{[^}]*appearance:\s*auto\s*!important/s,
   );
+});
+
+test("settings translations cover English and Simplified Chinese", async () => {
+  const { messagesForLocale } = await loadI18n();
+  const english = messagesForLocale("en");
+  const chinese = messagesForLocale("zh-CN");
+
+  assert.equal(english.enabledTitle, "Enable theme");
+  assert.equal(english.balanced.label, "Balanced (recommended)");
+  assert.equal(chinese.enabledTitle, "启用主题");
+  assert.equal(chinese.balanced.label, "平衡模式（推荐）");
+});
+
+test("settings locale follows the page language with an English fallback", async () => {
+  const { detectLocale, localeForLanguageTag } = await loadI18n();
+
+  for (const languageTag of ["zh", "zh-CN", "zh-SG", "zh-Hans", "zh-Hans-CN", "zh-CN-u-nu-hanidec"]) {
+    assert.equal(localeForLanguageTag(languageTag), "zh-CN");
+  }
+  for (const languageTag of ["", "not_a_locale", "en", "en-US", "fr", "zh-TW", "zh-Hant"]) {
+    assert.equal(localeForLanguageTag(languageTag), "en");
+  }
+  assert.equal(detectLocale("zh-CN", ["en-US"]), "zh-CN");
+  assert.equal(detectLocale("", ["zh-SG", "en-US"]), "zh-CN");
+  assert.equal(detectLocale("", []), "en");
+  assert.equal(detectLocale("fr-FR", ["zh-CN"]), "en");
+});
+
+test("settings copy reacts to page and browser language changes", async () => {
+  const { messagesForLocale, watchLocale } = await loadI18n();
+  const originalDescriptors = Object.fromEntries(
+    ["document", "navigator", "MutationObserver", "window"].map((name) => [
+      name,
+      Object.getOwnPropertyDescriptor(globalThis, name),
+    ]),
+  );
+  const documentElement = { lang: "en" };
+  const listeners = new Map();
+  let mutationCallback;
+  let disconnected = false;
+
+  class FakeMutationObserver {
+    constructor(callback) {
+      mutationCallback = callback;
+    }
+
+    observe(target, options) {
+      assert.equal(target, documentElement);
+      assert.deepEqual(options, { attributeFilter: ["lang"], attributes: true });
+    }
+
+    disconnect() {
+      disconnected = true;
+    }
+  }
+
+  Object.defineProperties(globalThis, {
+    document: { configurable: true, value: { documentElement } },
+    navigator: { configurable: true, value: { language: "en-US", languages: ["en-US"] } },
+    MutationObserver: { configurable: true, value: FakeMutationObserver },
+    window: {
+      configurable: true,
+      value: {
+        addEventListener: (name, listener) => listeners.set(name, listener),
+        removeEventListener: (name, listener) => {
+          if (listeners.get(name) === listener) listeners.delete(name);
+        },
+      },
+    },
+  });
+
+  try {
+    const enabledTitles = [];
+    const dispose = watchLocale((locale) => enabledTitles.push(messagesForLocale(locale).enabledTitle));
+
+    documentElement.lang = "zh-Hans-CN";
+    mutationCallback();
+    documentElement.lang = "en-GB";
+    listeners.get("languagechange")();
+
+    assert.deepEqual(enabledTitles, ["启用主题", "Enable theme"]);
+    dispose();
+    assert.equal(disconnected, true);
+    assert.equal(listeners.has("languagechange"), false);
+  } finally {
+    for (const [name, descriptor] of Object.entries(originalDescriptors)) {
+      if (descriptor) Object.defineProperty(globalThis, name, descriptor);
+      else delete globalThis[name];
+    }
+  }
 });
 
 test("balanced mode uses the official semantic token layer", () => {

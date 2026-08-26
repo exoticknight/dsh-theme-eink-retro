@@ -1,5 +1,6 @@
 import React, { type ComponentType, type ReactElement } from "react";
 import themeCss from "../theme.css";
+import { detectCurrentLocale, messagesForLocale, watchLocale, type Locale } from "./i18n.js";
 import { EINK_TOKEN_SENTINEL, tokensForMode, type ThemeTokenOverrides } from "./tokens.js";
 
 const STYLE_ID = "dsh-theme-eink-retro/style";
@@ -92,21 +93,9 @@ function applyMode(root: HTMLElement, mode: ThemeMode, snapshot: ThemeSnapshot):
 type SyncMode = (mode: ThemeMode, snapshot: ThemeSnapshot) => ModeViewState;
 
 function createSettingsSection(ctx: ClientContext, syncMode: SyncMode): ComponentType {
-  const options: Array<{ description: string; label: string; mode: ActiveThemeMode }> = [
-    {
-      mode: "balanced",
-      label: "平衡模式（推荐）",
-      description: "统一 DSH 壳层与控件，保留承载状态含义的语义色和用户内容原色。",
-    },
-    {
-      mode: "immersive",
-      label: "完全沉浸",
-      description: "将已适配的界面与兼容层转为墨色阶梯，图片、附件和视频保持原样。",
-    },
-  ];
-
   return function EinkRetroSettings(): ReactElement {
     const [view, setView] = React.useState<ModeViewState>(() => modeState(readMode(), ctx.theme.getTheme()));
+    const [locale, setLocale] = React.useState<Locale>(detectCurrentLocale);
 
     React.useEffect(() => {
       const onModeChange = (event: Event) => {
@@ -115,6 +104,8 @@ function createSettingsSection(ctx: ClientContext, syncMode: SyncMode): Componen
       window.addEventListener(MODE_EVENT, onModeChange);
       return () => window.removeEventListener(MODE_EVENT, onModeChange);
     }, []);
+
+    React.useEffect(() => watchLocale(setLocale), []);
 
     const selectMode = (mode: ThemeMode) => {
       writeMode(mode);
@@ -131,6 +122,11 @@ function createSettingsSection(ctx: ClientContext, syncMode: SyncMode): Componen
     };
 
     const enabled = view.mode !== "off";
+    const copy = messagesForLocale(locale);
+    const options: Array<{ description: string; label: string; mode: ActiveThemeMode }> = [
+      { mode: "balanced", ...copy.balanced },
+      { mode: "immersive", ...copy.immersive },
+    ];
 
     return React.createElement(
       "section",
@@ -139,7 +135,7 @@ function createSettingsSection(ctx: ClientContext, syncMode: SyncMode): Componen
       React.createElement(
         "p",
         { className: "eink-retro-settings__intro" },
-        "切换其他第三方皮肤时，E‑Ink Retro 会暂停。重新启用或切换 E‑Ink 模式时，DSH 会回到跟随系统。",
+        copy.intro,
       ),
       React.createElement(
         "label",
@@ -147,11 +143,11 @@ function createSettingsSection(ctx: ClientContext, syncMode: SyncMode): Componen
         React.createElement(
           "span",
           { className: "eink-retro-settings__enabled-copy" },
-          React.createElement("span", { className: "eink-retro-settings__enabled-title" }, "启用主题"),
+          React.createElement("span", { className: "eink-retro-settings__enabled-title" }, copy.enabledTitle),
           React.createElement(
             "span",
             { className: "eink-retro-settings__enabled-description" },
-            "关闭后移除全部 E‑Ink 颜色和组件覆盖。",
+            copy.enabledDescription,
           ),
         ),
         React.createElement(
@@ -167,7 +163,7 @@ function createSettingsSection(ctx: ClientContext, syncMode: SyncMode): Componen
       enabled
         ? React.createElement(
             "div",
-            { className: "eink-retro-settings__options", role: "radiogroup", "aria-label": "E‑Ink 主题模式" },
+            { className: "eink-retro-settings__options", role: "radiogroup", "aria-label": copy.modeGroupLabel },
             ...options.map((option) =>
               React.createElement(
                 "button",
@@ -189,7 +185,7 @@ function createSettingsSection(ctx: ClientContext, syncMode: SyncMode): Componen
         ? React.createElement(
             "p",
             { className: "eink-retro-settings__status", role: "status" },
-            "当前正在使用另一套第三方皮肤，E‑Ink Retro 已暂时停用。",
+            copy.pausedStatus,
           )
         : null,
     );

@@ -12,6 +12,7 @@ E-Ink Retro is a client-side theme for DeepSeek Harness. It uses neutral paper s
 - Immersive mode maps supported DSH surfaces and compatibility layers to a monochrome ink ramp.
 - Links, menus, form controls, tree items, and other adapted elements share a visible keyboard focus treatment.
 - Images, attachments, video, canvas output, and iframe content keep their original rendering.
+- Theme settings follow the DSH page language in English or Simplified Chinese, with English as the fallback.
 - The theme pauses when you select another third-party theme.
 
 ## Modes
