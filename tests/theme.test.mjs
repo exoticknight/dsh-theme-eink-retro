@@ -105,6 +105,31 @@ test("composer preserves DSH's backdrop text and owns a single focus border", ()
     css,
     /\[data-dsh-part="scrollport"\]\s*>\s*:has\(\s*\[data-composer-card="true"\]\s*\)::before\s*\{[^}]*linear-gradient/s,
   );
+  assert.match(
+    css,
+    /\[data-composer-card="true"\]:has\(\s*textarea\[data-dsh-part="composer-input"\]:focus-visible\s*\)\s*\{[^}]*box-shadow:\s*var\(--eink-shadow-2\), var\(--eink-focus-ring\)\s*!important/s,
+  );
+});
+
+test("the no-workspace composer is a solid rectilinear picker surface", () => {
+  assert.match(
+    css,
+    /\[data-composer-card="true"\]:has\(\s*textarea\[aria-haspopup="menu"\]\[readonly\]\s*\)\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border:\s*1px solid var\(--eink-rule-strong\)\s*!important[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important[^}]*box-shadow:\s*var\(--eink-shadow-2\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-composer-card="true"\]:has\(\s*textarea\[aria-haspopup="menu"\]\[readonly\]\s*\)::after\s*\{[^}]*content:\s*none\s*!important[^}]*mask:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-composer-card="true"\]:has\(\s*textarea\[aria-haspopup="menu"\]\[readonly\]\s*\):hover\s*\{[^}]*border-color:\s*var\(--eink-ink\)\s*!important/s,
+  );
+  const triggerHover = css
+    .slice(css.indexOf('[data-composer-card="true"]:has(\n  textarea[aria-haspopup="menu"][readonly]\n):hover'))
+    .split("}")[0];
+  assert.doesNotMatch(triggerHover, /box-shadow/);
+  // The trigger state is structural and does not depend on its localized placeholder.
+  assert.doesNotMatch(css, /placeholder="选择一个工作区开始"/);
 });
 
 test("composer context usage ring separates its track from its used portion", () => {
@@ -133,7 +158,15 @@ test("form controls use one focus owner and trajectory search has one frame", ()
   );
   assert.match(
     css,
-    /\[role="toolbar"\]:has\(input\[type="search"\]\)[^{]*:has\(\s*>\s*input\[type="search"\]:focus-visible\s*\)[^{]*\{[^}]*border-color:\s*var\(--eink-ink\)/s,
+    /\[role="toolbar"\]:has\(input\[type="search"\]\)[^{]*:has\(\s*>\s*input\[type="search"\]:focus-visible\s*\)[^{]*\{[^}]*border-color:\s*var\(--eink-ink\)[^}]*box-shadow:\s*var\(--eink-focus-ring\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-gitgraph-popover="true"\]\s*>\s*:has\(> input\)\s*\{[^}]*border:\s*1px solid var\(--eink-rule-strong\)\s*!important[^}]*border-radius:\s*var\(--eink-radius-control\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-gitgraph-popover="true"\]\s*>\s*:has\(> input\)\s*>\s*input\s*\{[^}]*border:\s*0\s*!important[^}]*box-shadow:\s*none\s*!important/s,
   );
 });
 
@@ -144,7 +177,7 @@ test("workspace tooltips stay legible and the add button owns an unclipped focus
   );
   assert.match(
     css,
-    /button\[aria-label\*="添加工作区"\]:focus-visible,[^{]*button\[aria-label\*="Add workspace" i\]:focus-visible\s*\{[^}]*outline:\s*0\s*!important[^}]*box-shadow:\s*inset 0 0 0 1px var\(--eink-ink\)\s*!important/s,
+    /button\[aria-label\*="添加工作区"\]:focus-visible,[^{]*button\[aria-label\*="Add workspace" i\]:focus-visible\s*\{[^}]*outline:\s*0\s*!important[^}]*box-shadow:\s*var\(--eink-focus-ring\)\s*!important/s,
   );
 });
 
@@ -159,7 +192,7 @@ test("workspace search and user messages use crisp surfaces with one focus owner
   );
   assert.match(
     css,
-    /:has\(> button\[aria-label\*="搜索会话"\]\):has\(> input:focus-visible\),[^{]*\{[^}]*border-color:\s*var\(--eink-ink\)\s*!important/s,
+    /:has\(> button\[aria-label\*="搜索会话"\]\):has\(> input:focus-visible\),[^{]*\{[^}]*border-color:\s*var\(--eink-ink\)\s*!important[^}]*box-shadow:\s*var\(--eink-focus-ring\)\s*!important/s,
   );
   assert.match(
     css,
@@ -237,6 +270,22 @@ test("approval requests and active turn status use neutral ink treatments", () =
   );
 });
 
+test("session state dots use the e-ink status palette and a legible chase", () => {
+  assert.match(
+    css,
+    /\[data-state="ongoing"\]\s*\{[^}]*--dsh-state-ongoing:\s*var\(--eink-ink-2\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-state="ongoing"\]\s*>\s*rect\s*\{[^}]*animation-name:\s*eink-retro-state-dot-chase\s*!important/s,
+  );
+  assert.match(css, /@keyframes eink-retro-state-dot-chase/);
+  assert.match(
+    css,
+    /\[data-state="done"\]::before\s*\{[^}]*opacity:\s*0\.16/s,
+  );
+});
+
 test("settings plugin cards share one neutral surface and text hierarchy", () => {
   assert.match(
     css,
@@ -252,7 +301,7 @@ test("settings plugin cards share one neutral surface and text hierarchy", () =>
   );
   assert.match(
     css,
-    /\[data-slot="settings\.plugin\.item"\][^{]*label:has\(> input\[type="radio"\]:checked\)\s*\{[^}]*border-color:\s*var\(--eink-ink\)\s*!important[^}]*box-shadow:\s*inset 0 -2px 0 var\(--eink-ink\)\s*!important/s,
+    /\[data-slot="settings\.plugin\.item"\][^{]*label:has\(> input\[type="radio"\]:checked\)\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border-color:\s*var\(--eink-ink\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
   );
   assert.match(
     css,
@@ -318,8 +367,25 @@ test("switches and semantic destructive buttons stay flat and explicit", () => {
 test("secondary tabs, markdown tables and capability badges keep readable hierarchy", () => {
   assert.match(
     css,
-    /\[role="tab"\]\[aria-selected="true"\]\s*\{[^}]*background-color:\s*transparent\s*!important/s,
+    /\[role="tab"\]\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*border-color:\s*transparent\s*!important[^}]*box-shadow:\s*none\s*!important/s,
   );
+  assert.match(
+    css,
+    /\[role="tab"\]:hover\s*\{[^}]*background-color:\s*var\(--eink-paper-raised\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[role="tab"\]\[aria-selected="true"\]\s*\{[^}]*background-color:\s*var\(--eink-paper-raised\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[role="tab"\]\[aria-selected="true"\]\s*\{[^}]*box-shadow:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[role="tab"\]:focus-visible\s*\{[^}]*background-color:\s*var\(--eink-selection-bg\)\s*!important[^}]*outline:\s*0\s*!important[^}]*box-shadow:\s*var\(--eink-focus-ring-inverse\)\s*!important/s,
+  );
+  assert.match(css, /\[role="tab"\]:focus:not\(:focus-visible\)\s*\{[^}]*outline:\s*0\s*!important/s);
   assert.match(css, /:where\(th, td\)\s*\{[^}]*padding:\s*8px 12px\s*!important/s);
   assert.match(
     css,
@@ -330,7 +396,15 @@ test("secondary tabs, markdown tables and capability badges keep readable hierar
 test("floating listboxes do not resize the conversation scrollport", () => {
   assert.match(
     css,
+    /:where\(\[role="menu"\], \[role="listbox"\]\)\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*background-image:\s*none\s*!important[^}]*backdrop-filter:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
     /\[data-dsh-part="scrollport"\]\s+:has\(>\s*\[role="listbox"\]\)\s*\{[^}]*contain:\s*layout/s,
+  );
+  assert.match(
+    css,
+    /:has\(:where\(\[role="menu"\], \[role="listbox"\]\)\)\s*\[role="tooltip"\]\s*\{[^}]*display:\s*none\s*!important/s,
   );
   assert.match(css, /\[role="listbox"\]\s*>\s*\*\s*\{[^}]*scrollbar-gutter:\s*stable/s);
   assert.match(
@@ -477,6 +551,7 @@ test("controls and surfaces take their radius from the matching token", () => {
     css,
     /:where\(button, input, textarea, select, \[role="button"\]\)\s*\{\s*border-radius:\s*var\(--eink-radius-control\)\s*!important/s,
   );
+  assert.match(css, /:where\([^)]*\[role="alert"\][^)]*\)\s*\{[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important/s);
   // Every radius on the scale goes through a token; only an explicit reset to
   // 0 and the `var(--token, 2px)` fallbacks used while the theme is off remain.
   const strayRadius = css
@@ -486,12 +561,20 @@ test("controls and surfaces take their radius from the matching token", () => {
   assert.deepEqual(strayRadius, [], `hardcoded radius: ${strayRadius.join(" | ")}`);
 });
 
-test("focused fields keep their inset well", () => {
+test("focus and selection never combine into a nested frame", () => {
   assert.match(css, /--eink-well:\s*inset 1px 1px 0/);
+  assert.match(css, /--eink-focus-ring:\s*inset 0 0 0 1px var\(--eink-ink\)/);
+  assert.match(css, /--eink-focus-ring-inverse:\s*inset 0 0 0 1px var\(--eink-selection-fg\)/);
   assert.match(
     css,
-    /:focus-visible\s*\{[^}]*box-shadow:\s*var\(--eink-well\), inset 0 -2px 0 var\(--eink-ink\)\s*!important/s,
+    /:where\(input, textarea, select, \[contenteditable="true"\]\):focus-visible\s*\{[^}]*box-shadow:\s*var\(--eink-focus-ring\)\s*!important/s,
   );
+  assert.match(
+    css,
+    /:where\([^}]*\[aria-current="true"\][^}]*\):focus-visible\s*\{[^}]*outline:\s*0\s*!important[^}]*box-shadow:\s*var\(--eink-focus-ring-inverse\)\s*!important/s,
+  );
+  const bottomInkLines = css.match(/box-shadow:\s*inset 0 -2px 0 var\(--eink-ink\)/g) ?? [];
+  assert.equal(bottomInkLines.length, 0, "selected tabs must not add a second focus-like line");
 });
 
 test("high contrast and print get an explicit treatment", () => {

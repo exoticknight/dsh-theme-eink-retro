@@ -170,6 +170,11 @@ html[data-dsh-theme-eink-retro] .eink-retro-settings__enabled-input:focus-visibl
  *   (controls stay flat: a control is shaped by its fill or its frame;
  *   ghost icon actions carry neither and rely on their label)
  *
+ * Interaction hierarchy — never spend elevation on state:
+ *   hover                 changes fill or border color only
+ *   focus                 adds one complete inner frame; elevation is retained
+ *   selected tab          changes fill and label weight, never adds another frame
+ *
  * Weights are mid-steps on purpose. On a variable face they render as drawn;
  * on a 400/700 system face the browser resolves both to the nearest real
  * weight, which is why they are named by role rather than by number. */
@@ -192,6 +197,8 @@ html[data-dsh-theme-eink-retro] body {
   --eink-shadow-1: var(--dsw-shadow-lv1, 1px 1px 0 #16161633);
   --eink-shadow-2: var(--dsw-shadow-lv2, 2px 2px 0 #16161633);
   --eink-well: inset 1px 1px 0 color-mix(in srgb, var(--eink-ink) 14%, transparent);
+  --eink-focus-ring: inset 0 0 0 1px var(--eink-ink);
+  --eink-focus-ring-inverse: inset 0 0 0 1px var(--eink-selection-fg);
   --eink-radius-tight: 1px;
   --eink-radius-control: 2px;
   --eink-radius-surface: 2px;
@@ -313,6 +320,7 @@ html[data-dsh-theme-eink-retro] :where(button, input, textarea, select, [role="b
 html[data-dsh-theme-eink-retro] :where(
   article,
   fieldset,
+  [role="alert"],
   [role="dialog"],
   [role="menu"],
   [role="listbox"],
@@ -498,6 +506,46 @@ html[data-dsh-theme-eink-retro] [class*="badgeInvokable"] {
   filter: none !important;
 }
 
+/* StateDot owns a component-local blue fallback, so the inherited compatibility
+ * token above cannot retint its running matrix by itself. Restore the theme's
+ * muted status ink at the primitive's stable semantic hook, then give the
+ * pixel chase a slightly clearer head-to-tail contrast. The selected row still
+ * inverts the matrix through its own currentColor rule. A completed state stays
+ * still; only its quiet halo gains enough density to read at sidebar scale. */
+html[data-dsh-theme-eink-retro] [data-state="ongoing"] {
+  --dsh-state-ongoing: var(--eink-ink-2) !important;
+}
+
+html[data-dsh-theme-eink-retro] [data-state="ongoing"] > rect {
+  animation-name: eink-retro-state-dot-chase !important;
+}
+
+@keyframes eink-retro-state-dot-chase {
+  0%,
+  12.4% {
+    opacity: 1;
+  }
+
+  12.5%,
+  24.9% {
+    opacity: 0.58;
+  }
+
+  25%,
+  37.4% {
+    opacity: 0.3;
+  }
+
+  37.5%,
+  100% {
+    opacity: 0.1;
+  }
+}
+
+html[data-dsh-theme-eink-retro] [data-state="done"]::before {
+  opacity: 0.16;
+}
+
 html[data-dsh-theme-eink-retro] :where(button:not(:disabled), [role="button"]:not([aria-disabled="true"]), [role="tab"]):active {
   transform: translate(1px, 1px);
 }
@@ -518,6 +566,34 @@ html[data-dsh-theme-eink-retro] textarea[data-dsh-part="composer-input"] {
   border: 0 !important;
   outline: 0 !important;
   box-shadow: none !important;
+}
+
+/* Before a Workspace exists, DSH turns the resident composer into the picker
+ * trigger and draws a 22px dashed SVG-mask ring over its real border. The ring
+ * survives the card's rectilinear theme radius and reads like a drop zone.
+ * Keep the generous whole-card target, but express it as the same solid paper
+ * panel used everywhere else; a real border also survives forced colors. */
+html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
+  textarea[aria-haspopup="menu"][readonly]
+) {
+  background-color: var(--eink-paper-bright) !important;
+  border: 1px solid var(--eink-rule-strong) !important;
+  border-radius: var(--eink-radius-surface) !important;
+  box-shadow: var(--eink-shadow-2) !important;
+}
+
+html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
+  textarea[aria-haspopup="menu"][readonly]
+)::after {
+  content: none !important;
+  -webkit-mask: none !important;
+  mask: none !important;
+}
+
+html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
+  textarea[aria-haspopup="menu"][readonly]
+):hover {
+  border-color: var(--eink-ink) !important;
 }
 
 /* The context meter is only 14px wide, so DSH's tertiary label and translucent
@@ -554,7 +630,7 @@ html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
   textarea[data-dsh-part="composer-input"]:focus-visible
 ) {
   border-color: var(--eink-ink) !important;
-  box-shadow: var(--eink-shadow-1) !important;
+  box-shadow: var(--eink-shadow-2), var(--eink-focus-ring) !important;
 }
 
 /* One focus frame for everything that can be reached by keyboard. Ink is by
@@ -595,7 +671,7 @@ html[data-dsh-theme-eink-retro] :where(
 html[data-dsh-theme-eink-retro] button[aria-label*="添加工作区"]:focus-visible,
 html[data-dsh-theme-eink-retro] button[aria-label*="Add workspace" i]:focus-visible {
   outline: 0 !important;
-  box-shadow: inset 0 0 0 1px var(--eink-ink) !important;
+  box-shadow: var(--eink-focus-ring) !important;
 }
 
 /* The workspace search draws its visible shape on the wrapper, not the icon
@@ -628,17 +704,16 @@ html[data-dsh-theme-eink-retro] :has(> button[aria-label*="Search" i]) > input {
 html[data-dsh-theme-eink-retro] :has(> button[aria-label*="搜索会话"]):has(> input:focus-visible),
 html[data-dsh-theme-eink-retro] :has(> button[aria-label*="Search" i]):has(> input:focus-visible) {
   border-color: var(--eink-ink) !important;
-  box-shadow: none !important;
+  box-shadow: var(--eink-focus-ring) !important;
 }
 
-/* Native form controls already own a visible border. Strengthen that one
- * frame and add an inner baseline instead of drawing a second offset outline.
- * The inset well is kept in the stack so the depth of the field does not
- * change the moment it takes focus. */
+/* Native form controls already own a visible border. Focus replaces the quiet
+ * inset well with one complete inner frame: no extra baseline, no elevation,
+ * and no layout shift from changing border width. */
 html[data-dsh-theme-eink-retro] :where(input, textarea, select, [contenteditable="true"]):focus-visible {
   outline: 0 !important;
   border-color: var(--eink-ink) !important;
-  box-shadow: var(--eink-well), inset 0 -2px 0 var(--eink-ink) !important;
+  box-shadow: var(--eink-focus-ring) !important;
 }
 
 html[data-dsh-theme-eink-retro] textarea[data-dsh-part="composer-input"]:focus-visible {
@@ -680,7 +755,32 @@ html[data-dsh-theme-eink-retro] [role="toolbar"]:has(input[type="search"]) :has(
   > input[type="search"]:focus-visible
 ) {
   border-color: var(--eink-ink) !important;
-  box-shadow: inset 0 -2px 0 var(--eink-ink) !important;
+  box-shadow: var(--eink-focus-ring) !important;
+}
+
+/* Git Graph exposes a stable popover hook, but its search field draws three
+ * nested shapes: the floating listbox, a thick rounded search wrapper, and a
+ * second focused input frame. Keep the listbox as the elevated surface and let
+ * the search wrapper own exactly one control frame. */
+html[data-dsh-theme-eink-retro] [data-gitgraph-popover="true"] > :has(> input) {
+  background-color: var(--eink-paper-bright) !important;
+  border: 1px solid var(--eink-rule-strong) !important;
+  border-radius: var(--eink-radius-control) !important;
+  box-shadow: none !important;
+}
+
+html[data-dsh-theme-eink-retro] [data-gitgraph-popover="true"] > :has(> input) > input {
+  background-color: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-dsh-theme-eink-retro] [data-gitgraph-popover="true"] > :has(
+  > input:focus-visible
+) {
+  border-color: var(--eink-ink) !important;
+  box-shadow: var(--eink-focus-ring) !important;
 }
 
 html[data-dsh-theme-eink-retro] select option {
@@ -709,9 +809,19 @@ html[data-dsh-theme-eink-retro] [role="presentation"]:has(> [role="dialog"]) > :
 }
 
 html[data-dsh-theme-eink-retro] :where([role="menu"], [role="listbox"]) {
-  background-color: var(--dsw-specific-menu);
+  background-color: var(--eink-paper-bright) !important;
+  background-image: none !important;
   border: 1px solid var(--eink-rule-strong);
   box-shadow: var(--eink-shadow-1);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Trigger tooltips add no information once a menu/listbox is open and can sit
+ * on top of the floating surface after a pointer click. Suppress that stale
+ * hover layer while a richer popup is present. */
+html[data-dsh-theme-eink-retro]:has(:where([role="menu"], [role="listbox"])) [role="tooltip"] {
+  display: none !important;
 }
 
 /* Plugin settings are contributed by independent packages, so their card
@@ -749,8 +859,9 @@ html[data-dsh-theme-eink-retro]
   [data-dsh-surface="settings"]
   [data-slot="settings.plugin.item"]
   label:has(> input[type="radio"]:checked) {
+  background-color: var(--eink-paper-bright) !important;
   border-color: var(--eink-ink) !important;
-  box-shadow: inset 0 -2px 0 var(--eink-ink) !important;
+  box-shadow: none !important;
 }
 
 html[data-dsh-theme-eink-retro]
@@ -897,18 +1008,61 @@ html[data-dsh-theme-eink-retro] :where(
   color: inherit !important;
 }
 
-/* Tabs are secondary navigation. A baseline and stronger label keep their
- * original footprint; inverse fills are reserved for primary selections. */
-html[data-dsh-theme-eink-retro] [role="tab"][aria-selected="true"] {
-  color: var(--eink-ink) !important;
+/* A selected/current control already owns the strongest ink fill. Drawing an
+ * offset ink outline around that fill reads as two nested selections. Keep the
+ * focus cue inside the selected surface, where inverse paper stays visible. */
+html[data-dsh-theme-eink-retro] :where(
+  [role="treeitem"][aria-selected="true"],
+  [aria-current="true"],
+  [aria-current="page"],
+  [aria-pressed="true"]
+):focus-visible {
+  outline: 0 !important;
+  box-shadow: var(--eink-focus-ring-inverse) !important;
+}
+
+/* Tabs are secondary navigation, not a row of outlined buttons. Their resting
+ * state is flat, hover spends only a quiet tonal fill, and the current view
+ * adds label weight. Keyboard focus temporarily inverts the same flat tab
+ * instead of wrapping it in a button-like outline. */
+html[data-dsh-theme-eink-retro] [role="tab"] {
   background-color: transparent !important;
   background-image: none !important;
   border-color: transparent !important;
-  box-shadow: inset 0 -2px 0 var(--eink-ink) !important;
+  box-shadow: none !important;
+}
+
+html[data-dsh-theme-eink-retro] [role="tab"]:hover {
+  background-color: var(--eink-paper-raised) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-dsh-theme-eink-retro] [role="tab"]:focus:not(:focus-visible) {
+  outline: 0 !important;
+}
+
+html[data-dsh-theme-eink-retro] [role="tab"][aria-selected="true"] {
+  color: var(--eink-ink) !important;
+  background-color: var(--eink-paper-raised) !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
   font-weight: var(--eink-weight-strong) !important;
 }
 
 html[data-dsh-theme-eink-retro] [role="tab"][aria-selected="true"] * {
+  color: inherit !important;
+}
+
+html[data-dsh-theme-eink-retro] [role="tab"]:focus-visible {
+  color: var(--eink-selection-fg) !important;
+  background-color: var(--eink-selection-bg) !important;
+  outline: 0 !important;
+  box-shadow: var(--eink-focus-ring-inverse) !important;
+}
+
+html[data-dsh-theme-eink-retro] [role="tab"]:focus-visible * {
   color: inherit !important;
 }
 
