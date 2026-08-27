@@ -2,6 +2,11 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
+[![DSH Market 已收录](https://raw.githubusercontent.com/2BingLing/dsh-market/master/assets/readme/badge-listed-zh.svg)](https://dsh.market/?q=exoticknight%2Fdsh-theme-eink-retro)
+[![CI](https://github.com/exoticknight/dsh-theme-eink-retro/actions/workflows/ci.yml/badge.svg)](https://github.com/exoticknight/dsh-theme-eink-retro/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/exoticknight/dsh-theme-eink-retro)](https://github.com/exoticknight/dsh-theme-eink-retro/releases/latest)
+[![License](https://img.shields.io/github/license/exoticknight/dsh-theme-eink-retro)](LICENSE)
+
 E-Ink Retro 是面向 DeepSeek Harness 的客户端主题。它使用中性纸面、近黑文字、硬边偏移阴影、小圆角和黑白反选状态。几何借鉴经典 Macintosh 界面，同时保留 DSH 原有布局和工作流。
 
 ![平衡模式应用于全新 DSH 0.1.1-rc.2 profile，截图日期 2026-08-26](assets/screenshots/balanced-fresh-profile.png)
@@ -70,6 +75,17 @@ dsh plugin --profile web remove dsh-theme-eink-retro
 ```sh
 dsh plugin --profile web add github:exoticknight/dsh-theme-eink-retro#v0.1.0
 ```
+
+## 收录目录
+
+你可以在以下目录找到 E-Ink Retro：
+
+- [dsh.pub](https://dsh.pub/zh/plugins/dsh-theme-eink-retro/)
+- [DSH Market](https://dsh.market/?q=exoticknight%2Fdsh-theme-eink-retro)
+- [DSH Marketplace](https://dshmarketplace.dev/zh/plugins?q=dsh-theme-eink-retro)
+- [HackSing DSH 插件目录](https://github.com/HackSing/dsh-plugins/blob/main/README.zh.md)
+- [Awesome DSH Plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins/blob/main/PLUGINS.md)
+- [Awesome DeepSeek Harness](https://github.com/0xsline/awesome-deepseek-harness/blob/main/CATALOG.md)
 
 ## 使用
 

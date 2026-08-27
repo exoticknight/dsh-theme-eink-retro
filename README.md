@@ -2,6 +2,11 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
+[![Listed on DSH Market](https://raw.githubusercontent.com/2BingLing/dsh-market/master/assets/readme/badge-listed-en.svg)](https://dsh.market/?q=exoticknight%2Fdsh-theme-eink-retro)
+[![CI](https://github.com/exoticknight/dsh-theme-eink-retro/actions/workflows/ci.yml/badge.svg)](https://github.com/exoticknight/dsh-theme-eink-retro/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/exoticknight/dsh-theme-eink-retro)](https://github.com/exoticknight/dsh-theme-eink-retro/releases/latest)
+[![License](https://img.shields.io/github/license/exoticknight/dsh-theme-eink-retro)](LICENSE)
+
 E-Ink Retro is a client-side theme for DeepSeek Harness. It uses neutral paper surfaces, near-black type, hard offset shadows, compact corners, and black-and-white selection states. The geometry takes cues from classic Macintosh interfaces while keeping the DSH layout and workflows recognizable.
 
 ![Balanced mode on a fresh DSH 0.1.1-rc.2 profile, captured 2026-08-26](assets/screenshots/balanced-fresh-profile.png)
@@ -70,6 +75,17 @@ Install a specific release tag again:
 ```sh
 dsh plugin --profile web add github:exoticknight/dsh-theme-eink-retro#v0.1.0
 ```
+
+## Directories
+
+You can find E-Ink Retro in these directories:
+
+- [dsh.pub](https://dsh.pub/en/plugins/dsh-theme-eink-retro/)
+- [DSH Market](https://dsh.market/?q=exoticknight%2Fdsh-theme-eink-retro)
+- [DSH Marketplace](https://dshmarketplace.dev/plugins?q=dsh-theme-eink-retro)
+- [HackSing DSH Plugins](https://github.com/HackSing/dsh-plugins/blob/main/README.md)
+- [Awesome DSH Plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins/blob/main/PLUGINS.md)
+- [Awesome DeepSeek Harness](https://github.com/0xsline/awesome-deepseek-harness/blob/main/CATALOG.md)
 
 ## Use
 
