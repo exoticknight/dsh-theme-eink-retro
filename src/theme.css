@@ -173,7 +173,7 @@ html[data-dsh-theme-eink-retro] .eink-retro-settings__enabled-input:focus-visibl
  * Interaction hierarchy — never spend elevation on state:
  *   hover                 changes fill or border color only
  *   focus                 adds one complete inner frame; elevation is retained
- *   selected tab          changes fill and label weight, never adds another frame
+ *   selected session tab  keeps the host's bottom rule and adds label weight
  *
  * Weights are mid-steps on purpose. On a variable face they render as drawn;
  * on a 400/700 system face the browser resolves both to the nearest real
@@ -413,6 +413,39 @@ html[data-dsh-theme-eink-retro] :where(
   color: inherit !important;
 }
 
+/* Question choices are long reading rows, so a full inverse fill gives the
+ * selected answer far more weight than the question itself. Keep the row on a
+ * quiet raised paper and spend the inverse treatment only on its compact
+ * number/check marker. `data-question-key` is the package's stable takeover
+ * boundary; the role structure distinguishes its option list without relying
+ * on generated CSS-module names or localized copy. */
+html[data-dsh-theme-eink-retro]
+  [data-question-key]
+  :where([role="radiogroup"], [role="group"])
+  > :where([role="radio"], [role="checkbox"])[aria-checked="true"] {
+  color: var(--eink-ink) !important;
+  background-color: var(--eink-paper-raised) !important;
+  border-color: var(--eink-rule-strong) !important;
+}
+
+html[data-dsh-theme-eink-retro]
+  [data-question-key]
+  :where([role="radiogroup"], [role="group"])
+  > :where([role="radio"], [role="checkbox"])[aria-checked="true"]
+  > :first-child {
+  color: var(--eink-selection-fg) !important;
+  background-color: var(--eink-selection-bg) !important;
+  border-radius: var(--eink-radius-control) !important;
+}
+
+html[data-dsh-theme-eink-retro]
+  [data-question-key]
+  :where([role="radiogroup"], [role="group"])
+  > :where([role="radio"], [role="checkbox"])[aria-checked="true"]
+  [class$="_description"] {
+  color: var(--eink-ink-2) !important;
+}
+
 /* A switch is a button wrapping a track, which in turn holds one absolutely
  * positioned thumb. The button is only the hit target, so it stays blank and
  * the track carries the state: an empty paper frame when off, filled with ink
@@ -555,6 +588,47 @@ html[data-dsh-theme-eink-retro] :where(input, textarea, select, [contenteditable
   border-color: var(--eink-rule-strong);
   box-shadow: var(--eink-well);
   caret-color: var(--eink-ink);
+}
+
+/* In a question with predefined choices, the custom answer is one peer row.
+ * Its generated component puts the textarea inside a mirrored auto-grow field,
+ * so the row owns the complete frame and the native textarea stays transparent.
+ * Requiring a role option sibling keeps the standalone, block answer field on
+ * its native layout. */
+html[data-dsh-theme-eink-retro]
+  [data-question-key]
+  :where([role="radiogroup"], [role="group"]):has(> [role="radio"], > [role="checkbox"])
+  > :has(> :last-child > textarea) {
+  background-color: var(--eink-paper-bright) !important;
+  border: 1px solid var(--eink-rule-strong) !important;
+  border-radius: var(--eink-radius-control) !important;
+  box-shadow: none !important;
+}
+
+html[data-dsh-theme-eink-retro]
+  [data-question-key]
+  :where([role="radiogroup"], [role="group"]):has(> [role="radio"], > [role="checkbox"])
+  > :has(> :last-child > textarea):hover {
+  border-color: var(--eink-ink-2) !important;
+}
+
+html[data-dsh-theme-eink-retro]
+  [data-question-key]
+  :where([role="radiogroup"], [role="group"]):has(> [role="radio"], > [role="checkbox"])
+  > :has(> :last-child > textarea):focus-within {
+  border-color: var(--eink-ink) !important;
+  box-shadow: var(--eink-focus-ring) !important;
+}
+
+html[data-dsh-theme-eink-retro]
+  [data-question-key]
+  :where([role="radiogroup"], [role="group"]):has(> [role="radio"], > [role="checkbox"])
+  > :has(> :last-child > textarea)
+  textarea {
+  background-color: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
 }
 
 /* The composer keeps its visible text in a backdrop layer underneath a
@@ -1065,6 +1139,43 @@ html[data-dsh-theme-eink-retro] [role="tab"]:focus-visible {
 
 html[data-dsh-theme-eink-retro] [role="tab"]:focus-visible * {
   color: inherit !important;
+}
+
+/* The conversation header's public responsive hook identifies the tab set in
+ * the reference without localized labels or generated classes. It already
+ * paints one 2px selected indicator on the tab's ::after, so this group drops
+ * the generic tonal block and keeps that native line as its sole active cue. */
+html[data-dsh-theme-eink-retro]
+  [data-dsh-responsive-part="session-tablist"]
+  > [role="tab"] {
+  background-color: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-dsh-theme-eink-retro]
+  [data-dsh-responsive-part="session-tablist"]
+  > [role="tab"]:hover {
+  color: var(--eink-ink) !important;
+  background-color: transparent !important;
+  box-shadow: inset 0 -1px 0 var(--eink-rule-strong) !important;
+}
+
+html[data-dsh-theme-eink-retro]
+  [data-dsh-responsive-part="session-tablist"]
+  > [role="tab"][aria-selected="true"] {
+  color: var(--eink-ink) !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  font-weight: var(--eink-weight-strong) !important;
+}
+
+html[data-dsh-theme-eink-retro]
+  [data-dsh-responsive-part="session-tablist"]
+  > [role="tab"]:focus-visible {
+  color: var(--eink-ink) !important;
+  background-color: transparent !important;
+  box-shadow: var(--eink-focus-ring) !important;
 }
 
 html[data-dsh-theme-eink-retro] ::selection {

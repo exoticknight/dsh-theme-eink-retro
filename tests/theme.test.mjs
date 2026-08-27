@@ -225,6 +225,55 @@ test("both active modes share crisp geometry and black-white interaction states"
   assert.match(css, /span\[class\*="tabSearch"\]/);
 });
 
+test("question choices use a quiet selected row with a compact inverse marker", () => {
+  assert.match(
+    css,
+    /\[data-question-key\][^{]*:where\(\[role="radiogroup"\], \[role="group"\]\)[^{]*:where\(\[role="radio"\], \[role="checkbox"\]\)\[aria-checked="true"\]\s*\{[^}]*color:\s*var\(--eink-ink\)\s*!important[^}]*background-color:\s*var\(--eink-paper-raised\)\s*!important[^}]*border-color:\s*var\(--eink-rule-strong\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-question-key\][^{]*\[aria-checked="true"\][^{]*>\s*:first-child\s*\{[^}]*color:\s*var\(--eink-selection-fg\)\s*!important[^}]*background-color:\s*var\(--eink-selection-bg\)\s*!important/s,
+  );
+});
+
+test("question custom answers use one complete input frame", () => {
+  assert.match(
+    css,
+    /\[data-question-key\][^{]*:has\(> \[role="radio"\], > \[role="checkbox"\]\)[^{]*>\s*:has\(>[^}]*textarea\)\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border:\s*1px solid var\(--eink-rule-strong\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-question-key\][^{]*>\s*:has\(>[^}]*textarea\):focus-within\s*\{[^}]*border-color:\s*var\(--eink-ink\)\s*!important[^}]*box-shadow:\s*var\(--eink-focus-ring\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-question-key\][^{]*>\s*:has\(>[^}]*textarea\)[^{]*textarea\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*border:\s*0\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+  );
+});
+
+test("tabs preserve the host underline without a selected fill", () => {
+  assert.match(
+    css,
+    /\[role="tab"\]\[aria-selected="true"\]\s*\{[^}]*background-color:\s*var\(--eink-paper-raised\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-dsh-responsive-part="session-tablist"\][^{]*>\s*\[role="tab"\]\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*border-radius:\s*0\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-dsh-responsive-part="session-tablist"\][^{]*>\s*\[role="tab"\]:hover\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*inset 0 -1px 0 var\(--eink-rule-strong\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-dsh-responsive-part="session-tablist"\][^{]*>\s*\[role="tab"\]\[aria-selected="true"\]\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-dsh-responsive-part="session-tablist"\][^{]*>\s*\[role="tab"\]:focus-visible\s*\{[^}]*color:\s*var\(--eink-ink\)\s*!important[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*var\(--eink-focus-ring\)\s*!important/s,
+  );
+});
+
 test("composer preserves DSH's backdrop text and owns a single focus border", () => {
   assert.match(css, /textarea\[data-dsh-part="composer-input"\]/);
   assert.match(css, /background-color:\s*transparent\s*!important/);
@@ -493,28 +542,7 @@ test("switches and semantic destructive buttons stay flat and explicit", () => {
   assert.match(css, /\[role="button"\][^}]*border-radius/s);
 });
 
-test("secondary tabs, markdown tables and capability badges keep readable hierarchy", () => {
-  assert.match(
-    css,
-    /\[role="tab"\]\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*border-color:\s*transparent\s*!important[^}]*box-shadow:\s*none\s*!important/s,
-  );
-  assert.match(
-    css,
-    /\[role="tab"\]:hover\s*\{[^}]*background-color:\s*var\(--eink-paper-raised\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
-  );
-  assert.match(
-    css,
-    /\[role="tab"\]\[aria-selected="true"\]\s*\{[^}]*background-color:\s*var\(--eink-paper-raised\)\s*!important/s,
-  );
-  assert.match(
-    css,
-    /\[role="tab"\]\[aria-selected="true"\]\s*\{[^}]*box-shadow:\s*none\s*!important/s,
-  );
-  assert.match(
-    css,
-    /\[role="tab"\]:focus-visible\s*\{[^}]*background-color:\s*var\(--eink-selection-bg\)\s*!important[^}]*outline:\s*0\s*!important[^}]*box-shadow:\s*var\(--eink-focus-ring-inverse\)\s*!important/s,
-  );
-  assert.match(css, /\[role="tab"\]:focus:not\(:focus-visible\)\s*\{[^}]*outline:\s*0\s*!important/s);
+test("markdown tables and capability badges keep readable hierarchy", () => {
   assert.match(css, /:where\(th, td\)\s*\{[^}]*padding:\s*8px 12px\s*!important/s);
   assert.match(
     css,
@@ -703,7 +731,7 @@ test("focus and selection never combine into a nested frame", () => {
     /:where\([^}]*\[aria-current="true"\][^}]*\):focus-visible\s*\{[^}]*outline:\s*0\s*!important[^}]*box-shadow:\s*var\(--eink-focus-ring-inverse\)\s*!important/s,
   );
   const bottomInkLines = css.match(/box-shadow:\s*inset 0 -2px 0 var\(--eink-ink\)/g) ?? [];
-  assert.equal(bottomInkLines.length, 0, "selected tabs must not add a second focus-like line");
+  assert.equal(bottomInkLines.length, 0, "the host already owns the selected-tab indicator");
 });
 
 test("high contrast and print get an explicit treatment", () => {
