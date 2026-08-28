@@ -22,6 +22,15 @@ async function loadI18n() {
   return import(`data:text/javascript;base64,${Buffer.from(code).toString("base64")}`);
 }
 
+function markdownSection(markdown, heading) {
+  const marker = `## ${heading}`;
+  const start = markdown.indexOf(marker);
+  assert.notEqual(start, -1, `${marker} section is missing`);
+  const contentStart = start + marker.length;
+  const nextSection = markdown.indexOf("\n## ", contentStart);
+  return markdown.slice(contentStart, nextSection === -1 ? undefined : nextSection);
+}
+
 test("package exposes a standard DSH host and client bundle", () => {
   assert.equal(pkg.name, "dsh-theme-eink-retro");
   assert.equal(pkg.main, "lib/index.js");
@@ -57,15 +66,17 @@ test("build output is normalized across operating systems", () => {
 });
 
 test("package ships user-facing documentation in English and Chinese", () => {
+  const currentInstall = `github:exoticknight/dsh-theme-eink-retro#v${pkg.version}`;
+
   assert.ok(pkg.files.includes("README.md"));
   assert.ok(pkg.files.includes("README.zh-CN.md"));
   assert.match(readmeEn, /Install from source/);
   assert.match(readmeEn, /Compatibility boundaries/);
-  assert.match(readmeEn, /github:exoticknight\/dsh-theme-eink-retro#v0\.1\.0/);
+  assert.ok(markdownSection(readmeEn, "Install").includes(currentInstall));
   assert.match(readmeEn, /Privacy and storage/);
   assert.match(readmeZh, /从源码安装/);
   assert.match(readmeZh, /兼容边界/);
-  assert.match(readmeZh, /github:exoticknight\/dsh-theme-eink-retro#v0\.1\.0/);
+  assert.ok(markdownSection(readmeZh, "安装").includes(currentInstall));
   assert.match(readmeZh, /隐私与存储/);
 });
 

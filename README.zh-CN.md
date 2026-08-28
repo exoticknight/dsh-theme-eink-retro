@@ -41,7 +41,7 @@ E-Ink Retro 是面向 DeepSeek Harness 的客户端主题。它使用中性纸�
 安装指定版本的 GitHub Release：
 
 ```sh
-dsh plugin --profile web add github:exoticknight/dsh-theme-eink-retro#v0.1.0
+dsh plugin --profile web add github:exoticknight/dsh-theme-eink-retro#v0.2.0
 ```
 
 安装后重启 DSH Web，然后打开 **设置 → E-Ink Retro**。
@@ -84,8 +84,10 @@ dsh plugin --profile web add github:exoticknight/dsh-theme-eink-retro#v0.1.0
 - [DSH Market](https://dsh.market/?q=exoticknight%2Fdsh-theme-eink-retro)
 - [DSH Marketplace](https://dshmarketplace.dev/zh/plugins?q=dsh-theme-eink-retro)
 - [HackSing DSH 插件目录](https://github.com/HackSing/dsh-plugins/blob/main/README.zh.md)
+- [Awesome DSH Plugin 目录](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/exoticknight__dsh-theme-eink-retro.yml)
 - [Awesome DSH Plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins/blob/main/PLUGINS.md)
 - [Awesome DeepSeek Harness](https://github.com/0xsline/awesome-deepseek-harness/blob/main/CATALOG.md)
+- [dsh-xray 能力卡](https://unstone.github.io/dsh-xray/p/exoticknight__dsh-theme-eink-retro.html)
 
 ## 使用
 
@@ -95,7 +97,7 @@ dsh plugin --profile web add github:exoticknight/dsh-theme-eink-retro#v0.1.0
 
 ## 兼容性
 
-`v0.1.0` 在以下环境完成构建和检查：
+`v0.2.0` 在以下环境完成构建和检查：
 
 | 组件 | 版本或环境 |
 | --- | --- |

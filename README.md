@@ -41,7 +41,7 @@ Requirements:
 Install the tagged GitHub release:
 
 ```sh
-dsh plugin --profile web add github:exoticknight/dsh-theme-eink-retro#v0.1.0
+dsh plugin --profile web add github:exoticknight/dsh-theme-eink-retro#v0.2.0
 ```
 
 Restart DSH Web after installation, then open **Settings → E-Ink Retro**.
@@ -84,8 +84,10 @@ You can find E-Ink Retro in these directories:
 - [DSH Market](https://dsh.market/?q=exoticknight%2Fdsh-theme-eink-retro)
 - [DSH Marketplace](https://dshmarketplace.dev/plugins?q=dsh-theme-eink-retro)
 - [HackSing DSH Plugins](https://github.com/HackSing/dsh-plugins/blob/main/README.md)
+- [Awesome DSH Plugin directory](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/exoticknight__dsh-theme-eink-retro.yml)
 - [Awesome DSH Plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins/blob/main/PLUGINS.md)
 - [Awesome DeepSeek Harness](https://github.com/0xsline/awesome-deepseek-harness/blob/main/CATALOG.md)
+- [dsh-xray capability card](https://unstone.github.io/dsh-xray/p/exoticknight__dsh-theme-eink-retro.html)
 
 ## Use
 
@@ -95,7 +97,7 @@ Selecting another third-party theme pauses E-Ink Retro. Enabling E-Ink Retro or 
 
 ## Compatibility
 
-The `v0.1.0` release was built and checked with:
+The `v0.2.0` release was built and checked with:
 
 | Component | Version or environment |
 | --- | --- |
