@@ -265,7 +265,7 @@ test("question custom answers use one complete input frame", () => {
 test("tabs preserve the host underline without a selected fill", () => {
   assert.match(
     css,
-    /\[role="tab"\]\[aria-selected="true"\]\s*\{[^}]*background-color:\s*var\(--eink-paper-raised\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+    /^html\[data-dsh-theme-eink-retro\] \[role="tab"\]\[aria-selected="true"\]\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*none\s*!important/ms,
   );
   assert.match(
     css,
@@ -287,16 +287,25 @@ test("tabs preserve the host underline without a selected fill", () => {
 
 test("composer preserves DSH's backdrop text and owns a single focus border", () => {
   assert.match(css, /textarea\[data-dsh-part="composer-input"\]/);
-  assert.match(css, /background-color:\s*transparent\s*!important/);
-  assert.match(css, /\[data-composer-card="true"\]:has\(/);
-  assert.match(css, /textarea\[data-dsh-part="composer-input"\]:focus-visible/);
+  assert.match(
+    css,
+    /\[data-composer-card="true"\][^{]*\[data-input-scroll="true"\][^{]*>\s*:has\(> \[data-input-backdrop="true"\]\):has\(> \[data-input-mirror="true"\]\)[^{]*>\s*textarea\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*border:\s*0\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+  );
   assert.match(
     css,
     /\[data-dsh-part="scrollport"\]\s*>\s*:has\(\s*\[data-composer-card="true"\]\s*\)::before\s*\{[^}]*linear-gradient/s,
   );
   assert.match(
     css,
-    /\[data-composer-card="true"\]:has\(\s*textarea\[data-dsh-part="composer-input"\]:focus-visible\s*\)\s*\{[^}]*box-shadow:\s*var\(--eink-focus-ring\)\s*!important/s,
+    /\[data-composer-card="true"\]:has\(\s*textarea\[data-dsh-part="composer-input"\]:focus-visible\s*\)\s*,/s,
+  );
+  assert.match(
+    css,
+    /\[data-composer-card="true"\]:has\(\s*\[data-input-scroll="true"\]\s+textarea:focus-visible\s*\)\s*\{[^}]*box-shadow:\s*var\(--eink-focus-ring\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-input-scroll="true"\][^{]*>\s*:has\(> \[data-input-backdrop="true"\]\):has\(> \[data-input-mirror="true"\]\)[^{]*>\s*textarea:focus-visible\s*\{[^}]*box-shadow:\s*none\s*!important/s,
   );
 });
 
@@ -518,11 +527,10 @@ test("markdown quotes and overlay surfaces stay flat and rectilinear", () => {
 });
 
 test("switches and semantic destructive buttons stay flat and explicit", () => {
-  // Every switch DSH ships is button > track > thumb, so there is one rule set
-  // and it is gated on that structure. The button stays blank, the track owns
-  // the state, and the thumb offsets are measured against the track's padding
-  // box: 2px centres a 10px thumb in a 30 x 16 track, 16px parks it at the far
-  // end, and both rest 3px from their edge.
+  // DSH ships both button > track > thumb and button-as-track > thumb switches.
+  // Each rule is gated on its exact structure. The thumb offsets are measured
+  // against the track's padding box: 2px centres a 10px thumb in a 30 x 16
+  // track, 16px parks it at the far end, and both rest 3px from their edge.
   assert.match(
     css,
     /\[role="switch"\]:has\(> :last-child > :only-child\)\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*none\s*!important/s,
@@ -539,6 +547,18 @@ test("switches and semantic destructive buttons stay flat and explicit", () => {
     css,
     /\[role="switch"\]\[aria-checked="true"\]:has\(> :last-child > :only-child\)[^{]*>\s*:last-child\s*>\s*:only-child\s*\{[^}]*left:\s*16px\s*!important[^}]*background-color:\s*var\(--eink-selection-fg\)\s*!important/s,
   );
+  assert.match(
+    css,
+    /\[role="switch"\]:has\(> :only-child\):not\(:has\(> :only-child > \*\)\)\s*\{[^}]*width:\s*30px\s*!important[^}]*height:\s*16px\s*!important[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border:\s*1px solid var\(--eink-ink\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[role="switch"\]:has\(> :only-child\):not\(:has\(> :only-child > \*\)\)\s*>\s*:only-child\s*\{[^}]*width:\s*10px\s*!important[^}]*height:\s*10px\s*!important[^}]*top:\s*2px\s*!important[^}]*left:\s*2px\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[role="switch"\]\[aria-checked="true"\]:has\(> :only-child\):not\(:has\(> :only-child > \*\)\)[^{]*>\s*:only-child\s*\{[^}]*left:\s*16px\s*!important[^}]*background-color:\s*var\(--eink-selection-fg\)\s*!important/s,
+  );
   // No rule that targets a switch may do so without first checking it has that
   // structure. Role lists inside :where() — the shared focus frame, the
   // inverted selection set — address it as one role among many and are exempt.
@@ -547,7 +567,11 @@ test("switches and semantic destructive buttons stay flat and explicit", () => {
   ).filter((rule) => !rule.includes(":where("));
   assert.ok(switchRules.length > 0, "no switch rules found");
   for (const rule of switchRules) {
-    assert.match(rule, /:has\(> :last-child > :only-child\)/, `ungated switch rule: ${rule.trim()}`);
+    assert.match(
+      rule,
+      /:has\(> :last-child > :only-child\)|:has\(> :only-child\):not\(:has\(> :only-child > \*\)\)/,
+      `ungated switch rule: ${rule.trim()}`,
+    );
   }
   assert.match(css, /button\[class\*="deleteButton" i\]/);
   assert.match(css, /\[role="button"\][^}]*border-radius/s);

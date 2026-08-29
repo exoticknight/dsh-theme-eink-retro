@@ -446,10 +446,10 @@ html[data-dsh-theme-eink-retro]
   color: var(--eink-ink-2) !important;
 }
 
-/* A switch is a button wrapping a track, which in turn holds one absolutely
- * positioned thumb. The button is only the hit target, so it stays blank and
- * the track carries the state: an empty paper frame when off, filled with ink
- * when on, with the thumb inverting against it.
+/* DSH switches use either a button wrapping a track and thumb, or the button
+ * itself as the track with one direct thumb. In both variants the track is an
+ * empty paper frame when off and fills with ink when on, with the thumb
+ * inverting against it.
  *
  * The offsets are authored against the track's padding box, which its own 1px
  * border already insets — so a 10px thumb centres in a 30 × 16 track at 2px,
@@ -500,6 +500,48 @@ html[data-dsh-theme-eink-retro]
 html[data-dsh-theme-eink-retro]
   [role="switch"][aria-checked="true"]:has(> :last-child > :only-child)
   > :last-child
+  > :only-child {
+  left: 16px !important;
+  background-color: var(--eink-selection-fg) !important;
+}
+
+/* Skill management uses the button itself as the track. The leaf-child guard
+ * keeps this adapter disjoint from the wrapped-track switch above. */
+html[data-dsh-theme-eink-retro]
+  [role="switch"]:has(> :only-child):not(:has(> :only-child > *)) {
+  box-sizing: border-box;
+  width: 30px !important;
+  height: 16px !important;
+  padding: 0 !important;
+  background-color: var(--eink-paper-bright) !important;
+  background-image: none !important;
+  border: 1px solid var(--eink-ink) !important;
+  border-radius: var(--eink-radius-tight) !important;
+  box-shadow: none !important;
+}
+
+html[data-dsh-theme-eink-retro]
+  [role="switch"]:has(> :only-child):not(:has(> :only-child > *))
+  > :only-child {
+  box-sizing: border-box;
+  width: 10px !important;
+  height: 10px !important;
+  top: 2px !important;
+  left: 2px !important;
+  background-color: var(--eink-ink) !important;
+  border: 0 !important;
+  border-radius: var(--eink-radius-tight) !important;
+  box-shadow: none !important;
+}
+
+html[data-dsh-theme-eink-retro]
+  [role="switch"][aria-checked="true"]:has(> :only-child):not(:has(> :only-child > *)) {
+  background-color: var(--eink-selection-bg) !important;
+  border-color: var(--eink-selection-bg) !important;
+}
+
+html[data-dsh-theme-eink-retro]
+  [role="switch"][aria-checked="true"]:has(> :only-child):not(:has(> :only-child > *))
   > :only-child {
   left: 16px !important;
   background-color: var(--eink-selection-fg) !important;
@@ -634,8 +676,14 @@ html[data-dsh-theme-eink-retro]
 /* The composer keeps its visible text in a backdrop layer underneath a
  * transparent textarea. Let the outer composer card own the surface and
  * focus treatment; otherwise the backdrop is hidden and a second inset rule
- * remains visible after the textarea loses focus. */
-html[data-dsh-theme-eink-retro] textarea[data-dsh-part="composer-input"] {
+ * remains visible after the textarea loses focus. Newer DSH builds expose the
+ * backdrop/mirror structure instead of the legacy composer-input part. */
+html[data-dsh-theme-eink-retro] textarea[data-dsh-part="composer-input"],
+html[data-dsh-theme-eink-retro]
+  [data-composer-card="true"]
+  [data-input-scroll="true"]
+  > :has(> [data-input-backdrop="true"]):has(> [data-input-mirror="true"])
+  > textarea {
   background-color: transparent !important;
   border: 0 !important;
   outline: 0 !important;
@@ -703,6 +751,9 @@ html[data-dsh-theme-eink-retro] [data-dsh-part="scrollport"] > :has(
 
 html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
   textarea[data-dsh-part="composer-input"]:focus-visible
+),
+html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
+  [data-input-scroll="true"] textarea:focus-visible
 ) {
   border-color: var(--eink-ink) !important;
   box-shadow: var(--eink-focus-ring) !important;
@@ -791,7 +842,12 @@ html[data-dsh-theme-eink-retro] :where(input, textarea, select, [contenteditable
   box-shadow: var(--eink-focus-ring) !important;
 }
 
-html[data-dsh-theme-eink-retro] textarea[data-dsh-part="composer-input"]:focus-visible {
+html[data-dsh-theme-eink-retro] textarea[data-dsh-part="composer-input"]:focus-visible,
+html[data-dsh-theme-eink-retro]
+  [data-composer-card="true"]
+  [data-input-scroll="true"]
+  > :has(> [data-input-backdrop="true"]):has(> [data-input-mirror="true"])
+  > textarea:focus-visible {
   box-shadow: none !important;
 }
 
@@ -1119,7 +1175,7 @@ html[data-dsh-theme-eink-retro] [role="tab"]:focus:not(:focus-visible) {
 
 html[data-dsh-theme-eink-retro] [role="tab"][aria-selected="true"] {
   color: var(--eink-ink) !important;
-  background-color: var(--eink-paper-raised) !important;
+  background-color: transparent !important;
   background-image: none !important;
   border-color: transparent !important;
   box-shadow: none !important;

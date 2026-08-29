@@ -41,7 +41,7 @@ E-Ink Retro 是面向 DeepSeek Harness 的客户端主题。它使用中性纸�
 安装指定版本的 GitHub Release：
 
 ```sh
-dsh plugin --profile web add github:exoticknight/dsh-theme-eink-retro#v0.2.0
+dsh plugin --profile web add github:exoticknight/dsh-theme-eink-retro#v0.2.1
 ```
 
 安装后重启 DSH Web，然后打开 **设置 → E-Ink Retro**。
@@ -97,7 +97,7 @@ dsh plugin --profile web add github:exoticknight/dsh-theme-eink-retro#v0.1.0
 
 ## 兼容性
 
-`v0.2.0` 在以下环境完成构建和检查：
+`v0.2.1` 在以下环境完成构建和检查：
 
 | 组件 | 版本或环境 |
 | --- | --- |

@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+## [0.2.1] - 2026-08-29
+
+### Fixed
+
+- Skill management switches use the paper-and-ink switch treatment across both DSH switch structures.
+- Selected tabs keep their native underline without an additional gray fill.
+- The current DSH composer input structure keeps one outer frame in resting and focus states.
+
 ## [0.2.0] - 2026-08-28
 
 ### Added
@@ -30,5 +38,6 @@ All notable changes to this project are documented here.
 - Local settings for theme enablement and mode selection.
 - English and Simplified Chinese documentation.
 
+[0.2.1]: https://github.com/exoticknight/dsh-theme-eink-retro/releases/tag/v0.2.1
 [0.2.0]: https://github.com/exoticknight/dsh-theme-eink-retro/releases/tag/v0.2.0
 [0.1.0]: https://github.com/exoticknight/dsh-theme-eink-retro/releases/tag/v0.1.0
