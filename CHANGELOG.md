@@ -4,6 +4,25 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+### Fixed
+
+- Shell panes, dividers, and the conversation scroll area follow the current `data-slot` anchors and `data-conversation-scroll` instead of the removed `data-dsh-surface` and `data-dsh-part` hooks.
+- The composer input, popups, code blocks, context and prompt bodies, and user message bubbles each keep a single frame instead of drawing a second box inside their own surface.
+- Composer popups keep their surface on the floating container with the viewport inside left bare, and a control that mounts its menu inside the trigger wrapper no longer paints that wrapper instead of the menu.
+- Code blocks are framed on all four sides; the ink spine that a banner then hid is gone.
+- Settings plugin cards hang off their slot alone; the removed settings surface anchor no longer gates them.
+- The composer is a paper panel with one rule and no blurred drop shadow, and its no-workspace picker trigger matches the current readonly editor.
+
+### Changed
+
+- Tab hover strengthens the host's bottom rule instead of filling the tab, across every tab set.
+- Tool-call rows, sidebar section headers, the conversation header's split control, settings steppers, and resize separators take the theme's rectilinear radius.
+- Round markers contributed by plugins are squared like the theme's own state dots.
+
+### Added
+
+- Compatibility adapters for the usage widget and the desktop panel family: rectilinear geometry, opaque surfaces with hard elevation, and immersive-mode grayscale coverage for their decorative data hues.
+
 ## [0.2.1] - 2026-08-29
 
 ### Fixed
