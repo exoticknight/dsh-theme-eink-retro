@@ -729,13 +729,21 @@ html[data-dsh-theme-eink-retro] [data-composer-card="true"] {
 }
 
 /* Before a Workspace exists, DSH turns the resident composer into the picker
- * trigger and draws a 22px dashed SVG-mask ring over its real border. The ring
- * survives the card's rectilinear theme radius and reads like a drop zone.
- * Keep the generous whole-card target, but express it as the same solid paper
- * panel used everywhere else. The trigger used to be a readonly textarea and is
- * a readonly editor in the current build, so both spellings are matched. */
+ * trigger and paints a 22px dashed ring over its real border with an SVG mask
+ * on the card's `::after`. The mask keeps the host's radius no matter what the
+ * card itself is set to, so the ring can never be re-cornered — it is drawn
+ * away, and the whole-card target becomes the same solid paper panel used
+ * everywhere else.
+ *
+ * The trigger is the composer text surface itself, which is the one part of the
+ * card that opens a menu while no Workspace exists. It has shipped as a readonly
+ * textarea and as a contenteditable div, so the hook is that shared role plus
+ * the menu attribute rather than one build's tag; the mode buttons that also
+ * open menus only mount once a Workspace does. The editor takes no frame and no
+ * native text selection either: its only copy is the aria-hidden placeholder
+ * under it, and selecting it would fight the click-to-open target. */
 html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
-  [aria-haspopup="menu"][readonly]
+  [role="textbox"][aria-haspopup="menu"]
 ) {
   background-color: var(--eink-paper-bright) !important;
   border: 1px solid var(--eink-rule-strong) !important;
@@ -743,8 +751,18 @@ html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
   box-shadow: none !important;
 }
 
+html[data-dsh-theme-eink-retro]
+  [data-composer-card="true"]:has([role="textbox"][aria-haspopup="menu"])
+  [role="textbox"] {
+  background-color: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  user-select: none;
+}
+
 html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
-  [aria-haspopup="menu"][readonly]
+  [role="textbox"][aria-haspopup="menu"]
 )::after {
   content: none !important;
   -webkit-mask: none !important;
@@ -752,7 +770,7 @@ html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
 }
 
 html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
-  [aria-haspopup="menu"][readonly]
+  [role="textbox"][aria-haspopup="menu"]
 ):hover {
   border-color: var(--eink-ink) !important;
 }

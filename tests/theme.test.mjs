@@ -340,22 +340,33 @@ test("composer preserves DSH's backdrop text and owns a single focus border", ()
 });
 
 test("the no-workspace composer is a solid rectilinear picker surface", () => {
-  // The picker trigger is a readonly editor in the current build, so the hook is
-  // the readonly menu trigger itself rather than the legacy textarea.
+  // The picker trigger is the composer text surface itself — the one control in
+  // the card that opens a menu while no Workspace exists — and it has shipped as
+  // a readonly textarea and as a contenteditable div alike, so the state is
+  // matched by its role plus the menu attribute rather than by one build's tag.
+  const picker = '[data-composer-card="true"]:has(\n  [role="textbox"][aria-haspopup="menu"]\n)';
   assert.match(
     css,
-    /\[data-composer-card="true"\]:has\(\s*\[aria-haspopup="menu"\]\[readonly\]\s*\)\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border:\s*1px solid var\(--eink-rule-strong\)\s*!important[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+    /\[data-composer-card="true"\]:has\(\s*\[role="textbox"\]\[aria-haspopup="menu"\]\s*\)\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border:\s*1px solid var\(--eink-rule-strong\)\s*!important[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
   );
   assert.match(
     css,
-    /\[data-composer-card="true"\]:has\(\s*\[aria-haspopup="menu"\]\[readonly\]\s*\)::after\s*\{[^}]*content:\s*none\s*!important[^}]*mask:\s*none\s*!important/s,
+    /\[data-composer-card="true"\]:has\(\s*\[role="textbox"\]\[aria-haspopup="menu"\]\s*\)::after\s*\{[^}]*content:\s*none\s*!important[^}]*mask:\s*none\s*!important/s,
+    "the host's 22px dashed mask ring cannot be re-cornered, so it is drawn away",
   );
   assert.match(
     css,
-    /\[data-composer-card="true"\]:has\(\s*\[aria-haspopup="menu"\]\[readonly\]\s*\):hover\s*\{[^}]*border-color:\s*var\(--eink-ink\)\s*!important/s,
+    /\[data-composer-card="true"\]:has\(\s*\[role="textbox"\]\[aria-haspopup="menu"\]\s*\):hover\s*\{[^}]*border-color:\s*var\(--eink-ink\)\s*!important/s,
+  );
+  assert.ok(css.includes(picker), "every picker rule shares one hook");
+  // The editor takes no frame of its own, and its only copy is the aria-hidden
+  // placeholder, so nothing in the picker is worth a native text selection.
+  assert.match(
+    css,
+    /\[data-composer-card="true"\]:has\(\[role="textbox"\]\[aria-haspopup="menu"\]\)\s*\n?\s*\[role="textbox"\]\s*\{[^}]*border:\s*0\s*!important[^}]*box-shadow:\s*none\s*!important[^}]*user-select:\s*none/s,
   );
   const triggerHover = css
-    .slice(css.indexOf('[data-composer-card="true"]:has(\n  [aria-haspopup="menu"][readonly]\n):hover'))
+    .slice(css.indexOf(`${picker}:hover`))
     .split("}")[0];
   assert.doesNotMatch(triggerHover, /box-shadow/);
   // The trigger state is structural and does not depend on its localized placeholder.
@@ -926,10 +937,10 @@ test("the composer is a paper panel instead of a floating card", () => {
     css,
     /\[data-composer-card="true"\]\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border:\s*1px solid var\(--eink-rule-strong\)\s*!important[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
   );
-  // The picker trigger is a readonly editor in the current build, not a textarea.
+  // The picker trigger is a menu-opening text surface, not a textarea.
   assert.match(
     css,
-    /\[data-composer-card="true"\]:has\(\s*\[aria-haspopup="menu"\]\[readonly\]\s*\)::after\s*\{[^}]*content:\s*none\s*!important[^}]*mask:\s*none\s*!important/s,
+    /\[data-composer-card="true"\]:has\(\s*\[role="textbox"\]\[aria-haspopup="menu"\]\s*\)::after\s*\{[^}]*content:\s*none\s*!important[^}]*mask:\s*none\s*!important/s,
   );
 });
 

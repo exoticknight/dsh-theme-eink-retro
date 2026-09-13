@@ -2,7 +2,11 @@
 
 All notable changes to this project are documented here.
 
-## Unreleased
+## [0.3.1] - 2026-09-13
+
+### Fixed
+
+- The no-workspace picker drops the host's 22px dashed mask ring: the composer is a solid rectilinear paper panel in that state, as it is everywhere else. The trigger moved from a readonly editor to a contenteditable text surface, so the picker is now matched by that shared role plus its menu attribute instead of by one build's element.
 
 ## [0.3.0] - 2026-09-13
 
