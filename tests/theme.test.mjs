@@ -269,19 +269,34 @@ test("tabs preserve the host underline without a selected fill", () => {
   );
   assert.match(
     css,
-    /\[data-dsh-responsive-part="session-tablist"\][^{]*>\s*\[role="tab"\]\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*border-radius:\s*0\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+    /^html\[data-dsh-theme-eink-retro\] \[role="tab"\]:hover\s*\{[^}]*color:\s*var\(--eink-ink\)\s*!important[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*inset 0 -1px 0 var\(--eink-rule-strong\)\s*!important/ms,
+    "every tab set strengthens the bottom rule on hover instead of spending a fill",
+  );
+  assert.doesNotMatch(
+    css,
+    /\[role="tab"\]:hover\s*\{[^}]*background-color:\s*var\(--eink-paper-raised\)/s,
+    "a tonal hover block would compete with the underline that marks the current tab",
   );
   assert.match(
     css,
-    /\[data-dsh-responsive-part="session-tablist"\][^{]*>\s*\[role="tab"\]:hover\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*inset 0 -1px 0 var\(--eink-rule-strong\)\s*!important/s,
+    /\[data-slot="conversation\.session\.header"\]\s*\[role="tablist"\]\s*>\s*\[role="tab"\]\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*border-radius:\s*0\s*!important[^}]*box-shadow:\s*none\s*!important/s,
   );
   assert.match(
     css,
-    /\[data-dsh-responsive-part="session-tablist"\][^{]*>\s*\[role="tab"\]\[aria-selected="true"\]\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+    /\[data-slot="conversation\.session\.header"\]\s*\[role="tablist"\]\s*>\s*\[role="tab"\]:hover\s*\{[^}]*color:\s*var\(--eink-ink\)\s*!important[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*inset 0 -1px 0 var\(--eink-rule-strong\)\s*!important/s,
   );
   assert.match(
     css,
-    /\[data-dsh-responsive-part="session-tablist"\][^{]*>\s*\[role="tab"\]:focus-visible\s*\{[^}]*color:\s*var\(--eink-ink\)\s*!important[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*var\(--eink-focus-ring\)\s*!important/s,
+    /\[data-slot="conversation\.session\.header"\]\s*\[role="tablist"\]\s*>\s*\[role="tab"\]\[aria-selected="true"\]\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-slot="conversation\.session\.header"\]\s*\[role="tablist"\]\s*>\s*\[role="tab"\]:focus-visible\s*\{[^}]*color:\s*var\(--eink-ink\)\s*!important[^}]*background-color:\s*transparent\s*!important[^}]*box-shadow:\s*var\(--eink-focus-ring\)\s*!important/s,
+  );
+  assert.doesNotMatch(
+    css,
+    /data-dsh-responsive-part="session-tablist"/,
+    "session tabs use the shipped conversation slot instead of an absent host hook",
   );
 });
 
@@ -307,23 +322,40 @@ test("composer preserves DSH's backdrop text and owns a single focus border", ()
     css,
     /\[data-input-scroll="true"\][^{]*>\s*:has\(> \[data-input-backdrop="true"\]\):has\(> \[data-input-mirror="true"\]\)[^{]*>\s*textarea:focus-visible\s*\{[^}]*box-shadow:\s*none\s*!important/s,
   );
+  // The current build ships a Lexical contenteditable instead of a textarea, so
+  // the same two halves are gated on its hook: the editor draws no frame and the
+  // card carries the focus frame.
+  assert.match(
+    css,
+    /\[data-composer-card="true"\]\s*\[data-composer-input="true"\],\s*\n[\s\S]{0,400}?\{[^}]*background-color:\s*transparent\s*!important[^}]*border:\s*0\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-composer-card="true"\]\s*\[data-composer-input="true"\]:focus-visible,\s*\n[\s\S]{0,400}?>\s*textarea:focus-visible\s*\{[^}]*box-shadow:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-dsh-theme-eink-retro\]\s*\n?\s*\[data-composer-card="true"\]:has\(\[data-composer-input="true"\]:focus-visible\)/,
+  );
 });
 
 test("the no-workspace composer is a solid rectilinear picker surface", () => {
+  // The picker trigger is a readonly editor in the current build, so the hook is
+  // the readonly menu trigger itself rather than the legacy textarea.
   assert.match(
     css,
-    /\[data-composer-card="true"\]:has\(\s*textarea\[aria-haspopup="menu"\]\[readonly\]\s*\)\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border:\s*1px solid var\(--eink-rule-strong\)\s*!important[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+    /\[data-composer-card="true"\]:has\(\s*\[aria-haspopup="menu"\]\[readonly\]\s*\)\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border:\s*1px solid var\(--eink-rule-strong\)\s*!important[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
   );
   assert.match(
     css,
-    /\[data-composer-card="true"\]:has\(\s*textarea\[aria-haspopup="menu"\]\[readonly\]\s*\)::after\s*\{[^}]*content:\s*none\s*!important[^}]*mask:\s*none\s*!important/s,
+    /\[data-composer-card="true"\]:has\(\s*\[aria-haspopup="menu"\]\[readonly\]\s*\)::after\s*\{[^}]*content:\s*none\s*!important[^}]*mask:\s*none\s*!important/s,
   );
   assert.match(
     css,
-    /\[data-composer-card="true"\]:has\(\s*textarea\[aria-haspopup="menu"\]\[readonly\]\s*\):hover\s*\{[^}]*border-color:\s*var\(--eink-ink\)\s*!important/s,
+    /\[data-composer-card="true"\]:has\(\s*\[aria-haspopup="menu"\]\[readonly\]\s*\):hover\s*\{[^}]*border-color:\s*var\(--eink-ink\)\s*!important/s,
   );
   const triggerHover = css
-    .slice(css.indexOf('[data-composer-card="true"]:has(\n  textarea[aria-haspopup="menu"][readonly]\n):hover'))
+    .slice(css.indexOf('[data-composer-card="true"]:has(\n  [aria-haspopup="menu"][readonly]\n):hover'))
     .split("}")[0];
   assert.doesNotMatch(triggerHover, /box-shadow/);
   // The trigger state is structural and does not depend on its localized placeholder.
@@ -395,6 +427,13 @@ test("workspace search and user messages use crisp surfaces with one focus owner
   assert.match(
     css,
     /\[data-chat-flow-kind="user"\][^{]*\[data-time-hover-root="true"\][^{]*>\s*:first-child\s*>\s*:last-child\s*\{[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important/s,
+  );
+  // The same card in the current build: the bubble is addressed through the
+  // user flow item and its generated class suffix, because neither the row nor
+  // the stack carries a message-part attribute any more.
+  assert.match(
+    css,
+    /\[data-chat-flow-kind="user"\]\s+\[class\*="_bubble"\]\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border:\s*1px solid var\(--eink-rule\)\s*!important[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
   );
 });
 
@@ -487,7 +526,7 @@ test("session state dots use the e-ink status palette and a legible chase", () =
 test("settings plugin cards share one neutral surface and text hierarchy", () => {
   assert.match(
     css,
-    /\[data-dsh-surface="settings"\][^{]*\[data-slot="settings\.plugin\.item"\]\s*>\s*:first-child\s*\{[^}]*background-color:\s*var\(--eink-paper-inset\)\s*!important[^}]*border:\s*1px solid color-mix\(in srgb, var\(--eink-ink\) 35%, transparent\)\s*!important/s,
+    /\[data-slot="settings\.plugin\.item"\]\s*>\s*:first-child\s*\{[^}]*background-color:\s*var\(--eink-paper-inset\)\s*!important[^}]*border:\s*1px solid color-mix\(in srgb, var\(--eink-ink\) 35%, transparent\)\s*!important/s,
   );
   assert.match(
     css,
@@ -602,6 +641,60 @@ test("floating listboxes do not resize the conversation scrollport", () => {
   assert.match(
     css,
     /\[data-dsh-part="scrollport"\]:has\(\s*section\[aria-label\*="Trajectory" i\]\s*\),[\s\S]*?\{[^}]*overflow-y:\s*hidden/s,
+  );
+});
+
+test("one popup surface owns the frame and the viewport inside it stays bare", () => {
+  // The composer menu mounts as container > viewport, where the container is the
+  // floating surface. Framing the viewport too paints a box inside the popup.
+  // The container must hold nothing but the popup: a trigger wrapper that also
+  // holds its own button satisfies the plain `:has()` test, and painting it puts
+  // the surface on the trigger while the real menu goes transparent.
+  assert.match(
+    css,
+    /:has\(>\s*\[role="menu"\],\s*>\s*\[role="listbox"\]\):not\(\s*:has\(>\s*:not\(\[role="menu"\], \[role="listbox"\]\)\)\s*\)\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border:\s*1px solid var\(--eink-rule-strong\)\s*!important[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important[^}]*box-shadow:\s*var\(--eink-shadow-1\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /:has\(>\s*\[role="menu"\],\s*>\s*\[role="listbox"\]\):not\(\s*:has\(>\s*:not\(\[role="menu"\], \[role="listbox"\]\)\)\s*\)\s*>\s*:is\(\[role="menu"\], \[role="listbox"\]\)\s*\{[^}]*background-color:\s*transparent\s*!important[^}]*border-color:\s*transparent\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+  );
+  // A menu that DSH mounts inside its trigger wrapper still owns its surface.
+  assert.match(
+    css,
+    /:where\(\[role="menu"\], \[role="listbox"\]\)\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important/s,
+  );
+});
+
+test("a code block is one framed surface with a squared banner", () => {
+  assert.match(
+    css,
+    /\[class\*="code-block" i\]\s+pre\s*\{[^}]*background-color:\s*transparent[^}]*border:\s*0[^}]*border-radius:\s*0[^}]*box-shadow:\s*none/s,
+    "the scrollable body must not repeat the wrapper's frame",
+  );
+  // A banner sits inside the frame and hides any spine behind it, so the block
+  // is framed on all four sides instead of trailing a stray ink edge.
+  assert.doesNotMatch(css, /inset 2px 0 0/);
+  assert.match(
+    css,
+    /:has\(>\s*\[data-code-block-banner\]\),[\s\S]*?\[data-code-block-banner\]\s*\{[^}]*background-color:\s*var\(--eink-paper-raised\)\s*!important[^}]*border-radius:\s*var\(--eink-radius-surface\) var\(--eink-radius-surface\) 0 0\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-code-block-banner\]\s*\{[^}]*border-bottom:\s*1px solid var\(--eink-rule\)/s,
+  );
+});
+
+test("model-facing context text keeps one surface and one frame", () => {
+  // A prompt/context payload renders as a bare pre inside a body that already
+  // owns the scrolling code-tone surface, so the code-block frame must not
+  // land a second box and a stray left ink rule inside it.
+  assert.match(
+    css,
+    /pre\[data-context-text\]\s*\{[^}]*background-color:\s*transparent[^}]*border:\s*0[^}]*border-radius:\s*0[^}]*box-shadow:\s*none/s,
+  );
+  assert.match(
+    css,
+    /:is\(\[data-system-prompt-body\], \[data-context-injection-body\]\)\s*\{[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important/s,
   );
 });
 
@@ -790,19 +883,103 @@ test("the theme keeps exactly one opinion about light and dark", () => {
   );
 });
 
-test("shell regions use the public surface anchor, not a stale pane attribute", () => {
-  // `data-dsh-surface` marks a region with a zero-size anchor, so the column
-  // that paints it is its parent. `data-pane` does not exist in DSH.
+test("shell regions follow the current anchor and keep the legacy one working", () => {
+  // A region is marked with a zero-size anchor child, so the column that paints
+  // it is the anchor's parent. The anchors are `data-slot` in the current build;
+  // `data-dsh-surface` named the same anchors before and is kept as a fallback.
+  // `data-pane` never existed in DSH.
   assert.doesNotMatch(css, /data-pane=/);
+  for (const region of ["sidebar", "main", "rightbar"]) {
+    assert.ok(css.includes(`:has(> [data-slot="${region}"])`), `missing slot anchor for ${region}`);
+  }
   for (const region of ["sidebar", "conversation", "details"]) {
     assert.ok(
       css.includes(`:has(> [data-dsh-surface="${region}"])`),
-      `missing surface anchor for ${region}`,
+      `missing legacy surface anchor for ${region}`,
     );
   }
   assert.match(
     css,
-    /:not\(\[data-details-collapsed="true"\]\)\s*>\s*:has\(> \[data-dsh-surface="conversation"\]\)/s,
+    /:not\(\[data-rightbar-collapsed="true"\], \[data-details-collapsed="true"\]\)\s*>\s*:where\(:has\(> \[data-slot="main"\]\), :has\(> \[data-dsh-surface="conversation"\]\)\)/s,
+  );
+  // The host stopped publishing its sidebar fill token, so the panes take the
+  // theme's raised paper instead of resolving to nothing.
+  assert.doesNotMatch(css, /var\(--dsw-specific-sidebar-fill\)/);
+});
+
+test("host chrome without a role is still clamped to the theme's geometry", () => {
+  // Tool-call rows, the sidebar's section header, and the conversation header's
+  // controls keep the host's soft radii; each is reached by a public attribute,
+  // a slot, or a semantic class suffix. Dots and avatars keep their shape.
+  assert.match(
+    css,
+    /\[data-chat-call-id\],[\s\S]{0,400}?\[data-slot="sidebar\.workspaces"\] \[class\*="_sectionHeader"\],[\s\S]{0,600}?border-radius:\s*var\(--eink-radius-surface\)\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-slot\^="conversation\.session\.header"\][\s\S]{0,300}?:not\(\[class\*="dot" i\]\):not\(\[class\*="avatar" i\]\)/s,
+  );
+});
+
+test("the composer is a paper panel instead of a floating card", () => {
+  assert.match(
+    css,
+    /\[data-composer-card="true"\]\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border:\s*1px solid var\(--eink-rule-strong\)\s*!important[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+  );
+  // The picker trigger is a readonly editor in the current build, not a textarea.
+  assert.match(
+    css,
+    /\[data-composer-card="true"\]:has\(\s*\[aria-haspopup="menu"\]\[readonly\]\s*\)::after\s*\{[^}]*content:\s*none\s*!important[^}]*mask:\s*none\s*!important/s,
+  );
+});
+
+test("scrollport rules follow the conversation scroll hook", () => {
+  assert.match(
+    css,
+    /\[data-conversation-scroll\]\s+:has\(>\s*\[role="listbox"\]\),[\s\S]{0,200}?\{[^}]*contain:\s*layout/s,
+  );
+  assert.match(
+    css,
+    /\[data-conversation-scroll\]:has\(\s*section\[aria-label\*="Trajectory" i\]\s*\),[\s\S]{0,400}?\{[^}]*overflow-y:\s*hidden/s,
+  );
+  assert.match(
+    css,
+    /\[data-composer-seat\]::before,[\s\S]{0,200}?\{[^}]*linear-gradient/s,
+  );
+});
+
+test("settings plugin cards hang off their slot alone", () => {
+  assert.match(css, /\[data-slot="settings\.plugin\.item"\]\s*>\s*:first-child\s*\{[^}]*box-shadow:\s*none\s*!important/s);
+  assert.doesNotMatch(
+    css,
+    /\[data-dsh-surface="settings"\]/,
+    "the settings surface anchor no longer exists in the current build",
+  );
+});
+
+test("contributed widget surfaces follow the theme's geometry and distance", () => {
+  // The usage widget's popover ships a translucent 16px pill with a blurred
+  // shadow; it takes the theme's paper, one rule and the hard attached-popup
+  // elevation. Its test ids are the package's own public hooks.
+  assert.match(
+    css,
+    /\[data-testid="billing-trigger-pop"\]\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important[^}]*box-shadow:\s*var\(--eink-shadow-1\)\s*!important[^}]*backdrop-filter:\s*none\s*!important/s,
+  );
+  assert.match(
+    css,
+    /\[data-testid="billing-live-cost-bar"\]\s*\{[^}]*backdrop-filter:\s*none\s*!important/s,
+  );
+  assert.match(css, /\[role="separator"\]/);
+  assert.match(
+    css,
+    /\[class\*="popDot"\],[\s\S]{0,400}?border-radius:\s*var\(--eink-radius-tight\)\s*!important/s,
+  );
+});
+
+test("immersive mode covers contributed data hues", () => {
+  assert.match(
+    css,
+    /\[data-dsh-theme-eink-retro="immersive"\][\s\S]{0,500}?\[data-role-kind\],[\s\S]{0,400}?filter:\s*grayscale\(1\)/s,
   );
 });
 

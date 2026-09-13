@@ -279,11 +279,14 @@ html[data-dsh-theme-eink-retro] ::placeholder {
   }
 }
 
-/* Shell regions. `data-dsh-surface` marks each region with a zero-size anchor
- * rather than the column that paints it, so the column is addressed as the
- * anchor's parent. That keeps the hook public and hash-free while still
- * landing on the element that actually has a background. */
+/* Shell regions. DSH marks each region with a zero-size anchor child rather
+ * than the column that paints it, so the column is addressed as the anchor's
+ * parent. The anchors moved from `data-dsh-surface` to `data-slot` in the
+ * current build; both spellings are kept so an older profile still resolves. */
 html[data-dsh-theme-eink-retro] :where(
+  :has(> [data-slot="sidebar"]),
+  :has(> [data-slot="main"]),
+  :has(> [data-slot="rightbar"]),
   :has(> [data-dsh-surface="sidebar"]),
   :has(> [data-dsh-surface="conversation"]),
   :has(> [data-dsh-surface="details"])
@@ -293,24 +296,26 @@ html[data-dsh-theme-eink-retro] :where(
   box-shadow: none;
 }
 
+/* Both side panes are one pair, so they share one fill. The host stopped
+ * publishing its sidebar token, and the raised paper is the tone the panes
+ * already resolve to, so the pair stays identical in light and dark. */
+html[data-dsh-theme-eink-retro] :has(> [data-slot="sidebar"]),
 html[data-dsh-theme-eink-retro] :has(> [data-dsh-surface="sidebar"]) {
-  background-color: var(--dsw-specific-sidebar-fill);
+  background-color: var(--eink-paper-raised);
   border-right: 1px solid var(--eink-rule);
 }
 
 /* Only a details pane that is actually on screen earns a divider, otherwise
  * the rule lands on the right edge of the window. */
 html[data-dsh-theme-eink-retro]
-  :not([data-details-collapsed="true"])
-  > :has(> [data-dsh-surface="conversation"]) {
+  :not([data-rightbar-collapsed="true"], [data-details-collapsed="true"])
+  > :where(:has(> [data-slot="main"]), :has(> [data-dsh-surface="conversation"])) {
   border-right: 1px solid var(--eink-rule);
 }
 
-/* The two side panes are one pair. Sourcing both from the sidebar fill keeps
- * that relationship identical in light and dark; `--eink-paper-raised` reads
- * as a lighter, detached slab in dark mode only. */
+html[data-dsh-theme-eink-retro] :has(> [data-slot="rightbar"]),
 html[data-dsh-theme-eink-retro] :has(> [data-dsh-surface="details"]) {
-  background-color: var(--dsw-specific-sidebar-fill);
+  background-color: var(--eink-paper-raised);
 }
 
 html[data-dsh-theme-eink-retro] :where(button, input, textarea, select, [role="button"]) {
@@ -326,6 +331,7 @@ html[data-dsh-theme-eink-retro] :where(
   [role="listbox"],
   [role="tooltip"],
   [role="treeitem"],
+  [role="separator"],
   [class*="card" i],
   [class*="panel" i],
   [class*="modal" i],
@@ -340,6 +346,23 @@ html[data-dsh-theme-eink-retro] :where(
 html[data-dsh-theme-eink-retro] span[class*="tabSearch"],
 html[data-dsh-theme-eink-retro] div[class$="_bar"]:has(> [class$="_label"]),
 html[data-dsh-theme-eink-retro] div:has(> [class$="_sep"][aria-hidden="true"]) {
+  border-radius: var(--eink-radius-surface) !important;
+}
+
+/* Host chrome that still carries its own soft geometry and has no role to be
+ * addressed by: a tool-call row is rounded to 6px, the sidebar's section header
+ * to 12px, the conversation header's split control to 14px, and the settings
+ * stepper to a full pill. Each is reached through a public data attribute, a
+ * slot, or a semantic class suffix instead of its hashed name. Dots and avatars
+ * keep their shape: a round state marker is a primitive, not a surface. */
+html[data-dsh-theme-eink-retro] [data-chat-call-id],
+html[data-dsh-theme-eink-retro] [data-slot="sidebar.workspaces"] [class*="_sectionHeader"],
+html[data-dsh-theme-eink-retro] [data-slot^="settings."] [class*="_stepper"],
+html[data-dsh-theme-eink-retro]
+  :where([data-slot^="conversation.session.header"], [data-slot^="main.conversation"])
+  :where(div, span, button, a, label):not([class*="dot" i]):not([class*="avatar" i]):not(
+    [class*="badge" i]
+  ):not([class*="chart" i]):not([class*="spark" i]) {
   border-radius: var(--eink-radius-surface) !important;
 }
 
@@ -674,11 +697,14 @@ html[data-dsh-theme-eink-retro]
 }
 
 /* The composer keeps its visible text in a backdrop layer underneath a
- * transparent textarea. Let the outer composer card own the surface and
- * focus treatment; otherwise the backdrop is hidden and a second inset rule
- * remains visible after the textarea loses focus. Newer DSH builds expose the
- * backdrop/mirror structure instead of the legacy composer-input part. */
+ * transparent editor. Let the outer composer card own the surface and focus
+ * treatment; otherwise the backdrop is hidden and a second inset rule remains
+ * visible after the editor loses focus. Three DSH generations expose the editor
+ * differently — the legacy composer-input part, the backdrop/mirror structure,
+ * and the Lexical contenteditable the current build ships — and all three take
+ * the same treatment so the card stays the only frame around the text. */
 html[data-dsh-theme-eink-retro] textarea[data-dsh-part="composer-input"],
+html[data-dsh-theme-eink-retro] [data-composer-card="true"] [data-composer-input="true"],
 html[data-dsh-theme-eink-retro]
   [data-composer-card="true"]
   [data-input-scroll="true"]
@@ -690,14 +716,26 @@ html[data-dsh-theme-eink-retro]
   box-shadow: none !important;
 }
 
+/* The composer is a paper panel, not a floating card. DSH ships a soft ring
+ * plus two blurred drop shadows, which is the only elevation the theme does not
+ * author; one strong rule and no shadow keeps its lower edge from reading as a
+ * grey smear on the seat, and matches the picker state below. Focus still spends
+ * the theme's inner frame on this same card. */
+html[data-dsh-theme-eink-retro] [data-composer-card="true"] {
+  background-color: var(--eink-paper-bright) !important;
+  border: 1px solid var(--eink-rule-strong) !important;
+  border-radius: var(--eink-radius-surface) !important;
+  box-shadow: none !important;
+}
+
 /* Before a Workspace exists, DSH turns the resident composer into the picker
  * trigger and draws a 22px dashed SVG-mask ring over its real border. The ring
  * survives the card's rectilinear theme radius and reads like a drop zone.
  * Keep the generous whole-card target, but express it as the same solid paper
- * panel used everywhere else. The card keeps one border and no drop shadow so
- * its lower edge cannot read as a stray rule; the border survives forced colors. */
+ * panel used everywhere else. The trigger used to be a readonly textarea and is
+ * a readonly editor in the current build, so both spellings are matched. */
 html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
-  textarea[aria-haspopup="menu"][readonly]
+  [aria-haspopup="menu"][readonly]
 ) {
   background-color: var(--eink-paper-bright) !important;
   border: 1px solid var(--eink-rule-strong) !important;
@@ -706,7 +744,7 @@ html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
 }
 
 html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
-  textarea[aria-haspopup="menu"][readonly]
+  [aria-haspopup="menu"][readonly]
 )::after {
   content: none !important;
   -webkit-mask: none !important;
@@ -714,7 +752,7 @@ html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
 }
 
 html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
-  textarea[aria-haspopup="menu"][readonly]
+  [aria-haspopup="menu"][readonly]
 ):hover {
   border-color: var(--eink-ink) !important;
 }
@@ -737,9 +775,12 @@ html[data-dsh-theme-eink-retro]
   stroke: var(--eink-ink) !important;
 }
 
-/* DSH places a blue-gray fade on the composer seat itself. Retint that native
- * layer instead of removing the useful separation between the message stream
- * and composer. */
+/* Where a build draws its blue-gray fade on the composer seat, retint that
+ * native layer instead of removing the useful separation between the message
+ * stream and the composer. The seat moved from the scrollport's child to a
+ * `data-composer-seat` element; the current build paints it plain, so this only
+ * bites where a host fade is actually present. */
+html[data-dsh-theme-eink-retro] [data-composer-seat]::before,
 html[data-dsh-theme-eink-retro] [data-dsh-part="scrollport"] > :has(
   [data-composer-card="true"]
 )::before {
@@ -749,6 +790,8 @@ html[data-dsh-theme-eink-retro] [data-dsh-part="scrollport"] > :has(
   ) !important;
 }
 
+html[data-dsh-theme-eink-retro]
+  [data-composer-card="true"]:has([data-composer-input="true"]:focus-visible),
 html[data-dsh-theme-eink-retro] [data-composer-card="true"]:has(
   textarea[data-dsh-part="composer-input"]:focus-visible
 ),
@@ -843,6 +886,7 @@ html[data-dsh-theme-eink-retro] :where(input, textarea, select, [contenteditable
 }
 
 html[data-dsh-theme-eink-retro] textarea[data-dsh-part="composer-input"]:focus-visible,
+html[data-dsh-theme-eink-retro] [data-composer-card="true"] [data-composer-input="true"]:focus-visible,
 html[data-dsh-theme-eink-retro]
   [data-composer-card="true"]
   [data-input-scroll="true"]
@@ -948,6 +992,43 @@ html[data-dsh-theme-eink-retro] :where([role="menu"], [role="listbox"]) {
   -webkit-backdrop-filter: none !important;
 }
 
+/* Current DSH wraps a composer popup in a positioned container whose only child
+ * is the menu/listbox viewport: the container is the floating surface — it
+ * carries the soft 20px radius and the blurred native shadow — while the
+ * viewport inside it is just the scroll area. Framing both draws a black box
+ * inside the popup. Keep one surface on the container and let the viewport stay
+ * transparent; older builds that mount the listbox directly still get the rule
+ * above.
+ *
+ * The container test has to be exact. Several controls render their menu as a
+ * second child of the trigger's own wrapper (`wrapper > button + [role=menu]`),
+ * which also satisfies `:has(> [role="menu"])`; painting that wrapper puts the
+ * surface on the trigger and leaves the real popup transparent. A floating
+ * container therefore has to hold nothing but the popup. */
+html[data-dsh-theme-eink-retro]
+  :has(> [role="menu"], > [role="listbox"]):not(
+    :has(> :not([role="menu"], [role="listbox"]))
+  ) {
+  background-color: var(--eink-paper-bright) !important;
+  background-image: none !important;
+  border: 1px solid var(--eink-rule-strong) !important;
+  border-radius: var(--eink-radius-surface) !important;
+  box-shadow: var(--eink-shadow-1) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html[data-dsh-theme-eink-retro]
+  :has(> [role="menu"], > [role="listbox"]):not(
+    :has(> :not([role="menu"], [role="listbox"]))
+  )
+  > :is([role="menu"], [role="listbox"]) {
+  background-color: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
 /* Trigger tooltips add no information once a menu/listbox is open and can sit
  * on top of the floating surface after a pointer click. Suppress that stale
  * hover layer while a richer popup is present. */
@@ -957,9 +1038,10 @@ html[data-dsh-theme-eink-retro]:has(:where([role="menu"], [role="listbox"])) [ro
 
 /* Plugin settings are contributed by independent packages, so their card
  * implementations do not always consume DSH's shared surface tokens. Normalize
- * the semantic slot instead of coupling the theme to generated class names. */
+ * the semantic slot instead of coupling the theme to generated class names; the
+ * slot is the hook, and the settings surface anchor it used to hang off is gone
+ * in the current build. */
 html[data-dsh-theme-eink-retro]
-  [data-dsh-surface="settings"]
   [data-slot="settings.plugin.item"]
   > :first-child {
   color: var(--eink-ink) !important;
@@ -970,7 +1052,6 @@ html[data-dsh-theme-eink-retro]
 }
 
 html[data-dsh-theme-eink-retro]
-  [data-dsh-surface="settings"]
   [data-slot="settings.plugin.item"]
   details
   > summary
@@ -980,14 +1061,12 @@ html[data-dsh-theme-eink-retro]
 }
 
 html[data-dsh-theme-eink-retro]
-  [data-dsh-surface="settings"]
   [data-slot="settings.plugin.item"]
   input[type="radio"] {
   accent-color: var(--eink-ink) !important;
 }
 
 html[data-dsh-theme-eink-retro]
-  [data-dsh-surface="settings"]
   [data-slot="settings.plugin.item"]
   label:has(> input[type="radio"]:checked) {
   background-color: var(--eink-paper-bright) !important;
@@ -996,7 +1075,6 @@ html[data-dsh-theme-eink-retro]
 }
 
 html[data-dsh-theme-eink-retro]
-  [data-dsh-surface="settings"]
   [data-slot="settings.plugin.item"]
   button[type="submit"] {
   color: var(--eink-selection-fg) !important;
@@ -1022,6 +1100,20 @@ html[data-dsh-theme-eink-retro]
   [data-time-hover-root="true"]
   > :first-child
   > :last-child {
+  padding: 8px 12px !important;
+  background-color: var(--eink-paper-bright) !important;
+  border: 1px solid var(--eink-rule) !important;
+  border-radius: var(--eink-radius-surface) !important;
+  box-shadow: none !important;
+}
+
+/* DSH 0.1.5 builds the same card as `userRow > userStack > bubble`, and the
+ * bubble is the only element that still carries the message surface: the row
+ * has no message-part attribute and the time-hover wrapper is gone, so the
+ * generated bubble class is the single hook left. It is the last child of the
+ * stack (attachments, when present, sit above it), which is why the suffix is
+ * anchored inside the user flow item rather than addressed on its own. */
+html[data-dsh-theme-eink-retro] [data-chat-flow-kind="user"] [class*="_bubble"] {
   padding: 8px 12px !important;
   background-color: var(--eink-paper-bright) !important;
   border: 1px solid var(--eink-rule) !important;
@@ -1153,9 +1245,13 @@ html[data-dsh-theme-eink-retro] :where(
 }
 
 /* Tabs are secondary navigation, not a row of outlined buttons. Their resting
- * state is flat, hover spends only a quiet tonal fill, and the current view
- * adds label weight. Keyboard focus temporarily inverts the same flat tab
- * instead of wrapping it in a button-like outline. */
+ * state is flat and the current view is marked by the host's own bottom rule,
+ * so hover strengthens that same rule instead of filling the tab: a tonal block
+ * competes with the underline as a second state marker and reads as a button.
+ * This covers every tab set DSH ships — the conversation header, the panel
+ * strips, and panel tabs contributed by plugins, which draw their selected
+ * indicator as their own bottom rule. Keyboard focus still inverts the whole
+ * tab instead of wrapping it in a button-like outline. */
 html[data-dsh-theme-eink-retro] [role="tab"] {
   background-color: transparent !important;
   background-image: none !important;
@@ -1164,9 +1260,10 @@ html[data-dsh-theme-eink-retro] [role="tab"] {
 }
 
 html[data-dsh-theme-eink-retro] [role="tab"]:hover {
-  background-color: var(--eink-paper-raised) !important;
+  color: var(--eink-ink) !important;
+  background-color: transparent !important;
   border-color: transparent !important;
-  box-shadow: none !important;
+  box-shadow: inset 0 -1px 0 var(--eink-rule-strong) !important;
 }
 
 html[data-dsh-theme-eink-retro] [role="tab"]:focus:not(:focus-visible) {
@@ -1197,12 +1294,14 @@ html[data-dsh-theme-eink-retro] [role="tab"]:focus-visible * {
   color: inherit !important;
 }
 
-/* The conversation header's public responsive hook identifies the tab set in
- * the reference without localized labels or generated classes. It already
- * paints one 2px selected indicator on the tab's ::after, so this group drops
- * the generic tonal block and keeps that native line as its sole active cue. */
+/* The conversation header's public slot identifies the session tab set without
+ * localized labels or generated classes. The host already paints one 2px
+ * selected indicator on each direct tab's ::after. Keep that as the only line:
+ * hover only strengthens the label and adds the same quiet bottom rule the rest
+ * of the tab sets use, so no tab ever gains a filled block. */
 html[data-dsh-theme-eink-retro]
-  [data-dsh-responsive-part="session-tablist"]
+  [data-slot="conversation.session.header"]
+  [role="tablist"]
   > [role="tab"] {
   background-color: transparent !important;
   border-radius: 0 !important;
@@ -1210,7 +1309,8 @@ html[data-dsh-theme-eink-retro]
 }
 
 html[data-dsh-theme-eink-retro]
-  [data-dsh-responsive-part="session-tablist"]
+  [data-slot="conversation.session.header"]
+  [role="tablist"]
   > [role="tab"]:hover {
   color: var(--eink-ink) !important;
   background-color: transparent !important;
@@ -1218,7 +1318,8 @@ html[data-dsh-theme-eink-retro]
 }
 
 html[data-dsh-theme-eink-retro]
-  [data-dsh-responsive-part="session-tablist"]
+  [data-slot="conversation.session.header"]
+  [role="tablist"]
   > [role="tab"][aria-selected="true"] {
   color: var(--eink-ink) !important;
   background-color: transparent !important;
@@ -1227,7 +1328,8 @@ html[data-dsh-theme-eink-retro]
 }
 
 html[data-dsh-theme-eink-retro]
-  [data-dsh-responsive-part="session-tablist"]
+  [data-slot="conversation.session.header"]
+  [role="tablist"]
   > [role="tab"]:focus-visible {
   color: var(--eink-ink) !important;
   background-color: transparent !important;
@@ -1267,7 +1369,49 @@ html[data-dsh-theme-eink-retro] :where(pre, [class*="code-block" i]) {
   background-color: var(--dsw-alias-markdown-code-block);
   border: 1px solid var(--eink-rule);
   border-radius: var(--eink-radius-surface);
-  box-shadow: inset 2px 0 0 var(--eink-rule-strong);
+}
+
+/* Current DSH renders a code block as a wrapper that holds an optional banner
+ * and a scrollable body, so the wrapper and the pre inside it both matched the
+ * rule above and the block drew two frames plus two left ink rules. One block
+ * is one framed surface: the wrapper keeps the frame, the body is only text. */
+html[data-dsh-theme-eink-retro] [class*="code-block" i] pre {
+  background-color: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* The banner is a label strip inside that one surface, not a second slab: it
+ * takes the paper above the code and is squared to the frame's own corners,
+ * separated from the body by the frame's rule instead of a soft grey block. */
+html[data-dsh-theme-eink-retro] :has(> [data-code-block-banner]),
+html[data-dsh-theme-eink-retro] [data-code-block-banner] {
+  background-color: var(--eink-paper-raised) !important;
+  background-image: none !important;
+  border-radius: var(--eink-radius-surface) var(--eink-radius-surface) 0 0 !important;
+}
+
+html[data-dsh-theme-eink-retro] [data-code-block-banner] {
+  border-bottom: 1px solid var(--eink-rule);
+}
+
+/* Model-facing context text is not a code block. DSH renders the durable
+ * prompt/context payload as a bare `pre[data-context-text]` inside a body that
+ * already owns the surface — a bounded, scrolling block in the code tone — so
+ * the code-block frame lands a second box and a stray left ink rule inside it
+ * once the row is expanded. The body keeps that tone and its bounded height,
+ * but takes the theme's rectilinear corner instead of the host's 8px pill. */
+html[data-dsh-theme-eink-retro] pre[data-context-text] {
+  background-color: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+html[data-dsh-theme-eink-retro]
+  :is([data-system-prompt-body], [data-context-injection-body]) {
+  border-radius: var(--eink-radius-surface) !important;
 }
 
 html[data-dsh-theme-eink-retro] code:not(pre code) {
@@ -1305,12 +1449,14 @@ html[data-dsh-theme-eink-retro] th {
   font-weight: var(--eink-weight-strong);
 }
 
-/* DSH mounts composer menus inside the conversation scrollport. Their
+/* DSH mounts composer menus inside the conversation scroll area. Their
  * absolutely positioned listboxes must not contribute their popup height to
  * the message stream, otherwise opening one changes the stream scrollHeight
  * and makes its scrollbar/thumb jump. Keep gutter reservation local to the
  * popup viewport: reserving it on the outer scrollport creates a second empty
- * track beside views such as the trajectory table. */
+ * track beside views such as the trajectory table. The scroll area is marked
+ * with `data-conversation-scroll`; older builds used a surface part name. */
+html[data-dsh-theme-eink-retro] [data-conversation-scroll] :has(> [role="listbox"]),
 html[data-dsh-theme-eink-retro] [data-dsh-part="scrollport"] :has(> [role="listbox"]) {
   contain: layout;
 }
@@ -1322,6 +1468,12 @@ html[data-dsh-theme-eink-retro] [role="listbox"] > * {
 /* The trajectory view already owns its vertical range in an inner table
  * scroller. Keep the otherwise empty outer scrollport from acquiring a second
  * scrollbar while a composer popup mounts or finishes unmounting. */
+html[data-dsh-theme-eink-retro] [data-conversation-scroll]:has(
+  section[aria-label*="Trajectory" i]
+),
+html[data-dsh-theme-eink-retro] [data-conversation-scroll]:has(
+  section[aria-label*="轨迹"]
+),
 html[data-dsh-theme-eink-retro] [data-dsh-part="scrollport"]:has(
   section[aria-label*="Trajectory" i]
 ),
@@ -1391,6 +1543,69 @@ html[data-dsh-theme-eink-retro] .lc-root .lc-gran {
 html[data-dsh-theme-eink-retro] .lc-root :is(.lc-gran-on, .lc-rich-seg-on) {
   color: var(--eink-selection-fg);
   background: var(--eink-selection-bg);
+}
+
+/* Optional adapters for the desktop panel family and the usage widget. These
+ * surfaces are contributed by independent packages: their geometry is addressed
+ * through the ids and class suffixes the packages publish, and only their
+ * decorative data hues move, which happens inside the immersive layer. */
+html[data-dsh-theme-eink-retro] [data-testid="billing-trigger-pop"] {
+  background-color: var(--eink-paper-bright) !important;
+  border: 1px solid var(--eink-rule-strong) !important;
+  border-radius: var(--eink-radius-surface) !important;
+  box-shadow: var(--eink-shadow-1) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html[data-dsh-theme-eink-retro] [data-testid="billing-live-cost-bar"] {
+  background-color: var(--eink-paper-bright) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html[data-dsh-theme-eink-retro] [data-testid="billing-trigger-icon"] {
+  border-radius: var(--eink-radius-control) !important;
+}
+
+/* A round marker is a primitive the theme squares off — its own state dots lose
+ * the pill the same way — so contributed dots and badges follow. */
+html[data-dsh-theme-eink-retro]
+  :is(
+    [class*="pillDot"],
+    [class*="popDot"],
+    [class*="fa-badge"],
+    [class*="agents-badge"],
+    [class*="stat-q"],
+    [class*="extension__tag"]
+  ) {
+  border-radius: var(--eink-radius-tight) !important;
+}
+
+html[data-dsh-theme-eink-retro] .lc-root :is([class*="fa-badge"], [class*="agents-badge"], [class*="stat-q"]) {
+  border-radius: var(--eink-radius-tight) !important;
+}
+
+/* The panel's graph keeps its marks as circles; the theme squares every other
+ * marker in the app, so these follow and stay readable as ink on paper. */
+html[data-dsh-theme-eink-retro] .lc-root i,
+html[data-dsh-theme-eink-retro] .lc-root :is([class*="br-err-dot"], [class*="node"]) {
+  border-radius: var(--eink-radius-tight);
+}
+
+/* Immersive mode maps the remaining data hues — the trajectory's role tags and
+ * timeline, the usage and panel widgets — to luminance, the same way the context
+ * plugin's data colors are mapped above. */
+html[data-dsh-theme-eink-retro="immersive"]
+  :is(
+    [data-role-kind],
+    [class*="kindTag"],
+    [data-testid^="billing-"],
+    .dsu-widget,
+    [class*="turnrewind"],
+    [class*="extension__tag"]
+  ) {
+  filter: grayscale(1) contrast(1.06);
 }
 
 /* Skill Center is an app surface even though its panel is not exposed as a
