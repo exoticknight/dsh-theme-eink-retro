@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+## [0.3.0] - 2026-09-13
+
 ### Fixed
 
 - Shell panes, dividers, and the conversation scroll area follow the current `data-slot` anchors and `data-conversation-scroll` instead of the removed `data-dsh-surface` and `data-dsh-part` hooks.
