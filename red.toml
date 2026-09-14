@@ -1,0 +1,16 @@
+version = 1
+
+[document]
+paths = ["README.md", "docs/**"]
+
+[research]
+# Local-only working notes; the directory is ignored by .gitignore.
+path = "research"
+
+[evolve]
+# Local-only proposals and active changes; the directory is ignored by .gitignore.
+path = "evolve"
+
+[policy]
+document_requires_approval = true
+report_document_implementation_conflicts = true

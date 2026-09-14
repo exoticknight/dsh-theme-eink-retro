@@ -2,10 +2,9 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-[![Listed on DSH Market](https://raw.githubusercontent.com/2BingLing/dsh-market/master/assets/readme/badge-listed-en.svg)](https://dsh.market/?q=exoticknight%2Fdsh-theme-eink-retro)
-[![CI](https://github.com/exoticknight/dsh-theme-eink-retro/actions/workflows/ci.yml/badge.svg)](https://github.com/exoticknight/dsh-theme-eink-retro/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/exoticknight/dsh-theme-eink-retro)](https://github.com/exoticknight/dsh-theme-eink-retro/releases/latest)
-[![License](https://img.shields.io/github/license/exoticknight/dsh-theme-eink-retro)](LICENSE)
+[![dsh.pub registry status](https://dsh.pub/api/badges/exoticknight/dsh-theme-eink-retro.svg)](https://dsh.pub/en/plugins/?q=exoticknight/dsh-theme-eink-retro) [![Listed on DSH Market](https://raw.githubusercontent.com/2BingLing/dsh-market/master/assets/readme/badge-listed-en.svg)](https://dsh.market/?q=exoticknight%2Fdsh-theme-eink-retro) [![Listed on dsh-plugin.org](https://dsh-plugin.org/badges/listed.svg)](https://dsh-plugin.org/plugins/exoticknight/dsh-theme-eink-retro) [![Awesome DSH Plugin](https://awesome-dsh-plugin.com/badge.svg)](https://awesome-dsh-plugin.com) [![dsh-xray](https://img.shields.io/endpoint?url=https%3A%2F%2Funstone.github.io%2Fdsh-xray%2Fbadge%2Fexoticknight__dsh-theme-eink-retro.json)](https://unstone.github.io/dsh-xray/p/exoticknight__dsh-theme-eink-retro.html)
+
+[![Maintained with RED](https://img.shields.io/badge/maintained_with-RED-C1121F)](https://github.com/exoticknight/red) [![CI](https://github.com/exoticknight/dsh-theme-eink-retro/actions/workflows/ci.yml/badge.svg)](https://github.com/exoticknight/dsh-theme-eink-retro/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/exoticknight/dsh-theme-eink-retro)](https://github.com/exoticknight/dsh-theme-eink-retro/releases/latest) [![License](https://img.shields.io/github/license/exoticknight/dsh-theme-eink-retro)](LICENSE)
 
 E-Ink Retro is a client-side theme for DeepSeek Harness. It uses neutral paper surfaces, near-black type, hard offset shadows, compact corners, and black-and-white selection states. The geometry takes cues from classic Macintosh interfaces while keeping the DSH layout and workflows recognizable.
 
@@ -83,6 +82,7 @@ You can find E-Ink Retro in these directories:
 - [dsh.pub](https://dsh.pub/en/plugins/dsh-theme-eink-retro/)
 - [DSH Market](https://dsh.market/?q=exoticknight%2Fdsh-theme-eink-retro)
 - [DSH Marketplace](https://dshmarketplace.dev/plugins?q=dsh-theme-eink-retro)
+- [dsh-plugin.org](https://dsh-plugin.org/plugins/exoticknight/dsh-theme-eink-retro)
 - [HackSing DSH Plugins](https://github.com/HackSing/dsh-plugins/blob/main/README.md)
 - [Awesome DSH Plugin directory](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/exoticknight__dsh-theme-eink-retro.yml)
 - [Awesome DSH Plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins/blob/main/PLUGINS.md)

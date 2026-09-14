@@ -2,3 +2,7 @@ node_modules/
 .tmp/
 *.tgz
 .DS_Store
+
+# RED working artifacts are local-only and are intentionally not versioned.
+research/
+evolve/

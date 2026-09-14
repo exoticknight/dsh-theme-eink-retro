@@ -2,10 +2,9 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-[![DSH Market 已收录](https://raw.githubusercontent.com/2BingLing/dsh-market/master/assets/readme/badge-listed-zh.svg)](https://dsh.market/?q=exoticknight%2Fdsh-theme-eink-retro)
-[![CI](https://github.com/exoticknight/dsh-theme-eink-retro/actions/workflows/ci.yml/badge.svg)](https://github.com/exoticknight/dsh-theme-eink-retro/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/exoticknight/dsh-theme-eink-retro)](https://github.com/exoticknight/dsh-theme-eink-retro/releases/latest)
-[![License](https://img.shields.io/github/license/exoticknight/dsh-theme-eink-retro)](LICENSE)
+[![dsh.pub registry status](https://dsh.pub/api/badges/exoticknight/dsh-theme-eink-retro.svg)](https://dsh.pub/zh/plugins/?q=exoticknight/dsh-theme-eink-retro) [![DSH Market 已收录](https://raw.githubusercontent.com/2BingLing/dsh-market/master/assets/readme/badge-listed-zh.svg)](https://dsh.market/?q=exoticknight%2Fdsh-theme-eink-retro) [![Listed on dsh-plugin.org](https://dsh-plugin.org/badges/listed.svg)](https://dsh-plugin.org/plugins/exoticknight/dsh-theme-eink-retro) [![Awesome DSH Plugin](https://awesome-dsh-plugin.com/badge.svg)](https://awesome-dsh-plugin.com) [![dsh-xray](https://img.shields.io/endpoint?url=https%3A%2F%2Funstone.github.io%2Fdsh-xray%2Fbadge%2Fexoticknight__dsh-theme-eink-retro.json)](https://unstone.github.io/dsh-xray/p/exoticknight__dsh-theme-eink-retro.html)
+
+[![Maintained with RED](https://img.shields.io/badge/maintained_with-RED-C1121F)](https://github.com/exoticknight/red) [![CI](https://github.com/exoticknight/dsh-theme-eink-retro/actions/workflows/ci.yml/badge.svg)](https://github.com/exoticknight/dsh-theme-eink-retro/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/exoticknight/dsh-theme-eink-retro)](https://github.com/exoticknight/dsh-theme-eink-retro/releases/latest) [![License](https://img.shields.io/github/license/exoticknight/dsh-theme-eink-retro)](LICENSE)
 
 E-Ink Retro 是面向 DeepSeek Harness 的客户端主题。它使用中性纸面、近黑文字、硬边偏移阴影、小圆角和黑白反选状态。几何借鉴经典 Macintosh 界面，同时保留 DSH 原有布局和工作流。
 
@@ -83,6 +82,7 @@ dsh plugin --profile web add github:exoticknight/dsh-theme-eink-retro#v0.1.0
 - [dsh.pub](https://dsh.pub/zh/plugins/dsh-theme-eink-retro/)
 - [DSH Market](https://dsh.market/?q=exoticknight%2Fdsh-theme-eink-retro)
 - [DSH Marketplace](https://dshmarketplace.dev/zh/plugins?q=dsh-theme-eink-retro)
+- [dsh-plugin.org](https://dsh-plugin.org/plugins/exoticknight/dsh-theme-eink-retro)
 - [HackSing DSH 插件目录](https://github.com/HackSing/dsh-plugins/blob/main/README.zh.md)
 - [Awesome DSH Plugin 目录](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/exoticknight__dsh-theme-eink-retro.yml)
 - [Awesome DSH Plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins/blob/main/PLUGINS.md)
