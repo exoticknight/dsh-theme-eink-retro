@@ -1,7 +1,7 @@
 version = 1
 
 [document]
-paths = ["README.md", "docs/**"]
+paths = ["README.md", "README.zh-CN.md", "docs/**"]
 
 [research]
 # Local-only working notes; the directory is ignored by .gitignore.
