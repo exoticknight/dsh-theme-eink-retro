@@ -23,4 +23,4 @@ GitHub Releases are published from version tags. Before tagging a release:
 3. Run `npm run check` and confirm the generated `lib/` files are current.
 4. Create and push the matching `v<version>` tag.
 
-The Release workflow rejects tags that do not match `package.json`, rebuilds and tests the project, packs the distributable files, and then creates the GitHub Release. Re-running a tag replaces the archive without duplicating the Release. npm publishing is intentionally separate.
+The Release workflow rejects tags that do not match `package.json`, rebuilds and tests the project, then creates or updates the GitHub Release with release notes. GitHub provides a source archive for each tag; the workflow does not attach an npm package archive. npm publishing is intentionally separate.

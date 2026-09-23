@@ -39,19 +39,9 @@ jobs:
       - name: Verify committed bundles are current
         run: git diff --exit-code -- lib
 
-      - name: Pack release archive
-        id: pack
-        shell: bash
-        run: |
-          package_file="$(npm pack --ignore-scripts --silent)"
-          test -f "$package_file"
-          echo "file=$package_file" >> "$GITHUB_OUTPUT"
-          sha256sum "$package_file"
-
       - name: Create or update GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-          PACKAGE_FILE: ${{ steps.pack.outputs.file }}
         shell: bash
         run: |
           notes_file="docs/release-notes-$GITHUB_REF_NAME.md"
@@ -61,11 +51,10 @@ jobs:
             else
               gh release edit "$GITHUB_REF_NAME" --verify-tag --title "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY"
             fi
-            gh release upload "$GITHUB_REF_NAME" "$PACKAGE_FILE" --clobber --repo "$GITHUB_REPOSITORY"
           else
             if [[ -f "$notes_file" ]]; then
-              gh release create "$GITHUB_REF_NAME" "$PACKAGE_FILE" --verify-tag --title "$GITHUB_REF_NAME" --notes-file "$notes_file" --repo "$GITHUB_REPOSITORY"
+              gh release create "$GITHUB_REF_NAME" --verify-tag --title "$GITHUB_REF_NAME" --notes-file "$notes_file" --repo "$GITHUB_REPOSITORY"
             else
-              gh release create "$GITHUB_REF_NAME" "$PACKAGE_FILE" --verify-tag --title "$GITHUB_REF_NAME" --generate-notes --repo "$GITHUB_REPOSITORY"
+              gh release create "$GITHUB_REF_NAME" --verify-tag --title "$GITHUB_REF_NAME" --generate-notes --repo "$GITHUB_REPOSITORY"
             fi
           fi

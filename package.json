@@ -21,8 +21,7 @@
     "build": "node scripts/build.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "node --test tests/theme.test.mjs",
-    "check": "npm run typecheck && npm run test && npm run build",
-    "prepack": "npm run check"
+    "check": "npm run typecheck && npm run test && npm run build"
   },
   "keywords": [
     "deepseek-harness",

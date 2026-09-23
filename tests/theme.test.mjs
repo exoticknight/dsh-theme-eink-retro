@@ -45,7 +45,7 @@ test("package exposes release and support metadata", () => {
   assert.equal(pkg.repository.url, "git+https://github.com/exoticknight/dsh-theme-eink-retro.git");
   assert.equal(pkg.homepage, "https://github.com/exoticknight/dsh-theme-eink-retro#readme");
   assert.equal(pkg.bugs.url, "https://github.com/exoticknight/dsh-theme-eink-retro/issues");
-  assert.match(pkg.scripts.prepack, /npm run check/);
+  assert.equal(pkg.scripts.prepack, undefined);
 });
 
 test("version tags verify and publish a reproducible GitHub release", () => {
@@ -54,9 +54,9 @@ test("version tags verify and publish a reproducible GitHub release", () => {
   assert.match(releaseWorkflow, /package\.json/);
   assert.match(releaseWorkflow, /npm run check/);
   assert.match(releaseWorkflow, /git diff --exit-code -- lib/);
-  assert.match(releaseWorkflow, /npm pack --ignore-scripts/);
+  assert.doesNotMatch(releaseWorkflow, /npm pack/);
   assert.match(releaseWorkflow, /gh release edit[^\n]*--verify-tag[^\n]*--notes-file/);
-  assert.match(releaseWorkflow, /gh release upload[^\n]*--clobber/);
+  assert.doesNotMatch(releaseWorkflow, /gh release upload/);
   assert.match(releaseWorkflow, /gh release create[^\n]*--verify-tag/);
 });
 
