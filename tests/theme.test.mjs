@@ -638,6 +638,10 @@ test("markdown tables and capability badges keep readable hierarchy", () => {
 test("floating listboxes do not resize the conversation scrollport", () => {
   assert.match(
     css,
+    /:where\(\[role="menu"\], \[role="listbox"\]\)\s+:where\(button:not\(:disabled\), \[role="button"\]:not\(\[aria-disabled="true"\]\), \[role="tab"\]\):active\s*\{[^}]*transform:\s*none/s,
+  );
+  assert.match(
+    css,
     /:where\(\[role="menu"\], \[role="listbox"\]\)\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*background-image:\s*none\s*!important[^}]*backdrop-filter:\s*none\s*!important/s,
   );
   assert.match(
