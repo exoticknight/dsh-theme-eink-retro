@@ -40,7 +40,7 @@ Requirements:
 Install the tagged GitHub release:
 
 ```sh
-dsh plugin --profile web add github:exoticknight/dsh-theme-eink-retro#v0.3.1
+dsh plugin --profile web add github:exoticknight/dsh-theme-eink-retro#v0.3.2
 ```
 
 Restart DSH Web after installation, then open **Settings → E-Ink Retro**.
@@ -98,14 +98,14 @@ Selecting another third-party theme pauses E-Ink Retro. Enabling E-Ink Retro or 
 
 ## Compatibility
 
-The `v0.3.1` release was built and checked with:
+The `v0.3.2` release was built and checked with:
 
 | Component | Version or environment |
 | --- | --- |
-| DeepSeek Harness | `0.1.5-rc.2` |
-| Node.js | `24.2.0` |
-| pnpm | `11.24.0` |
-| Operating system | Windows `10.0.26200.0` |
+| DeepSeek Harness | `0.1.7-rc.1` |
+| Node.js | `24.21.0` |
+| pnpm | `11.19.0` |
+| Operating system | Windows, DSH `web` profile |
 
 DSH is in developer preview. A future DSH release may change UI hooks or theme tokens and require a plugin update.
 

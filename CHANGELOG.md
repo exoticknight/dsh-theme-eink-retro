@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented here.
 
+## [0.3.2] - 2026-09-24
+
+### Fixed
+
+- Popup menu options no longer move down on press, preventing transient overflow and scrollbar flashes at scroll viewport edges.
+- User-message copy tooltips keep their own contrast instead of inheriting message-bubble styling; wide tables reveal horizontal scrolling only when content overflows.
+- Sidebar guide cards and switch thumbs align with the current DSH surface structure.
+
+### Compatibility
+
+- Follow DSH `0.1.7-rc.1` surface hooks and remove the obsolete `@deepseek-ai/dsh-client-runtime` injection.
+
 ## [0.3.1] - 2026-09-13
 
 ### Fixed
@@ -63,6 +75,9 @@ All notable changes to this project are documented here.
 - Local settings for theme enablement and mode selection.
 - English and Simplified Chinese documentation.
 
+[0.3.2]: https://github.com/exoticknight/dsh-theme-eink-retro/releases/tag/v0.3.2
+[0.3.1]: https://github.com/exoticknight/dsh-theme-eink-retro/releases/tag/v0.3.1
+[0.3.0]: https://github.com/exoticknight/dsh-theme-eink-retro/releases/tag/v0.3.0
 [0.2.1]: https://github.com/exoticknight/dsh-theme-eink-retro/releases/tag/v0.2.1
 [0.2.0]: https://github.com/exoticknight/dsh-theme-eink-retro/releases/tag/v0.2.0
 [0.1.0]: https://github.com/exoticknight/dsh-theme-eink-retro/releases/tag/v0.1.0
