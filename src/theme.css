@@ -340,6 +340,13 @@ html[data-dsh-theme-eink-retro] :where(
   border-radius: var(--eink-radius-surface) !important;
 }
 
+/* DSH's right-sidebar guide entries paint their card radius on this wrapper;
+ * the buttons inside already follow the control radius, but cannot change the
+ * visible outer shell. */
+html[data-dsh-theme-eink-retro] [data-sidebar-right-guide-entry] {
+  border-radius: var(--eink-radius-surface) !important;
+}
+
 /* Some DSH and marketplace controls draw their visible surface on a wrapper
  * instead of the native input/card. Keep those shells in the same rectilinear
  * system without flattening charts or user content. */
@@ -547,10 +554,12 @@ html[data-dsh-theme-eink-retro]
   [role="switch"]:has(> :only-child):not(:has(> :only-child > *))
   > :only-child {
   box-sizing: border-box;
+  position: absolute !important;
   width: 10px !important;
   height: 10px !important;
   top: 2px !important;
   left: 2px !important;
+  transform: none !important;
   background-color: var(--eink-ink) !important;
   border: 0 !important;
   border-radius: var(--eink-radius-tight) !important;
@@ -1130,8 +1139,11 @@ html[data-dsh-theme-eink-retro]
  * has no message-part attribute and the time-hover wrapper is gone, so the
  * generated bubble class is the single hook left. It is the last child of the
  * stack (attachments, when present, sit above it), which is why the suffix is
- * anchored inside the user flow item rather than addressed on its own. */
-html[data-dsh-theme-eink-retro] [data-chat-flow-kind="user"] [class*="_bubble"] {
+ * anchored inside the user flow item rather than addressed on its own.
+ * Shared tooltips also use a generated `_bubble` class and render inside the
+ * user flow item; exclude them so the card fill cannot override their ink. */
+html[data-dsh-theme-eink-retro] [data-chat-flow-kind="user"]
+  [class*="_bubble"]:not([role="tooltip"]) {
   padding: 8px 12px !important;
   background-color: var(--eink-paper-bright) !important;
   border: 1px solid var(--eink-rule) !important;
@@ -1454,6 +1466,14 @@ html[data-dsh-theme-eink-retro] blockquote > :last-child {
 
 html[data-dsh-theme-eink-retro] table {
   border-collapse: collapse;
+}
+
+/* DSH forces a scrollbar on hover for tables marked wide, including those
+ * that already fit their container. Keep horizontal scrolling available, but
+ * only paint the bar when the table actually overflows. */
+html[data-dsh-theme-eink-retro] .md-table-wide:hover,
+html[data-dsh-theme-eink-retro] .md-table-wide:focus-visible {
+  overflow-x: auto !important;
 }
 
 html[data-dsh-theme-eink-retro] :where(th, td) {

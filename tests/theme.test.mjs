@@ -444,7 +444,7 @@ test("workspace search and user messages use crisp surfaces with one focus owner
   // the stack carries a message-part attribute any more.
   assert.match(
     css,
-    /\[data-chat-flow-kind="user"\]\s+\[class\*="_bubble"\]\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border:\s*1px solid var\(--eink-rule\)\s*!important[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
+    /\[data-chat-flow-kind="user"\]\s+\[class\*="_bubble"\]:not\(\[role="tooltip"\]\)\s*\{[^}]*background-color:\s*var\(--eink-paper-bright\)\s*!important[^}]*border:\s*1px solid var\(--eink-rule\)\s*!important[^}]*border-radius:\s*var\(--eink-radius-surface\)\s*!important[^}]*box-shadow:\s*none\s*!important/s,
   );
 });
 
