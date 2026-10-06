@@ -1,6 +1,6 @@
 {
   "name": "dsh-theme-eink-retro",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A paper-and-ink client-side theme for DeepSeek Harness with Balanced and Immersive modes.",
   "type": "module",
   "main": "lib/index.js",
@@ -59,6 +59,13 @@
         "@deepseek-ai/dsh-client-ui-settings"
       ],
       "platform": "web"
+    },
+    "compatibility": {
+      "dsh": ">=0.1.7-rc.1 <0.3.0",
+      "dshReleases": {
+        "0.1.7-rc.1": "compatible",
+        "0.2.0-rc.2": "compatible"
+      }
     }
   },
   "devDependencies": {
